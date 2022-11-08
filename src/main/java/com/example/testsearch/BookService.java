@@ -22,4 +22,15 @@ public class BookService {
 
         return bookResTestDtos;
     }
+
+    public List<BookResTestDto> searchFullText(String searchtext) {
+
+        List<Books> bookList = bookRepository.searchByFullText(searchtext);
+        List<BookResTestDto> bookResTestDtos = new ArrayList<>();
+        for (Books books : bookList) {
+            bookResTestDtos.add(new BookResTestDto(books));
+        }
+
+        return bookResTestDtos;
+    }
 }

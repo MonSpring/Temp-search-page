@@ -13,8 +13,7 @@ public class BookResTestDto {
     private String title;
     private String author;
     private String publisher;
-    private String publication_year;
-    private String vol;
+    private Date publication_year;
     private Long isbn;
 //    private int numberOfBooks;
 //    private int numberOfLoans;
@@ -27,8 +26,6 @@ public class BookResTestDto {
         this.author = book.getAuthor();
         this.publisher = book.getPublisher();
         this.publication_year = book.getPublication_year();
-        this.vol = book.getVol();
         this.isbn = book.getIsbn();
-        this.reg_date = book.getRegistrationDate();
     }
 }
