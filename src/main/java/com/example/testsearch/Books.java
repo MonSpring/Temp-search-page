@@ -42,20 +42,20 @@ public class Books {
     @Column
     private String publisher;
 
-    @Column
-    private Date publication_year;
+    @Column(name = "publication_year")
+    private Date publicationYear;
 
     @Column
     private Long isbn;
 
-    @Column
-    private String book_count;
+    @Column(name = "book_count")
+    private String bookCount;
 
-    @Column
-    private int lend_out_book_count;
+    @Column(name = "lend_out_book_count")
+    private int lendOutBookCount;
 
-    @Column
-    private Date reg_date;
+    @Column(name = "reg_date")
+    private Date regDate;
 
     @JoinColumn(name = "libcode")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,18 +63,18 @@ public class Books {
 
     @Builder
     public Books(Long id, String title, String author, String publisher,
-                 Date publication_year, Long isbn, String book_count, int lend_out_book_count,
-                 Date reg_date, Librarys librarys) {
+                 Date publicationYear, Long isbn, String bookCount, int lendOutBookCount,
+                 Date regDate, Librarys librarys) {
 
         this.id = id;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
-        this.publication_year = publication_year;
+        this.publicationYear = publicationYear;
         this.isbn = isbn;
-        this.book_count = book_count;
-        this.lend_out_book_count = lend_out_book_count;
-        this.reg_date = reg_date;
+        this.bookCount = bookCount;
+        this.lendOutBookCount = lendOutBookCount;
+        this.regDate = regDate;
         this.librarys = librarys;
     }
 }

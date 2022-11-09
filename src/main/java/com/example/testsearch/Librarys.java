@@ -22,7 +22,7 @@ public class Librarys {
     @Id
     private Long libcode;
 
-    @Column
+    @Column(name = "lib_name")
     private String libName;
 
     @Column
