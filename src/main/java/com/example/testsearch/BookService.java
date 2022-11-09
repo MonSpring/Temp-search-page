@@ -62,8 +62,8 @@ public class BookService {
         return new BookResTestDto(books);
     }
 
-    public Object searchSqlPageable(int page, int offset, int limit) {
-        List<Books> booksList = bookRepository.findAll();
-        return booksList;
-    }
+//    public Object searchSqlPageable(int page, int offset, int limit) {
+//        List<Books> booksList = bookRepository.findAll();
+//        return booksList;
+//    }
 }
