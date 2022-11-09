@@ -59,7 +59,14 @@
     </div>
   </div>
 </div>
-
+<form class="pager" method="Get" action="/pageable">
+  <input class="page" name="page" type="text">
+  <input class="size" name="size" type="text">
+  <input class="orderBy" name="orderBy" type="text">
+  <input class="isAsc" name="isAsc" type="text">
+  <!-- boolean 값 셀렉트 박스로 isAsc or Desc 해야함 -->
+  <button type="submit">이걸 누르면 페이저가 되요</button>
+</form>
 <table class="table table-striped">
   <thead>
   <tr>
@@ -71,66 +78,28 @@
     <th scope="col">isbn</th>
   </tr>
   </thead>
-  <tbody id="getAllSearch">
+  <tbody class="getAllSearch">
     <tr th:each="li : ${data}">
       <td th:text="${li.id}"></td>
       <td th:text="${li.title}"></td>
       <td th:text="${li.author}"></td>
       <td th:text="${li.publisher}"></td>
+      <td th:text="${li.bookCount}"></td>
       <td th:text="${li.isbn}"></td>
     </tr>
   </tbody>
-  <form id = "pager">
-    <input id ="page" name="page" type="text">
-    <input id="size" name="size" type="text">
-    <input id="orderBy" name="orderBy" type="text">
-    <input id="isAsc" name="isAsc" type="text">
-<!-- boolean 값 셀렉트 박스로 isAsc or Desc로 해야함 -->
-    <button onclick="searchPageable()">이걸 누르면 페이저가 되요</button>
-  </form>
-  <tbody id="getAllSearch2">
+  <tbody class="getAllSearch2">
   <tr th:each="li : ${data2}">
     <td th:text="${li.id}"></td>
     <td th:text="${li.title}"></td>
     <td th:text="${li.author}"></td>
     <td th:text="${li.publisher}"></td>
+    <td th:text="${li.bookCount}"></td>
     <td th:text="${li.isbn}"></td>
   </tr>
   </tbody>
+
 </table>
 </body>
 
-<script>
-  function searchPageable() {
-
-    let pageTemp = $("#page").val();
-    let sizeTemp = $("#size").val();
-    let orderByTemp = $("#orderBy").val();
-    let isAscTemp = $("#isAsc").val();
-
-    let getAllSearchTbody = $("#getAllSearch")
-    let getAllSearchTbody2 = $("#getAllSearch2")
-
-    $.ajax({
-      type: "POST",
-      url: "/pageable",
-      data: {
-        page : pageTemp,
-        size : sizeTemp,
-        orderBy : orderByTemp,
-        isAsc : isAscTemp
-      },
-      success: function (response) {
-        if (response['result'] === 'success') {
-          getAllSearchTbody.setAttribute("display", "none");
-          getAllSearchTbody2.setAttribute("display", "block");
-          window.location.replace("/")
-        } else {
-          alert(response["데이터를 받지 못했습니다"])
-        }
-      }
-    });
-  }
-
-</script>
 </html>

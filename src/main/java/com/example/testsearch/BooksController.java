@@ -33,7 +33,7 @@ public class BooksController extends HttpServlet {
 
     // data Jpa 페이저블 사용한 기존 페이지네이션 검색
     @LogExecutionTime
-    @PostMapping("/pageable")
+    @GetMapping("/pageable")
     public String searchPageable(Model model,
                                  @RequestParam("page") int page,
                                  @RequestParam("size") int size,
@@ -43,22 +43,21 @@ public class BooksController extends HttpServlet {
         return "index";
     }
 
-    @LogExecutionTime
-    @PostMapping("/pageable")
-    public String searchSqlPageable(Model model,
-                                 @RequestParam("page") int page,
-                                 @RequestParam("offset") int offset,
-                                 @RequestParam("limit") int limit){
-        model.addAttribute("data2", bookService.searchSqlPageable(page, offset, limit));
-        return "index";
-    }
-
+//    @LogExecutionTime
+//    @PostMapping("/jpql")
+//    public String searchSqlPageable(Model model,
+//                                 @RequestParam("page") int page,
+//                                 @RequestParam("offset") int offset,
+//                                 @RequestParam("limit") int limit){
+//        model.addAttribute("data3", bookService.searchSqlPageable(page, offset, limit));
+//        return "index";
+//    }
 
     // 풀텍스트 인덱스 검색
     @LogExecutionTime
     @GetMapping("/search")
     public String searchFullText(Model model, @RequestParam("searchText") String searchText){
-        model.addAttribute("datatemp", bookService.searchFullText(searchText));
+        model.addAttribute("data4", bookService.searchFullText(searchText));
         return "index";
     }
 }
