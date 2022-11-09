@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
   <!-- JavaScript Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <style>
     .main {
       width: 50%;
@@ -70,21 +71,69 @@
     <th scope="col">isbn</th>
   </tr>
   </thead>
-  <tbody>
+  <tbody id="getAllSearch">
     <tr th:each="li : ${data}">
       <td th:text="${li.id}"></td>
-      <td th:text="${li.bookname}"></td>
+      <td th:text="${li.title}"></td>
       <td th:text="${li.author}"></td>
       <td th:text="${li.publisher}"></td>
       <td th:text="${li.isbn}"></td>
     </tr>
   </tbody>
-  <form id = "pager" method="/search">
-    <input name="page" type="text">
-    <input name="offset" type="text">
-    <input name="limit" type="text">
-    <button type="submit">이걸 누르면 페이저가 되요</button>
+  <form id = "pager">
+    <input id ="page" name="page" type="text">
+    <input id="size" name="size" type="text">
+    <input id="orderBy" name="orderBy" type="text">
+    <input id="isAsc" name="isAsc" type="text">
+<!-- boolean 값 셀렉트 박스로 isAsc or Desc로 해야함 -->
+    <button onclick="searchPageable()">이걸 누르면 페이저가 되요</button>
   </form>
+  <tbody id="getAllSearch2">
+  <tr th:each="li : ${data2}">
+    <td th:text="${li.id}"></td>
+    <td th:text="${li.title}"></td>
+    <td th:text="${li.author}"></td>
+    <td th:text="${li.publisher}"></td>
+    <td th:text="${li.isbn}"></td>
+  </tr>
+  </tbody>
 </table>
 </body>
+
+<script>
+  function searchPageable() {
+
+    let pageTemp = $("#page").val();
+    let sizeTemp = $("#size").val();
+    let orderByTemp = $("#orderBy").val();
+    let isAscTemp = $("#isAsc").val();
+
+    let getAllSearchTbody = $("#getAllSearch")
+    let getAllSearchTbody2 = $("#getAllSearch2")
+
+    $.ajax({
+      type: "POST",
+      url: "/pageable",
+      data: {
+        page : pageTemp,
+        size : sizeTemp,
+        orderBy : orderByTemp,
+        isAsc : isAscTemp
+      },
+      success: function (response) {
+        if (response['result'] === 'success') {
+          getAllSearchTbody.setAttribute("display", "none");
+          getAllSearchTbody2.setAttribute("display", "block");
+
+          let html_temp = ``;
+
+          window.location.replace("/")
+        } else {
+          alert(response["데이터를 받지 못했습니다"])
+        }
+      }
+    });
+  }
+
+</script>
 </html>

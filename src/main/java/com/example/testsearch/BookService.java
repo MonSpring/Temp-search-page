@@ -1,6 +1,10 @@
 package com.example.testsearch;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +26,22 @@ public class BookService {
         }
 
         return bookResTestDtos;
+    }
+
+    // data Jpa pageable 검색
+    public List<BookResTestDto> searchPageable(int page, int size, String orderBy, boolean isAsc) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, orderBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        List<BookResTestDto> bookResTestDtoList = new ArrayList<>();
+        Page<Books> booksList = bookRepository.findAll(pageable);
+
+        for (Books books:booksList) {
+            BookResTestDto bookResTestDto = new BookResTestDto(books);
+            bookResTestDtoList.add(bookResTestDto);
+        }
+        return bookResTestDtoList;
     }
 
     // 풀텍스트 인덱스 검색
