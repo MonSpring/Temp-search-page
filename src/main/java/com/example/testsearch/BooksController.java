@@ -13,6 +13,7 @@ public class BooksController {
 
     private final BookService bookService;
 
+    // 1630만개 끌어오기
     @LogExecutionTime
     @GetMapping("/index")
     public String getAll(Model model){
@@ -20,9 +21,9 @@ public class BooksController {
         return "index";
     }
 
-
+    // 풀텍스트 인덱스 검색
     @LogExecutionTime
-    @GetMapping("/index")
+    @GetMapping("/search")
     public String searchFullText(Model model, @RequestParam("searchText") String searchText){
         model.addAttribute("data", bookService.searchFullText(searchText));
         return "index";

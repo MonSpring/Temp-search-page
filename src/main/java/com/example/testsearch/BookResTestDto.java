@@ -15,9 +15,8 @@ public class BookResTestDto {
     private String publisher;
     private Date publication_year;
     private Long isbn;
-//    private int numberOfBooks;
-//    private int numberOfLoans;
     private Date reg_date;
+    private Librarys librarys;
 
     @Builder
     public BookResTestDto(Books book) {
@@ -27,5 +26,10 @@ public class BookResTestDto {
         this.publisher = book.getPublisher();
         this.publication_year = book.getPublication_year();
         this.isbn = book.getIsbn();
+        this.reg_date = book.getReg_date();
+    }
+
+    public void update(Librarys librarys) {
+        this.librarys = librarys;
     }
 }

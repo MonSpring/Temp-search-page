@@ -30,6 +30,11 @@
       pointer-events: none;
       color: #aaa;
     }
+
+    #pager {
+      margin: 0 auto;
+      padding-top: 100px;
+    }
   </style>
 </head>
 <body>
@@ -74,6 +79,12 @@
       <td th:text="${li.isbn}"></td>
     </tr>
   </tbody>
+  <form id = "pager" method="/search">
+    <input name="page" type="text">
+    <input name="offset" type="text">
+    <input name="limit" type="text">
+    <button type="submit">이걸 누르면 페이저가 되요</button>
+  </form>
 </table>
 </body>
 </html>
