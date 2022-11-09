@@ -63,6 +63,6 @@ public class BookService {
     }
 
     public Object searchSqlPageable(int page, int offset, int limit) {
-        List<Books> = bookRepository.findB
+//        List<Books> = bookRepository.findB
     }
 }
