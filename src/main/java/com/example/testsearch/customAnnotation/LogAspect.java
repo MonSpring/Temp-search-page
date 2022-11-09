@@ -20,8 +20,9 @@ public class LogAspect {
         Object proceed = joinPoint.proceed();
 
         stopWatch.stop();
-        log.info("total mills : " + stopWatch.getTotalTimeMillis() + " ms" + " nano: "+stopWatch.getTotalTimeNanos());
-
+        log.info("total mills : " + stopWatch.getTotalTimeMillis() + " ms");
+        log.info("total nanos : " + stopWatch.getTotalTimeNanos() + " ns");
+        log.info("method name : " + joinPoint.getSignature().getName());
         return proceed;
     }
 }

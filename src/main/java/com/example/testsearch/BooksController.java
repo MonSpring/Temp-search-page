@@ -2,6 +2,8 @@ package com.example.testsearch;
 
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 public class BooksController extends HttpServlet {
 
     private final BookService bookService;
+
+    private final BookRepository bookRepository;
+
 
 //    @GetMapping("/index")
 //    public String getToken(HttpServletRequest httpServletRequest) {
@@ -35,12 +40,26 @@ public class BooksController extends HttpServlet {
     @LogExecutionTime
     @GetMapping("/pageable")
     public String searchPageable(Model model,
-                                 @RequestParam("page") int page,
-                                 @RequestParam("size") int size,
-                                 @RequestParam("orderBy") String orderBy,
-                                 @RequestParam("isAsc")boolean isAsc){
+                                 @RequestParam(defaultValue = "1", name = "page") int page,
+                                 @RequestParam(defaultValue = "10", name = "size") int size,
+                                 @RequestParam(defaultValue = "id", name = "orderBy") String orderBy,
+                                 @RequestParam(defaultValue = "false", name = "isAsc")boolean isAsc){
+        // 총 게시물 수
+        int totalListCnt = (int) bookRepository.count();
+
+        // 생성인자로  총 게시물 수, 현재 페이지를 전달
+        Pagination pagination = new Pagination(totalListCnt, page);
+/*
+        // DB select start index
+        int startIndex = pagination.getStartIndex();
+        // 페이지 당 보여지는 게시글의 최대 개수
+        int pageSize = pagination.getPageSize();*/
+
+        /*List<Board> boardList = boardRepository.findListPaging(startIndex, pageSize);*/
+
         model.addAttribute("data2", bookService.searchPageable(page, size, orderBy, isAsc));
-        return "index";
+        model.addAttribute("pagination", pagination);
+        return "pageable";
     }
 
 //    @LogExecutionTime
