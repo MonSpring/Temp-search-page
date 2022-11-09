@@ -31,6 +31,7 @@ public class BooksController extends HttpServlet {
         return "index";
     }
 
+    // data Jpa 페이저블 사용한 기존 페이지네이션 검색
     @LogExecutionTime
     @PostMapping("/pageable")
     public String searchPageable(Model model,
@@ -39,6 +40,16 @@ public class BooksController extends HttpServlet {
                                  @RequestParam("orderBy") String orderBy,
                                  @RequestParam("isAsc")boolean isAsc){
         model.addAttribute("data2", bookService.searchPageable(page, size, orderBy, isAsc));
+        return "index";
+    }
+
+    @LogExecutionTime
+    @PostMapping("/pageable")
+    public String searchSqlPageable(Model model,
+                                 @RequestParam("page") int page,
+                                 @RequestParam("offset") int offset,
+                                 @RequestParam("limit") int limit){
+        model.addAttribute("data2", bookService.searchSqlPageable(page, offset, limit));
         return "index";
     }
 

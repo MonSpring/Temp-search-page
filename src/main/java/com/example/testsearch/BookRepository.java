@@ -15,4 +15,8 @@ public interface BookRepository  extends JpaRepository<Books, Long> {
 
     Page<Books> findAll(Pageable pageable);
 
+//    @Query(value = "SELECT b FROM books.b WHERE ")
+    List<Books> findAll(@Param("page") int page, @Param("offset") int offset, @Param("limit") int limit);
+
+//    int page, int offset, int limit
 }

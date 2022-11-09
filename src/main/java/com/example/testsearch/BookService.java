@@ -61,4 +61,8 @@ public class BookService {
         Books books = bookRepository.findById(id).orElseThrow(()->new RuntimeException("책을 찾을 수 없습니다"));
         return new BookResTestDto(books);
     }
+
+    public Object searchSqlPageable(int page, int offset, int limit) {
+        List<Books> = bookRepository.findB
+    }
 }
