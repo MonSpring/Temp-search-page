@@ -12,20 +12,8 @@ import java.util.Date;
 @Getter @Setter
 public class Books {
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_id")
-//    //     pooled-lo ID 할당 (MySQL 의 경우 SEQUENCE 쓸 수 없고, Identity 는 batch insert 불가능하다. 이를 위한 대안책. id를 1000개씩 미리 준비하므로 시퀀스가 1000씩 올라간다)
-//    @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence-generator")
-//    @GenericGenerator(
-//            name = "sequence-generator",
-//            strategy = "sequence",
-//            parameters = {
-//                    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = SequenceStyleGenerator.DEF_SEQUENCE_NAME),
-//                    @Parameter(name = SequenceStyleGenerator.INITIAL_PARAM, value = "1"),
-//                    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1000"),
-//                    @Parameter(name = AvailableSettings.PREFERRED_POOLED_OPTIMIZER, value = "pooled-lo")
-//            }
-//    )
     private Long id;
 
     @Column

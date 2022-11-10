@@ -62,6 +62,15 @@ public class BookService {
         return new BookResTestDto(books);
     }
 
+    public List<BookResTestDto> getSerachBooks(String word) {
+        List<Books> List = bookRepository.searchByFullText(word);
+        List<BookResTestDto> bookResTestDtoList = new ArrayList<>();
+        for (Books books : List) {
+            bookResTestDtoList.add(new BookResTestDto(books));
+        }
+        return bookResTestDtoList;
+    }
+
 //    public Object searchSqlPageable(int page, int offset, int limit) {
 //        List<Books> booksList = bookRepository.findAll();
 //        return booksList;
