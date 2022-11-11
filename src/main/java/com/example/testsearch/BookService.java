@@ -2,6 +2,7 @@ package com.example.testsearch;
 
 import com.example.testsearch.customAnnotation.ListBookResTestDtoAndPagination;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookService {
@@ -49,7 +51,7 @@ public class BookService {
     // 풀텍스트 인덱스 검색
     public List<BookResTestDto> searchFullText(String searchtext) {
 
-        List<Books> bookList = bookRepository.searchByFullText(searchtext);
+        List<Books> bookList = bookRepository.onlyWordSearchByFullText(searchtext);
         List<BookResTestDto> bookResTestDtos = new ArrayList<>();
         for (Books books : bookList) {
             bookResTestDtos.add(new BookResTestDto(books));
@@ -70,6 +72,7 @@ public class BookService {
         List<Books> booksList = bookRepository.searchByFullText(word, size, page);
 
         int totalListCnt = bookRepository.searchByFullTextCount(word);
+        log.info(String.valueOf(totalListCnt));
 
         Pagination pagination = new Pagination(totalListCnt, page);
 

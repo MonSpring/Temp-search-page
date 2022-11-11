@@ -37,6 +37,10 @@
       margin: 0 auto;
       padding-top: 100px;
     }
+
+    .no-search {
+      text-align: center;
+    }
   </style>
 
 </head>
@@ -46,7 +50,7 @@
   <select class="form-select" aria-label="Default select example">
     <option value="" selected>선택?전체?</option>
     <option value="title">책이름</option>
-    <option value="author">작사</option>
+    <option value="author">작가</option>
     <option value="publisher">출판사</option>
     <option value="isbn">isbn</option>
   </select>
@@ -96,10 +100,10 @@
 </table>
 
   <!-- paging button-->
-  <nav aria-label="Page navigation example">
+  <nav th:if="${pagination.totalListCnt}>0" aria-label="Page navigation example">
     <ul class="pagination d-flex justify-content-center">
       <li class="page-item">
-        <a class="page-link" th:href="@{/searchJpql?word={word}&page={page}&size={size} (page = ${pagination.startPage}, word = ${word}, size=${pagination.pageSize})}" aria-label="Previous">
+        <a class="page-link" th:href="@{/searchJpql?word={word}&page={page}&size={size} (page = 1, word = ${word}, size=${pagination.pageSize})}" aria-label="Previous">
           <span aria-hidden="true">처음</span>
         </a>
       </li>
@@ -127,7 +131,7 @@
       </li>
     </ul>
   </nav>
-
+<div th:if="${pagination.totalListCnt}==0" class="no-search">검색 내용을 찾을 수 없습니다</div>
 
 </body>
 </html>

@@ -7,9 +7,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity
 @NoArgsConstructor
 @Getter @Setter
+@Entity
 public class Books {
 
     @Id

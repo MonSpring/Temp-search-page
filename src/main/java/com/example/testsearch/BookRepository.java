@@ -14,12 +14,12 @@ public interface BookRepository  extends JpaRepository<Books, Long> {
     List<Books> searchByFullTextBoolean(@Param("word") String word);
 
     @Query(value = "SELECT * FROM books WHERE MATCH(title) AGAINST(:word in natural language mode)", nativeQuery = true)
-    List<Books> searchByFullText(@Param("word") String word);
+    List<Books> onlyWordSearchByFullText(@Param("word") String word);
 
-    @Query(value = "SELECT * FROM books WHERE MATCH(title) AGAINST(:word in natural language mode) LIMIT :size OFFSET :page" , nativeQuery = true)
+    @Query(value = "SELECT * FROM books WHERE MATCH(title) AGAINST(:word in boolean mode) LIMIT :size OFFSET :page" , nativeQuery = true)
     List<Books> searchByFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
 
-    @Query(value = "SELECT count(1) FROM books WHERE MATCH(title) AGAINST(:word in natural language mode)" , nativeQuery = true)
+    @Query(value = "SELECT count(1) FROM books WHERE MATCH(title) AGAINST(:word in boolean mode)" , nativeQuery = true)
     int searchByFullTextCount(@Param("word") String word);
 
     Page<Books> findAll(Pageable pageable);
@@ -31,4 +31,7 @@ public interface BookRepository  extends JpaRepository<Books, Long> {
 //    List<Books> findAll(@Param("page") int page, @Param("offset") int offset, @Param("limit") int limit);
 
 //    int page, int offset, int limit
+
+    @Query(value = "SELECT * FROM books WHERE isbn LIKE %:isbn%", nativeQuery = true)
+    List<Books> findAllByIsbnContains(@Param("isbn") String isbn);
 }
