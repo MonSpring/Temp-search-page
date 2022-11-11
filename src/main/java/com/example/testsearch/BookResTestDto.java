@@ -17,7 +17,6 @@ public class BookResTestDto {
     private Long isbn;
     private Date regDate;
     private Librarys librarys;
-
     private String bookCount;
 
     @Builder
@@ -35,4 +34,5 @@ public class BookResTestDto {
     public void update(Librarys librarys) {
         this.librarys = librarys;
     }
+
 }

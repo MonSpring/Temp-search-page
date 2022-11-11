@@ -16,6 +16,9 @@ public interface BookRepository  extends JpaRepository<Books, Long> {
     @Query(value = "SELECT * FROM books WHERE MATCH(title) AGAINST(:word in natural language mode)", nativeQuery = true)
     List<Books> searchByFullText(@Param("word") String word);
 
+    @Query(value = "SELECT * FROM books WHERE MATCH(title) AGAINST(:word in natural language mode) LIMIT :size OFFSET :page" , nativeQuery = true)
+    List<Books> searchByFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
+
     Page<Books> findAll(Pageable pageable);
 
     @Query("select b from Books b where b.title LIKE %:word%")

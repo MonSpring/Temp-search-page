@@ -38,6 +38,11 @@
       padding-top: 100px;
     }
   </style>
+
+  <script>
+    let word = $("#search-word").val();
+  </script>
+
 </head>
 <body>
 <div class="main">
@@ -53,7 +58,7 @@
   <div class="input-group">
     <div class="input-group-append">
       <form class="pager" method="Get" action="/searchJpql">
-        <input type="text" class="form-control" placeholder="Search this blog" name="word">
+        <input type="text" id="search-word" class="form-control" placeholder="Search this blog" name="word">
         <button class="btn btn-secondary" type="submit">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
@@ -92,16 +97,39 @@
       <td th:text="${li.isbn}"></td>
     </tr>
   </tbody>
-  <tbody class="getAllSearch2">
-  <tr th:each="li : ${data5}">
-    <td th:text="${li.id}"></td>
-    <td th:text="${li.title}"></td>
-    <td th:text="${li.author}"></td>
-    <td th:text="${li.publisher}"></td>
-    <td th:text="${li.bookCount}"></td>
-    <td th:text="${li.isbn}"></td>
-  </tr>
-  </tbody>
+
+  <!-- paging button-->
+  <nav aria-label="Page navigation example">
+    <ul class="pagination d-flex justify-content-center">
+      <li class="page-item">
+        <a class="page-link" th:href="@{/searchJpql?page=1}" aria-label="Previous">
+          <span aria-hidden="true">처음</span>
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" th:href="@{/searchJpql?page={page} (page = ${pagination.prevBlock})}" aria-label="Previous">
+          <span aria-hidden="true">이전</span>
+        </a>
+      </li>
+      <th:block  th:with="start = ${pagination.startPage}, end = ${pagination.endPage}">
+        <li class="page-item"
+            th:with="start = ${pagination.startPage}, end = ${pagination.endPage}"
+            th:each="pageButton : ${#numbers.sequence(start, end)}">
+          <a class="page-link" th:href="@{/searchJpql?page={page} (page = ${pageButton})}" th:text=${pageButton}></a>
+        </li>
+      </th:block>
+      <li class="page-item">
+        <a class="page-link" th:href="@{/searchJpql?page={page} (page = ${pagination.nextBlock})}" aria-label="Next">
+          <span aria-hidden="true">다음</span>
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" th:href="@{/searchJpql?page={page} (page = ${pagination.totalPageCnt})}" aria-label="Previous">
+          <span aria-hidden="true">끝</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
 
 </table>
 <!--<div class="margin-top align-center pager">

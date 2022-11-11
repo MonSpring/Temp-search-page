@@ -1,5 +1,6 @@
 package com.example.testsearch;
 
+import com.example.testsearch.customAnnotation.ListBookResTestDtoAndPagination;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -10,10 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@Transactional
 public class BooksController extends HttpServlet {
 
     private final BookService bookService;
@@ -82,8 +85,17 @@ public class BooksController extends HttpServlet {
     // jpal 검색
     @LogExecutionTime
     @GetMapping("/searchJpql")
-    public String jpqlSearch(Model model, @RequestParam("word") String word){
-        model.addAttribute("data5", bookService.getSerachBooks(word));
+    public String jpqlSearch(Model model,
+                             @RequestParam String word,
+                             @RequestParam(defaultValue = "1", name = "page") int page,
+                             @RequestParam(defaultValue = "10", name = "size") int size){
+
+        ListBookResTestDtoAndPagination listBookResTestDtoAndPagination = bookService.getSerachBooks(word, size, page);
+        // 검색 리스트 가져오는 용도
+        model.addAttribute("data5", listBookResTestDtoAndPagination.getBookResTestDtoList());
+        // page 버튼 뿌려주는 용도
+        model.addAttribute("pagination", listBookResTestDtoAndPagination.getPagination());
+
         return "searchPage";
     }
 

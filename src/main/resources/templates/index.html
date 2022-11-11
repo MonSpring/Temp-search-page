@@ -37,9 +37,15 @@
       margin: 0 auto;
       padding-top: 100px;
     }
+
   </style>
 </head>
 <body>
+
+<script>
+
+</script>
+
 <div class="main">
 
   <select class="form-select" aria-label="Default select example">
@@ -63,7 +69,7 @@
     </div>
   </div>
 </div>
-<form class="pager" method="Get" action="/searchJpql">
+<form class="pager" method="Get" action="/pageable">
   <input class="page" name="page" type="text">
   <input class="size" name="size" type="text">
   <input class="orderBy" name="orderBy" type="text">
@@ -104,67 +110,6 @@
   </tbody>
 
 </table>
-<!--<div class="margin-top align-center pager">
-
-  <div>
-    <th:if test="${startNum > 1}">
-      <a href="/pageable?page=" class="btn btn-prev">이전</a>
-    </th:if>
-    <th:if test="${startNum <= 1}">
-      <span class="btn btn-prev" onclick="alert('이전 페이지가 없습니다.');">이전</span>
-    </th:if>
-  </div>
-
-  <ul class="-list- center">
-    <th:forEach var="i" begin="0" end="4">
-      <th:if test="${(startNum+i) <= lastNum }">
-        <li><a class="-text- ${(page==(startNum+i))?'orange':''} bold" href="?p=${startNum+i}&f${param.f}=&q=${param.q}">${startNum+i}</a></li>
-      </th:if>
-    </th:forEach>
-  </ul>
-  &lt;!&ndash; startNum+LimitShowPage < lastNum &ndash;&gt;
-  <div>
-    <th:if test="${startNum+4 < lastNum}">
-      <a href="?p=${startNum+5}&t=&q=" class="btn btn-next">다음</a>
-    </th:if>
-    <th:if test="${startNum+4 >= lastNum}">
-      <span class="btn btn-next" onclick="alert('다음 페이지가 없습니다.');">다음</span>
-    </th:if>
-  </div>
-</div>-->
-
-<!-- paging button-->
-<!--<nav aria-label="Page navigation example ">
-  <ul class="pagination">
-    <li class="page-item">
-      <a class="page-link" th:href="@{/pageable?page=1}" aria-label="Previous">
-        <span aria-hidden="true">처음</span>
-      </a>
-    </li>
-    <li class="page-item">
-      <a class="page-link" th:href="@{/pageable?page={page} (page = ${pagination.prevBlock})}" aria-label="Previous">
-        <span aria-hidden="true">이전</span>
-      </a>
-    </li>
-    <th:block  th:with="start = ${pagination.startPage}, end = ${pagination.endPage}">
-      <li class="page-item"
-          th:with="start = ${pagination.startPage}, end = ${pagination.endPage}"
-          th:each="pageButton : ${#numbers.sequence(start, end)}">
-        <a class="page-link" th:href="@{/pageable?page={page} (page = ${pageButton})}" th:text=${pageButton}></a>
-      </li>
-    </th:block>
-    <li class="page-item">
-      <a class="page-link" th:href="@{/pageable?page={page} (page = ${pagination.nextBlock})}" aria-label="Next">
-        <span aria-hidden="true">다음</span>
-      </a>
-    </li>
-    <li class="page-item">
-      <a class="page-link" th:href="@{/pageable?page={page} (page = ${pagination.totalPageCnt})}" aria-label="Previous">
-        <span aria-hidden="true">끝</span>
-      </a>
-    </li>
-  </ul>
-</nav>-->
 </body>
 
 </html>

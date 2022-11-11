@@ -1,5 +1,6 @@
 package com.example.testsearch;
 
+import com.example.testsearch.customAnnotation.ListBookResTestDtoAndPagination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,17 +64,23 @@ public class BookService {
         return new BookResTestDto(books);
     }
 
-    public List<BookResTestDto> getSerachBooks(String word) {
-        List<Books> List = bookRepository.searchByFullText(word);
+    @Transactional
+    public ListBookResTestDtoAndPagination getSerachBooks(String word, int size, int page) {
+
+        List<Books> booksList = bookRepository.searchByFullText(word, size, page);
+
+        int totalListCnt = booksList.size();
+
+        Pagination pagination = new Pagination(totalListCnt, page);
+
         List<BookResTestDto> bookResTestDtoList = new ArrayList<>();
-        for (Books books : List) {
+        for (Books books : booksList) {
             bookResTestDtoList.add(new BookResTestDto(books));
         }
-        return bookResTestDtoList;
-    }
 
-//    public Object searchSqlPageable(int page, int offset, int limit) {
-//        List<Books> booksList = bookRepository.findAll();
-//        return booksList;
-//    }
+        return ListBookResTestDtoAndPagination.builder()
+                .bookResTestDtoList(bookResTestDtoList)
+                .pagination(pagination)
+                .build();
+    }
 }
