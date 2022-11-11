@@ -39,10 +39,6 @@
     }
   </style>
 
-  <script>
-    let word = $("#search-word").val();
-  </script>
-
 </head>
 <body>
 <div class="main">
@@ -68,14 +64,14 @@
     </div>
   </div>
 </div>
-<form class="pager" method="Get" action="/pageable">
-  <input class="page" name="page" type="text">
-  <input class="size" name="size" type="text">
-  <input class="orderBy" name="orderBy" type="text">
-  <input class="isAsc" name="isAsc" type="text">
-  <!-- boolean 값 셀렉트 박스로 isAsc or Desc 해야함 -->
-  <button type="submit">이걸 누르면 검색이가 되요</button>
-</form>
+<!--<form class="pager" method="Get" action="/pageable">-->
+<!--  <input class="page" name="page" type="text">-->
+<!--  <input class="size" name="size" type="text">-->
+<!--  <input class="orderBy" name="orderBy" type="text">-->
+<!--  <input class="isAsc" name="isAsc" type="text">-->
+<!--  &lt;!&ndash; boolean 값 셀렉트 박스로 isAsc or Desc 해야함 &ndash;&gt;-->
+<!--  <button type="submit">이걸 누르면 검색이가 되요</button>-->
+<!--</form>-->
 <table class="table table-striped">
   <thead>
   <tr>
@@ -97,69 +93,41 @@
       <td th:text="${li.isbn}"></td>
     </tr>
   </tbody>
+</table>
 
   <!-- paging button-->
   <nav aria-label="Page navigation example">
     <ul class="pagination d-flex justify-content-center">
       <li class="page-item">
-        <a class="page-link" th:href="@{/searchJpql?page=1}" aria-label="Previous">
+        <a class="page-link" th:href="@{/searchJpql?word={word}&page={page}&size={size} (page = ${pagination.startPage}, word = ${word}, size=${pagination.pageSize})}" aria-label="Previous">
           <span aria-hidden="true">처음</span>
         </a>
       </li>
       <li class="page-item">
-        <a class="page-link" th:href="@{/searchJpql?page={page} (page = ${pagination.prevBlock})}" aria-label="Previous">
+        <a class="page-link" th:href="@{/searchJpql?word={word}&page={page}&size={size} (page = ${pagination.prevBlock}, word = ${word}, size=${pagination.pageSize})}" aria-label="Previous">
           <span aria-hidden="true">이전</span>
         </a>
       </li>
       <th:block  th:with="start = ${pagination.startPage}, end = ${pagination.endPage}">
         <li class="page-item"
-            th:with="start = ${pagination.startPage}, end = ${pagination.endPage}"
+            th:with="start = ${pagination.startPage}, end = ${pagination.endPage}, word = ${word}"
             th:each="pageButton : ${#numbers.sequence(start, end)}">
-          <a class="page-link" th:href="@{/searchJpql?page={page} (page = ${pageButton})}" th:text=${pageButton}></a>
+          <a class="page-link" th:href="@{/searchJpql?word={word}&page={page}&size={size} (page = ${pageButton}, word = ${word}, size=${pagination.pageSize})}" th:text=${pageButton}></a>
         </li>
       </th:block>
       <li class="page-item">
-        <a class="page-link" th:href="@{/searchJpql?page={page} (page = ${pagination.nextBlock})}" aria-label="Next">
+        <a class="page-link" th:href="@{/searchJpql?word={word}&page={page}&size={size} (page = ${pagination.nextBlock}, word = ${word}, size=${pagination.pageSize})}" aria-label="Next">
           <span aria-hidden="true">다음</span>
         </a>
       </li>
       <li class="page-item">
-        <a class="page-link" th:href="@{/searchJpql?page={page} (page = ${pagination.totalPageCnt})}" aria-label="Previous">
+        <a class="page-link" th:href="@{/searchJpql?word={word}&page={page}&size={size} (page = ${pagination.totalPageCnt}, word = ${word}, size=${pagination.pageSize})}" aria-label="Previous">
           <span aria-hidden="true">끝</span>
         </a>
       </li>
     </ul>
   </nav>
 
-</table>
-<!--<div class="margin-top align-center pager">
-
-  <div>
-    <th:if test="${startNum > 1}">
-      <a href="/pageable?page=" class="btn btn-prev">이전</a>
-    </th:if>
-    <th:if test="${startNum <= 1}">
-      <span class="btn btn-prev" onclick="alert('이전 페이지가 없습니다.');">이전</span>
-    </th:if>
-  </div>
-
-  <ul class="-list- center">
-    <th:forEach var="i" begin="0" end="4">
-      <th:if test="${(startNum+i) <= lastNum }">
-        <li><a class="-text- ${(page==(startNum+i))?'orange':''} bold" href="?p=${startNum+i}&f${param.f}=&q=${param.q}">${startNum+i}</a></li>
-      </th:if>
-    </th:forEach>
-  </ul>
-  &lt;!&ndash; startNum+LimitShowPage < lastNum &ndash;&gt;
-  <div>
-    <th:if test="${startNum+4 < lastNum}">
-      <a href="?p=${startNum+5}&t=&q=" class="btn btn-next">다음</a>
-    </th:if>
-    <th:if test="${startNum+4 >= lastNum}">
-      <span class="btn btn-next" onclick="alert('다음 페이지가 없습니다.');">다음</span>
-    </th:if>
-  </div>
-</div>-->
 
 </body>
 </html>

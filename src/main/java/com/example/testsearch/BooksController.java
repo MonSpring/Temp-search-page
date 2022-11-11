@@ -95,6 +95,7 @@ public class BooksController extends HttpServlet {
         model.addAttribute("data5", listBookResTestDtoAndPagination.getBookResTestDtoList());
         // page 버튼 뿌려주는 용도
         model.addAttribute("pagination", listBookResTestDtoAndPagination.getPagination());
+        model.addAttribute("word", word);
 
         return "searchPage";
     }

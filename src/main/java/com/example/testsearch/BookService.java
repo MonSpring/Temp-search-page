@@ -69,7 +69,7 @@ public class BookService {
 
         List<Books> booksList = bookRepository.searchByFullText(word, size, page);
 
-        int totalListCnt = booksList.size();
+        int totalListCnt = bookRepository.searchByFullTextCount(word);
 
         Pagination pagination = new Pagination(totalListCnt, page);
 
