@@ -3,6 +3,7 @@ package com.example.testsearch;
 import com.example.testsearch.customAnnotation.ListBookResTestDtoAndPagination;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @Transactional
@@ -88,14 +90,21 @@ public class BooksController extends HttpServlet {
     public String jpqlSearch(Model model,
                              @RequestParam String word,
                              @RequestParam(defaultValue = "1", name = "page") int page,
-                             @RequestParam(defaultValue = "10", name = "size") int size){
+                             @RequestParam(defaultValue = "10", name = "size") int size,
+                             @RequestParam String field,
+                             @RequestParam String mode){
 
-        ListBookResTestDtoAndPagination listBookResTestDtoAndPagination = bookService.getSerachBooks(word, size, page);
+        log.info(field);
+        log.info(mode);
+
+        ListBookResTestDtoAndPagination listBookResTestDtoAndPagination = bookService.getSerachBooks(word, size, page, field, mode);
         // 검색 리스트 가져오는 용도
         model.addAttribute("data5", listBookResTestDtoAndPagination.getBookResTestDtoList());
         // page 버튼 뿌려주는 용도
         model.addAttribute("pagination", listBookResTestDtoAndPagination.getPagination());
         model.addAttribute("word", word);
+        model.addAttribute("field", field);
+        model.addAttribute("mode", mode);
 
         return "searchPage";
     }

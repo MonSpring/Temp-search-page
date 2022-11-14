@@ -32,14 +32,11 @@
       pointer-events: none;
       color: #aaa;
     }
-
-    #pager {
-      margin: 0 auto;
-      padding-top: 100px;
-    }
   </style>
 </head>
+
 <body>
+
 <div class="main">
 
   <select class="form-select" aria-label="Default select example">
@@ -61,14 +58,7 @@
     </div>
   </div>
 </div>
-<!--<form class="pager" method="Get" action="/pageable">-->
-<!--  <input class="page" name="page" type="text">-->
-<!--  <input class="size" name="size" type="text">-->
-<!--  <input class="orderBy" name="orderBy" type="text">-->
-<!--  <input class="isAsc" name="isAsc" type="text">-->
-<!--  &lt;!&ndash; boolean 값 셀렉트 박스로 isAsc or Desc 해야함 &ndash;&gt;-->
-<!--  <button type="submit">이걸 누르면 페이저가 되요</button>-->
-<!--</form>-->
+
 <table class="table table-striped">
   <thead>
   <tr>
@@ -100,7 +90,6 @@
     <td th:text="${li.isbn}"></td>
   </tr>
   </tbody>
-
 </table>
 
 <!-- paging button-->

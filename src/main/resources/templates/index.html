@@ -10,9 +10,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
   <style>
-    .main {
-      width: 50%;
-      margin: 50px auto;
+    .wrap {
+      width: 90%;
+      margin: 0 auto;
     }
 
     /* Bootstrap 4 text input with search icon */
@@ -33,9 +33,22 @@
       color: #aaa;
     }
 
-    #pager {
-      margin: 0 auto;
-      padding-top: 100px;
+    .no-search {
+      text-align: center;
+    }
+
+    .search-detail {
+      padding : 10px 0 10px 0;
+    }
+
+    .input-group {
+      margin: 2em -1em;
+      justify-content: center;
+    }
+
+    .search-box {
+      display: flex;
+      float :left;
     }
 
   </style>
@@ -46,49 +59,61 @@
 
 </script>
 
-<div class="main">
+<div class="wrap">
 
-  <select class="form-select" aria-label="Default select example">
-    <option value="" selected>선택?전체?</option>
-    <option value="title">책이름</option>
-    <option value="author">작가</option>
-    <option value="publisher">출판사</option>
-    <option value="isbn">isbn</option>
-  </select>
   <div class="input-group">
     <div class="input-group-append">
-      <form class="pager" method="Get" action="/searchJpql">
-      <input type="text" class="form-control" placeholder="Search this blog" name="word">
-      <button class="btn btn-secondary" type="submit">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-        </svg>
-      </button>
+      <form class="pager" method="get" action="/searchJpql">
+        <select name="field" class="form-select" aria-label="Default select example">
+          <option value="title" selected>제목</option>
+          <option value="author">작가</option>
+          <option value="publisher">출판사</option>
+          <option value="isbn">ISBN</option>
+        </select>
+        <div class="search-detail">
+          <tr>
+            <th>검색 상세설정 : </th>
+            <td class="text-align-left text-indent text-strong text-orange" colspan="3">
+              <input type="radio" name="mode" value="boolean mode" id="rd1" checked><label for="rd1">&nbsp정확도순</label>
+              <input type="radio" name="mode" value="natural language mode" id="rd2"><label for="rd2">&nbsp연관성순</label>
+            </td>
+          </tr>
+        </div>
+        <div class="search-box">
+          <input type="text" id="search-word" class="form-control" placeholder="Search this blog" name="word">
+          <button class="btn btn-secondary" type="submit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+          </button>
+        </div>
       </form>
     </div>
   </div>
-</div>
-<!--<form class="pager" method="Get" action="/pageable">-->
-<!--  <input class="page" name="page" type="text">-->
-<!--  <input class="size" name="size" type="text">-->
-<!--  <input class="orderBy" name="orderBy" type="text">-->
-<!--  <input class="isAsc" name="isAsc" type="text">-->
-<!--  &lt;!&ndash; boolean 값 셀렉트 박스로 isAsc or Desc 해야함 &ndash;&gt;-->
-<!--  <button type="submit">이걸 누르면 페이저가 되요</button>-->
-<!--</form>-->
-<table class="table table-striped">
-  <thead>
-  <tr>
-    <th scope="col">번호</th>
-    <th scope="col">책이름</th>
-    <th scope="col">작가</th>
-    <th scope="col">출판사</th>
-    <th scope="col">권수</th>
-    <th scope="col">isbn</th>
-  </tr>
-  </thead>
-  <tbody class="getAllSearch">
-    <tr th:each="li : ${data}">
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">번호</th>
+      <th scope="col">책이름</th>
+      <th scope="col">작가</th>
+      <th scope="col">출판사</th>
+      <th scope="col">권수</th>
+      <th scope="col">isbn</th>
+    </tr>
+    </thead>
+    <tbody class="getAllSearch">
+      <tr th:each="li : ${data}">
+        <td th:text="${li.id}"></td>
+        <td th:text="${li.title}"></td>
+        <td th:text="${li.author}"></td>
+        <td th:text="${li.publisher}"></td>
+        <td th:text="${li.bookCount}"></td>
+        <td th:text="${li.isbn}"></td>
+      </tr>
+    </tbody>
+    <tbody class="getAllSearch2">
+    <tr th:each="li : ${data2}">
       <td th:text="${li.id}"></td>
       <td th:text="${li.title}"></td>
       <td th:text="${li.author}"></td>
@@ -96,19 +121,12 @@
       <td th:text="${li.bookCount}"></td>
       <td th:text="${li.isbn}"></td>
     </tr>
-  </tbody>
-  <tbody class="getAllSearch2">
-  <tr th:each="li : ${data2}">
-    <td th:text="${li.id}"></td>
-    <td th:text="${li.title}"></td>
-    <td th:text="${li.author}"></td>
-    <td th:text="${li.publisher}"></td>
-    <td th:text="${li.bookCount}"></td>
-    <td th:text="${li.isbn}"></td>
-  </tr>
-  </tbody>
+    </tbody>
 
-</table>
+  </table>
+
+</div>
+
 </body>
 
 </html>
