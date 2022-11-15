@@ -1,12 +1,10 @@
-package com.example.testsearch;
+package com.example.testsearch.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.example.testsearch.repository.BookRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.XML;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,16 +18,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.transaction.Transactional;
-import javax.xml.bind.JAXB;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service

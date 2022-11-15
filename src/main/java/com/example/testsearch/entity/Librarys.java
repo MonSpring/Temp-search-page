@@ -1,6 +1,7 @@
-package com.example.testsearch;
+package com.example.testsearch.entity;
 
 
+import com.example.testsearch.entity.Books;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

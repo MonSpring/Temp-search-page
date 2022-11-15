@@ -1,14 +1,13 @@
-package com.example.testsearch.customAnnotation;
+package com.example.testsearch.controller;
 
-import com.example.testsearch.BookResTestDto;
-import com.example.testsearch.BookService;
+import com.example.testsearch.customAnnotation.LogExecutionTime;
+import com.example.testsearch.dto.BookResTestDto;
+import com.example.testsearch.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

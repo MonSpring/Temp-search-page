@@ -1,4 +1,4 @@
-package com.example.testsearch;
+package com.example.testsearch.dto;
 
 import lombok.Getter;
 
