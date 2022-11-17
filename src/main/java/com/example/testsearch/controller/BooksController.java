@@ -28,22 +28,6 @@ public class BooksController extends HttpServlet {
 
     private final BookRepository bookRepository;
 
-
-//    @GetMapping("/index")
-//    public String getToken(HttpServletRequest httpServletRequest) {
-//        String AssorizationToken = httpServletRequest.getCookies("Assorization");
-//        return AssorizationToken;
-//    }
-
-    // 1630만개 끌어오기
-//    @LogExecutionTime
-//    @GetMapping("/index")
-//    public String getAll(Model model){
-//        model.addAttribute("data", bookService.getAll());
-//        return "index";
-//    }
-
-
     // 기본 페이지
     @GetMapping("/index")
     public String main() {
@@ -63,38 +47,13 @@ public class BooksController extends HttpServlet {
 
         // 생성인자로  총 게시물 수, 현재 페이지를 전달
         Pagination pagination = new Pagination(totalListCnt, page);
-/*
-        // DB select start index
-        int startIndex = pagination.getStartIndex();
-        // 페이지 당 보여지는 게시글의 최대 개수
-        int pageSize = pagination.getPageSize();*/
-
-        /*List<Board> boardList = boardRepository.findListPaging(startIndex, pageSize);*/
 
         model.addAttribute("data2", bookService.searchPageable(page, size, orderBy, isAsc));
         model.addAttribute("pagination", pagination);
         return "pageable";
     }
 
-//    @LogExecutionTime
-//    @PostMapping("/jpql")
-//    public String searchSqlPageable(Model model,
-//                                 @RequestParam("page") int page,
-//                                 @RequestParam("offset") int offset,
-//                                 @RequestParam("limit") int limit){
-//        model.addAttribute("data3", bookService.searchSqlPageable(page, offset, limit));
-//        return "index";
-//    }
-
-    // 풀텍스트 인덱스 검색
-    @LogExecutionTime
-    @GetMapping("/search")
-    public String searchFullText(Model model, @RequestParam("searchText") String searchText){
-        model.addAttribute("data4", bookService.searchFullText(searchText));
-        return "index";
-    }
-
-    // jpal 검색
+    // JPQL 검색
     @LogExecutionTime
     @GetMapping("/searchJpql")
     public String jpqlSearch(Model model,

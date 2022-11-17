@@ -56,9 +56,12 @@
     }
 
   </style>
-
 </head>
 <body>
+
+<script>
+
+</script>
 
 <div class="wrap">
 
@@ -129,7 +132,6 @@
     </div>
   </div>
 
-
   <table class="table table-striped">
     <thead>
     <tr>
@@ -142,7 +144,7 @@
     </tr>
     </thead>
     <tbody class="getAllSearch">
-      <tr th:each="li : ${data6}">
+      <tr th:each="li : ${data}">
         <td th:text="${li.id}"></td>
         <td th:text="${li.title}"></td>
         <td th:text="${li.author}"></td>
@@ -151,43 +153,21 @@
         <td th:text="${li.isbn}"></td>
       </tr>
     </tbody>
-  </table>
+    <tbody class="getAllSearch2">
+    <tr th:each="li : ${data2}">
+      <td th:text="${li.id}"></td>
+      <td th:text="${li.title}"></td>
+      <td th:text="${li.author}"></td>
+      <td th:text="${li.publisher}"></td>
+      <td th:text="${li.bookCount}"></td>
+      <td th:text="${li.isbn}"></td>
+    </tr>
+    </tbody>
 
-    <!-- paging button-->
-  <nav th:if="${pagination.totalListCnt}>0" aria-label="Page navigation example">
-    <ul class="pagination d-flex justify-content-center">
-      <li class="page-item">
-        <a class="page-link" th:href="@{/querydsl?field={field}&word={word}&mode={mode}&page={page}&size={size} (page = 1, field = ${field}, word = ${word}, mode = ${mode}, size=${pagination.pageSize})}" aria-label="Previous">
-          <span aria-hidden="true">처음</span>
-        </a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" th:href="@{/querydsl?field={field}&word={word}&mode={mode}&page={page}&size={size} (page = ${pagination.prevBlock}, field = ${field}, word = ${word}, mode = ${mode}, size=${pagination.pageSize})}" aria-label="Previous">
-          <span aria-hidden="true">이전</span>
-        </a>
-      </li>
-      <th:block  th:with="start = ${pagination.startPage}, end = ${pagination.endPage}">
-        <li class="page-item"
-            th:with="start = ${pagination.startPage}, end = ${pagination.endPage}, word = ${word}"
-            th:each="pageButton : ${#numbers.sequence(start, end)}">
-          <a class="page-link" th:href="@{/querydsl?field={field}&word={word}&mode={mode}&page={page}&size={size} (page = ${pageButton}, field = ${field}, word = ${word}, mode = ${mode}, size=${pagination.pageSize})}" th:text=${pageButton}></a>
-        </li>
-      </th:block>
-      <li class="page-item">
-        <a class="page-link" th:href="@{/querydsl?field={field}&word={word}&mode={mode}&page={page}&size={size} (page = ${pagination.nextBlock}, field = ${field}, word = ${word}, mode = ${mode}, size=${pagination.pageSize})}" aria-label="Next">
-          <span aria-hidden="true">다음</span>
-        </a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" th:href="@{/querydsl?field={field}&word={word}&mode={mode}&page={page}&size={size} (page = ${pagination.totalPageCnt}, field = ${field}, word = ${word}, mode = ${mode}, size=${pagination.pageSize})}" aria-label="Previous">
-          <span aria-hidden="true">끝</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
-  <div th:if="${pagination.totalListCnt}==0" class="no-search">검색 내용을 찾을 수 없습니다</div>
+  </table>
 
 </div>
 
 </body>
+
 </html>

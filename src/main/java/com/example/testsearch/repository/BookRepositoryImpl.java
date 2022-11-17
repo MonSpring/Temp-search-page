@@ -48,7 +48,7 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
                     .fetch();
 
             Long count = queryFactory
-                    .select(books.count())
+                    .select(books.title.count())
                     .from(books)
                     .where(books.isbn.eq(Long.valueOf(word)))
                     .fetchOne();
@@ -89,7 +89,7 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
                 .fetch();
 
         Long count = queryFactory
-                .select(books.count())
+                .select(books.title.count())
                 .from(books)
                 .where(builder)
                 .fetchOne();

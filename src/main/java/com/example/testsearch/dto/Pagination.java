@@ -11,7 +11,7 @@ public class Pagination {
     private int pageSize = 10;
 
     /** 2. 페이징된 버튼의 블럭당 최대 개수 **/
-    private int blockSize = 10;
+    private int blockSize = 10; // limit
 
     /** 3. 현재 페이지 **/
     private int page = 1;
@@ -59,7 +59,7 @@ public class Pagination {
         /** 6. 총 페이지 수 **/
         // 한 페이지의 최대 개수를 총 게시물 수 * 1.0로 나누어주고 올림 해준다.
         // 총 페이지 수 를 구할 수 있다.
-        setTotalPageCnt((int) Math.ceil(totalListCnt * 1.0 / pageSize) - 1);
+        setTotalPageCnt((int) Math.ceil(totalListCnt * 1.0 / pageSize));
 
         /** 7. 총 블럭 수 **/
         // 한 블럭의 최대 개수를 총  페이지의 수 * 1.0로 나누어주고 올림 해준다.

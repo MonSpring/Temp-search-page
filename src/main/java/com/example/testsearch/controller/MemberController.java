@@ -35,7 +35,7 @@ public class MemberController {
             return "redirect:/user/login";
         } else {
             model.addAttribute(memberService.loginAccount(loginReqDto));
-            return "redirect:/";
+            return "search";
         }
     }
 
@@ -56,7 +56,7 @@ public class MemberController {
     @GetMapping("/kakao/callback")
     public String kakaoLogin(@RequestParam String code) throws JsonProcessingException {
         kakaoUserService.kakaoLogin(code);
-        return "redirect:/";
+        return "search";
     }
 
     // 토큰 재발급

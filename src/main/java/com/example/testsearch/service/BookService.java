@@ -76,42 +76,55 @@ public class BookService {
         List<Books> booksList = new ArrayList<>();
         int totalListCnt = 0;
 
-        // 아주 맘에 안듬 한개로 줄일 수 있음
+        // Total Rows 가져오는 SEQ
         if (mode.equals("boolean mode")) {
             if (field.equals("title")) {
-                booksList = bookRepository.searchTitleFullText(word, size, page);
                 totalListCnt = bookRepository.searchTitleFullTextCount(word);
             } else if (field.equals("author")) {
-                booksList = bookRepository.searchAuthorFullText(word, size, page);
                 totalListCnt = bookRepository.searchAuthorFullTextCount(word);
             } else if (field.equals("publisher")) {
-                booksList = bookRepository.searchPublisherFullText(word, size, page);
                 totalListCnt = bookRepository.searchPublisherFullTextCount(word);
-            } else if (field.equals("isbn")) {
-                booksList = bookRepository.searchIsbn(word, size, page);
-                totalListCnt = bookRepository.searchIsbnTextCount(word);
             } else {
-                throw new RuntimeException("뭐든 골랐어야지 응?");
+                totalListCnt = bookRepository.searchIsbnTextCount(word);
             }
         } else {
             if (field.equals("title")) {
-                booksList = bookRepository.searchNativeTitleFullText(word, size, page);
                 totalListCnt = bookRepository.searchNativeTitleFullTextCount(word);
             } else if (field.equals("author")) {
-                booksList = bookRepository.searchNativeAuthorFullText(word, size, page);
                 totalListCnt = bookRepository.searchNativeAuthorFullTextCount(word);
             } else if (field.equals("publisher")) {
-                booksList = bookRepository.searchNativePublisherFullText(word, size, page);
                 totalListCnt = bookRepository.searchNativePublisherFullTextCount(word);
-            } else if (field.equals("isbn")) {
-                booksList = bookRepository.searchIsbn(word, size, page);
-                totalListCnt = bookRepository.searchIsbnTextCount(word);
             } else {
-                throw new RuntimeException("뭐든 골랐어야지");
+                totalListCnt = bookRepository.searchIsbnTextCount(word);
             }
         }
 
         Pagination pagination = new Pagination(totalListCnt, page);
+        int pageOffset = pagination.getStartIndex();
+        log.info("total rows : " + totalListCnt);
+
+        // List 가져오는 SEQ
+        if (mode.equals("boolean mode")) {
+            if (field.equals("title")) {
+                booksList = bookRepository.searchTitleFullText(word, size, pageOffset);
+            } else if (field.equals("author")) {
+                booksList = bookRepository.searchAuthorFullText(word, size, pageOffset);
+            } else if (field.equals("publisher")) {
+                booksList = bookRepository.searchPublisherFullText(word, size, pageOffset);
+            } else {
+                booksList = bookRepository.searchIsbn(word, size, pageOffset);
+            }
+        } else {
+            if (field.equals("title")) {
+                booksList = bookRepository.searchNativeTitleFullText(word, size, pageOffset);
+            } else if (field.equals("author")) {
+                booksList = bookRepository.searchNativeAuthorFullText(word, size, pageOffset);
+            } else if (field.equals("publisher")) {
+                booksList = bookRepository.searchNativePublisherFullText(word, size, pageOffset);
+            } else {
+                booksList = bookRepository.searchIsbn(word, size, pageOffset);
+            }
+        }
 
         List<BookResTestDto> bookResTestDtoList = new ArrayList<>();
         for (Books books : booksList) {

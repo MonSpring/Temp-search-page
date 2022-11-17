@@ -73,7 +73,7 @@ public class WebSecurityConfig {
                 // 로그인 처리 (POST /user/login)
                 .loginProcessingUrl("/user/login")
                 // 로그인 처리 후 성공 시 URL
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/search")
                 // 로그인 처리 후 실패 시 URL
                 .failureUrl("/user/login?error")
                 .permitAll()
@@ -107,6 +107,8 @@ public class WebSecurityConfig {
                 .antMatchers("/css/**").permitAll()
                 // 회원 관리 처리 API 전부를 login 없이 허용
                 .antMatchers("/user/**").permitAll()
+                // 인덱스 페이지 허용
+                .antMatchers("/**").permitAll()
                 // 그외 어떤 요청이 오든 체크
                 .anyRequest().authenticated()
 
