@@ -13,6 +13,11 @@ public class MySQL8DialectCustom extends MySQL8Dialect {
                 "match",
                 new SQLFunctionTemplate(StandardBasicTypes.DOUBLE, "match(?1) against (?2 in boolean mode)")
         );
+
+        registerFunction(
+                "match2",
+                new SQLFunctionTemplate(StandardBasicTypes.DOUBLE, "match(?1) against (?2 in natural language mode)")
+        );
     }
 
 }

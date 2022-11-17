@@ -115,13 +115,22 @@ public class BooksController extends HttpServlet {
 
     @LogExecutionTime
     @GetMapping("/querydsl")
-    @ResponseBody
-    public Page<BookResTestDto> querydsl(@Param("word") String word,
+    public String querydsl(Model model,
+                                         @RequestParam("word") String word,
+                                         @RequestParam("mode") String mode,
+                                         @RequestParam String field,
                                          @RequestParam(defaultValue = "1", name = "page") int page,
-                                         @RequestParam(defaultValue = "10", name = "size") int size) {
+                                         @RequestParam(defaultValue = "10", name = "size") int size){
         Pageable pageable = PageRequest.of(page,size);
-        Page<BookResTestDto> books = bookRepository.searchByFullTextBooleanTest(word,page,size,pageable);
-        return books;
+        Page<BookResTestDto> bookResTestDtos = bookRepository.searchByFullTextBooleanTest(word, mode, page, size, pageable, field);
+        model.addAttribute("data6", bookResTestDtos);
+        Pagination pagination = new Pagination((int) bookResTestDtos.getTotalElements(), page);
+        model.addAttribute("pagination", pagination);
+        model.addAttribute("word", word);
+        model.addAttribute("field", field);
+        model.addAttribute("mode", mode);
+
+        return "querydsl";
     }
 
 }
