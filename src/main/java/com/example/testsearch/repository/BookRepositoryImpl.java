@@ -24,7 +24,7 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<BookResTestDto> searchByFullTextBooleanTest(String word, String mode, int page, int size, Pageable pageable, String field) {
+    public List<BookResTestDto> searchByFullTextBooleanTest(String word, String mode, int page, int size, String field) {
         BooleanBuilder builder=new BooleanBuilder();
         if(field.equals("isbn")) {
             List<BookResTestDto> result = queryFactory
@@ -47,14 +47,7 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
                     .limit(size)
                     .fetch();
 
-            Long count = queryFactory
-                    .select(books.title.count())
-                    .from(books)
-                    .where(books.isbn.eq(Long.valueOf(word)))
-                    .fetchOne();
-            int countTemp = Integer.parseInt(String.valueOf(count));
-
-            return new PageImpl<>(result,pageable,countTemp);
+            return result;
         }
 
         NumberTemplate booleanTemplate= Expressions.numberTemplate(Double.class,
@@ -88,29 +81,56 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
                 .limit(size)
                 .fetch();
 
+        return result;
+    }
+
+    @Override
+    public int searchByFullTextBooleanCount(String word, String mode, String field) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        NumberTemplate booleanTemplate= Expressions.numberTemplate(Double.class,
+                "function('match',{0},{1})", bookEq(field), word);
+
+        NumberTemplate booleanTemplate2= Expressions.numberTemplate(Double.class,
+                "function('match2',{0},{1})", bookEq(field), word);
+
+        if(Objects.equals(mode, "boolean")) {
+            builder.and(booleanTemplate.gt(1));
+        } else {
+            builder.and(booleanTemplate2.gt(1));
+        }
+
         Long count = queryFactory
                 .select(books.title.count())
                 .from(books)
                 .where(builder)
                 .fetchOne();
-        int countTemp = Integer.parseInt(String.valueOf(count));
 
-        return new PageImpl<>(result,pageable,countTemp);
-
+        return Integer.parseInt(String.valueOf(count));
     }
 
+    @Override
+    public int searchByIsbnCountQuery(String word, String mode, String field) {
+        Long count = queryFactory
+                .select(books.title.count())
+                .from(books)
+                .where(books.isbn.eq(Long.valueOf(word)))
+                .fetchOne();
+        return Integer.parseInt(String.valueOf(count));
+    }
+
+
     private Object bookEq(String field) {
-        if(field.equals("title")){
-            return books.title;
-        }
-        else if(field.equals("author")){
-            return books.author;
-        }
-        else if(field.equals("publisher")){
-            return books.publisher;
-        }
-        else if(field.equals("isbn")){
-            return books.isbn;
+        switch (field) {
+            case "title":
+                return books.title;
+            case "author":
+                return books.author;
+            case "publisher":
+                return books.publisher;
+            case "isbn":
+                return books.isbn;
         }
         return null;
     }
