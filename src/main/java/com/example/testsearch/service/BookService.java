@@ -78,24 +78,34 @@ public class BookService {
 
         // Total Rows 가져오는 SEQ
         if (mode.equals("boolean mode")) {
-            if (field.equals("title")) {
-                totalListCnt = bookRepository.searchTitleFullTextCount(word);
-            } else if (field.equals("author")) {
-                totalListCnt = bookRepository.searchAuthorFullTextCount(word);
-            } else if (field.equals("publisher")) {
-                totalListCnt = bookRepository.searchPublisherFullTextCount(word);
-            } else {
-                totalListCnt = bookRepository.searchIsbnTextCount(word);
+            switch (field) {
+                case "title":
+                    totalListCnt = bookRepository.searchTitleFullTextCount(word);
+                    break;
+                case "author":
+                    totalListCnt = bookRepository.searchAuthorFullTextCount(word);
+                    break;
+                case "publisher":
+                    totalListCnt = bookRepository.searchPublisherFullTextCount(word);
+                    break;
+                default:
+                    totalListCnt = bookRepository.searchIsbnTextCount(word);
+                    break;
             }
         } else {
-            if (field.equals("title")) {
-                totalListCnt = bookRepository.searchNativeTitleFullTextCount(word);
-            } else if (field.equals("author")) {
-                totalListCnt = bookRepository.searchNativeAuthorFullTextCount(word);
-            } else if (field.equals("publisher")) {
-                totalListCnt = bookRepository.searchNativePublisherFullTextCount(word);
-            } else {
-                totalListCnt = bookRepository.searchIsbnTextCount(word);
+            switch (field) {
+                case "title":
+                    totalListCnt = bookRepository.searchNativeTitleFullTextCount(word);
+                    break;
+                case "author":
+                    totalListCnt = bookRepository.searchNativeAuthorFullTextCount(word);
+                    break;
+                case "publisher":
+                    totalListCnt = bookRepository.searchNativePublisherFullTextCount(word);
+                    break;
+                default:
+                    totalListCnt = bookRepository.searchIsbnTextCount(word);
+                    break;
             }
         }
 
@@ -105,24 +115,34 @@ public class BookService {
 
         // List 가져오는 SEQ
         if (mode.equals("boolean mode")) {
-            if (field.equals("title")) {
-                booksList = bookRepository.searchTitleFullText(word, size, pageOffset);
-            } else if (field.equals("author")) {
-                booksList = bookRepository.searchAuthorFullText(word, size, pageOffset);
-            } else if (field.equals("publisher")) {
-                booksList = bookRepository.searchPublisherFullText(word, size, pageOffset);
-            } else {
-                booksList = bookRepository.searchIsbn(word, size, pageOffset);
+            switch (field) {
+                case "title":
+                    booksList = bookRepository.searchTitleFullText(word, size, pageOffset);
+                    break;
+                case "author":
+                    booksList = bookRepository.searchAuthorFullText(word, size, pageOffset);
+                    break;
+                case "publisher":
+                    booksList = bookRepository.searchPublisherFullText(word, size, pageOffset);
+                    break;
+                default:
+                    booksList = bookRepository.searchIsbn(word, size, pageOffset);
+                    break;
             }
         } else {
-            if (field.equals("title")) {
-                booksList = bookRepository.searchNativeTitleFullText(word, size, pageOffset);
-            } else if (field.equals("author")) {
-                booksList = bookRepository.searchNativeAuthorFullText(word, size, pageOffset);
-            } else if (field.equals("publisher")) {
-                booksList = bookRepository.searchNativePublisherFullText(word, size, pageOffset);
-            } else {
-                booksList = bookRepository.searchIsbn(word, size, pageOffset);
+            switch (field) {
+                case "title":
+                    booksList = bookRepository.searchNativeTitleFullText(word, size, pageOffset);
+                    break;
+                case "author":
+                    booksList = bookRepository.searchNativeAuthorFullText(word, size, pageOffset);
+                    break;
+                case "publisher":
+                    booksList = bookRepository.searchNativePublisherFullText(word, size, pageOffset);
+                    break;
+                default:
+                    booksList = bookRepository.searchIsbn(word, size, pageOffset);
+                    break;
             }
         }
 
