@@ -1,7 +1,5 @@
 package com.example.testsearch.dto;
 
-import com.example.testsearch.dto.BookResTestDto;
-import com.example.testsearch.entity.Pagination;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

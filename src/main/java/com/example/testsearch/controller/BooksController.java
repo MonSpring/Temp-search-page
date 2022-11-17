@@ -3,7 +3,7 @@ package com.example.testsearch.controller;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.dto.BookResTestDto;
 import com.example.testsearch.service.BookService;
-import com.example.testsearch.entity.Pagination;
+import com.example.testsearch.dto.Pagination;
 import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.example.testsearch.service;
 
 import com.example.testsearch.dto.BookResTestDto;
-import com.example.testsearch.entity.Pagination;
+import com.example.testsearch.dto.Pagination;
 import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
 import com.example.testsearch.entity.Books;
 import com.example.testsearch.repository.BookRepository;

@@ -1,7 +1,7 @@
 package com.example.testsearch.repository;
 
 import com.example.testsearch.dto.BookResTestDto;
-import com.example.testsearch.QBookResTestDto;
+import com.example.testsearch.dto.QBookResTestDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.example.testsearch.QBooks.*;
+import static com.example.testsearch.entity.QBooks.books;
 
 @Repository
 @RequiredArgsConstructor
