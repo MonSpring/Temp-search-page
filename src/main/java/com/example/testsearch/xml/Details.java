@@ -12,14 +12,8 @@ import javax.xml.bind.annotation.XmlElement;
 @Getter
 @Setter
 @ToString
-public class ResponseTag {
+public class Details {
 
-    @XmlElement(name = "request")
-    private RequestTag requesttag;
-
-    @XmlElement(name = "detail")
-    private Details details;
-
-    @XmlElement(name = "loanInfo")
-    private LoanInfo loanInfo;
+    @XmlElement(name = "book")
+    private BookTag bookTag;
 }

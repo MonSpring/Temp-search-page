@@ -1,5 +1,6 @@
 package com.example.testsearch.service;
 
+import com.example.testsearch.aouth.SignupRequestDto;
 import com.example.testsearch.dto.*;
 import com.example.testsearch.entity.Authority;
 import com.example.testsearch.entity.Member;
@@ -35,6 +36,8 @@ public class MemberService implements UserDetailsService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository
@@ -47,29 +50,40 @@ public class MemberService implements UserDetailsService {
 
     // 회원가입
     @Transactional
-    public ResponseDto<?> createAccount(SignupReqDto signupReqDto) {
+    public void createAccount(SignupRequestDto signupReqDto) {
         String username = signupReqDto.getUsername();
         String password = signupReqDto.getPassword();
-        String passwordConfirm = signupReqDto.getPasswordConfirm();
-        String nickname = signupReqDto.getNickname();
+        String email = signupReqDto.getEmail();
         if(memberRepository.existsByUsername(username)) {
-            return ResponseDto.fail("이미 존재하는 아이디 입니다.");
+            ResponseDto.fail("이미 존재하는 아이디 입니다.");
+            return;
         }
-        if(!password.equals(passwordConfirm)) {
-            return ResponseDto.fail("비밀번호와 비밀번호 확인이 일치하지 않습니다");
+
+        Authority role = Authority.ROLE_USER;
+        if (signupReqDto.isAdmin()) {
+            if (!signupReqDto.getAdminToken().equals(ADMIN_TOKEN)) {
+                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+            }
+            role = Authority.ROLE_ADMIN;
         }
-        Member member = new Member(username, passwordEncoder.encode(password), nickname, Authority.ROLE_USER);
-        return ResponseDto.success(memberRepository.save(member));
+
+        Member member = new Member(username, passwordEncoder.encode(password), email, role);
+        ResponseDto.success(memberRepository.save(member));
     }
 
     // 로그인
     @Transactional
     public ResponseEntity<?> loginAccount(LoginReqDto loginReqDto) {
 
+        Member member = memberRepository.findByUsername(loginReqDto.getUsername()).orElseThrow(()->new RuntimeException("존재하지 않는 유저입니다"));
+
+        if (member == null) {
+            return new ResponseEntity<>(ResponseDto.fail("유저 정보를 찾을 수 없습니다"), HttpStatus.NOT_FOUND);
+        }
+
         UsernamePasswordAuthenticationToken authenticationToken = loginReqDto.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        Member member = memberRepository.findByUsername(loginReqDto.getUsername()).orElse(null);
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
         RefreshToken refreshToken = RefreshToken.builder()
@@ -82,7 +96,6 @@ public class MemberService implements UserDetailsService {
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.BEARER_PREFIX + tokenDto.getAccessToken());
         httpHeaders.add("Refresh-Token", tokenDto.getRefreshToken());
 
-        assert member != null;
         MemberDto memberDto = new MemberDto(member);
 
         return new ResponseEntity<>(ResponseDto.success(memberDto), httpHeaders, HttpStatus.OK);
@@ -112,21 +125,4 @@ public class MemberService implements UserDetailsService {
         return tokenDto;
     }
 
-    // 아이디 중복 체크
-    public ResponseDto<?> duplicateCheckId(String username) {
-        if (memberRepository.existsByUsername(username))
-        return ResponseDto.fail("중복된 아이디 값입니다");
-        else {
-            return ResponseDto.success("사용할 수 있는 아이디 입니다");
-        }
-    }
-
-    // 닉네임 중복 체크
-    public ResponseDto<?> duplicateCheckNickname(String nickname) {
-        if (memberRepository.existsByNickname(nickname))
-            return ResponseDto.fail("중복된 닉네임입니다");
-        else {
-            return ResponseDto.success("사용할 수 있는 닉네임 입니다");
-        }
-    }
 }

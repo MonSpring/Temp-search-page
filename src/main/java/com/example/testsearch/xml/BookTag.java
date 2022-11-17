@@ -14,6 +14,9 @@ import javax.xml.bind.annotation.XmlElement;
 @ToString
 public class BookTag {
 
+    @XmlElement(name = "no")
+    private String no;
+
     @XmlElement(name = "bookname")
     private String bookname;
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
@@ -25,7 +26,7 @@ public class BooksApiController {
     @ResponseBody
     @LogExecutionTime
     @GetMapping("/search")
-    public void getItems(@RequestParam String isbn) throws IOException, ParserConfigurationException, SAXException {
+    public void getItems(@RequestParam String isbn) throws JAXBException {
         booksApiService.getItems(isbn);
     }
 }

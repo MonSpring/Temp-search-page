@@ -22,6 +22,5 @@ public class MemberDto {
         this.modifiedAt = member.getModifiedAt();
         this.member_id = member.getMember_id();
         this.username = member.getUsername();
-        this.nickname = member.getNickname();
     }
 }

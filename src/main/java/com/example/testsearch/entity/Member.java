@@ -1,6 +1,7 @@
 package com.example.testsearch.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,8 +27,12 @@ public class Member extends Timestamped {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
-    private String nickname;
+    @JsonIgnore
+    @Column(nullable = false)
+    private String email;
+
+    @Column(unique = true)
+    private Long kakaoId;
 
     @JsonIgnore
     @Enumerated(EnumType.STRING)
@@ -36,10 +41,20 @@ public class Member extends Timestamped {
     @OneToMany(mappedBy = "member")
     private List<Orders> ordersList = new ArrayList<>();
 
-    public Member(String username, String password, String nickname, Authority authority) {
+    @Builder
+    public Member(String username, String password, String email, Authority authority) {
         this.username = username;
         this.password = password;
-        this.nickname = nickname;
+        this.email = email;
+        this.kakaoId = null;
         this.authority = authority;
+    }
+
+    public Member(String username, String encodedPassword, String email, Authority role, Long kakaoId) {
+        this.username = username;
+        this.password = encodedPassword;
+        this.email = email;
+        this.authority = role;
+        this.kakaoId = kakaoId;
     }
 }

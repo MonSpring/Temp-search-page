@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,11 +36,18 @@ public class BooksController extends HttpServlet {
 //    }
 
     // 1630만개 끌어오기
-    @LogExecutionTime
+//    @LogExecutionTime
+//    @GetMapping("/index")
+//    public String getAll(Model model){
+//        model.addAttribute("data", bookService.getAll());
+//        return "index";
+//    }
+
+
+    // 기본 페이지
     @GetMapping("/index")
-    public String getAll(Model model){
-        model.addAttribute("data", bookService.getAll());
-        return "index";
+    public String main() {
+        return "redirect:/user/login";
     }
 
     // data Jpa 페이저블 사용한 기존 페이지네이션 검색

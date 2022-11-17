@@ -128,35 +128,4 @@ public class TokenProvider {
         }
         return false;
     }
-
-    // Security 에서 인증 유저 정보 가져오기
-    public String getMemberNicknameInToken(String accessTokenTemp) {
-
-        if(!StringUtils.hasText(accessTokenTemp) && accessTokenTemp.startsWith(BEARER_PREFIX)) {
-            throw new RuntimeException("토큰에 아무것두 없어유");
-        }
-        String accessToken =  accessTokenTemp.substring(7);
-
-        Claims claims = parseClaims(accessToken);
-
-        if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다");
-        }
-
-        String username = claims.getSubject();
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username + "라는 유저가 없습니다"));
-
-        return member.getNickname();
-    }
-
-    public String getMemberFromAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<Member> memberTemp = memberRepository.findByUsername(authentication.getName());
-        if (memberTemp.isEmpty()) {
-            throw new RuntimeException();
-        }
-        Member member = memberTemp.get();
-        return member.getNickname();
-    }
 }
