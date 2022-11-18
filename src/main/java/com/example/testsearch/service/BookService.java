@@ -156,4 +156,26 @@ public class BookService {
                 .pagination(pagination)
                 .build();
     }
+
+
+    public ListBookResTestDtoAndPagination searchFullTextQueryDsl(String word, String mode,int page, int size, String field) {
+        int count = 0;
+
+        if(field.equals("isbn")) {
+            count = bookRepository.searchByIsbnCountQuery(word, mode, field);
+        } else {
+            count = bookRepository.searchByFullTextBooleanCount(word, mode, field);
+        }
+
+        Pagination pagination = new Pagination(count, page);
+        int pageOffset = pagination.getStartIndex();
+
+        List<BookResTestDto> list = bookRepository.searchByFullTextBooleanTest(word, mode, pageOffset, size, field);
+
+        return ListBookResTestDtoAndPagination.builder()
+                .bookResTestDtoList(list)
+                .pagination(pagination)
+                .build();
+    }
+
 }

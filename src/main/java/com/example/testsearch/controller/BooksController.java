@@ -87,21 +87,10 @@ public class BooksController extends HttpServlet {
                                          @RequestParam(defaultValue = "1", name = "page") int page,
                                          @RequestParam(defaultValue = "10", name = "size") int size){
 
-        int count = 0;
+        ListBookResTestDtoAndPagination listBookResTestDtoAndPagination = bookService.searchFullTextQueryDsl(word, mode, page, size, field);
 
-        if(field.equals("isbn")) {
-            count = bookRepository.searchByIsbnCountQuery(word, mode, field);
-        } else {
-            count = bookRepository.searchByFullTextBooleanCount(word, mode, field);
-        }
-
-        Pagination pagination = new Pagination(count, page);
-        int pageOffset = pagination.getStartIndex();
-
-        List<BookResTestDto> bookResTestDtos = bookRepository.searchByFullTextBooleanTest(word, mode, pageOffset, size, field);
-        model.addAttribute("data6", bookResTestDtos);
-
-        model.addAttribute("pagination", pagination);
+        model.addAttribute("data6", listBookResTestDtoAndPagination.getBookResTestDtoList());
+        model.addAttribute("pagination", listBookResTestDtoAndPagination.getPagination());
         model.addAttribute("word", word);
         model.addAttribute("field", field);
         model.addAttribute("mode", mode);
