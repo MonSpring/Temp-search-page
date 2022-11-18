@@ -99,7 +99,7 @@ public class MemberService implements UserDetailsService {
                 .value(tokenDto.getRefreshToken())
                 .build();
 
-        refreshTokenRepository.save(refreshToken);
+        //refreshTokenRepository.save(refreshToken);
 
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
         // 1일
@@ -109,7 +109,6 @@ public class MemberService implements UserDetailsService {
         String value = stringStringValueOperations.get(authentication.getName());
 
         log.info("value =" +value);
-
 
 
         HttpHeaders httpHeaders = new HttpHeaders();
