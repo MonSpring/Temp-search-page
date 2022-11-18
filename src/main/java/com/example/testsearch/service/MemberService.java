@@ -12,6 +12,10 @@ import com.example.testsearch.repository.MemberRepository;
 import com.example.testsearch.repository.RefreshTokenRepository;
 import com.example.testsearch.security.MemberDetails;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.TimeoutUtils;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +29,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MemberService implements UserDetailsService {
 
@@ -35,6 +41,8 @@ public class MemberService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+
+    private final StringRedisTemplate stringRedisTemplate;
 
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
@@ -90,7 +98,19 @@ public class MemberService implements UserDetailsService {
                 .key(authentication.getName())
                 .value(tokenDto.getRefreshToken())
                 .build();
+
         refreshTokenRepository.save(refreshToken);
+
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+        // 1일
+        long LIMIT_TIME = 1000 * 60 * 60 * 24;
+        stringStringValueOperations.set(authentication.getName(), tokenDto.getRefreshToken(),LIMIT_TIME, TimeUnit.MILLISECONDS);
+
+        String value = stringStringValueOperations.get(authentication.getName());
+
+        log.info("value =" +value);
+
+
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.BEARER_PREFIX + tokenDto.getAccessToken());

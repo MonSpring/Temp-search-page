@@ -11,8 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @Controller
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -30,13 +28,9 @@ public class MemberController {
 
     // 로그인 요청 처리
     @PostMapping("/login")
-    public String login(@RequestBody LoginReqDto loginReqDto, Model model) {
-        if (memberService.loginAccount(loginReqDto).getStatusCode().is4xxClientError()) {
-            return "redirect:/user/login";
-        } else {
+    public String loginAccess(LoginReqDto loginReqDto, Model model) {
             model.addAttribute(memberService.loginAccount(loginReqDto));
             return "search";
-        }
     }
 
     // 회원 가입 페이지
