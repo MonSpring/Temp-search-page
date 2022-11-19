@@ -55,6 +55,15 @@
       display: flex;
     }
 
+    .stop-watch {
+      display: inline-flex;
+      margin-left: 5px;
+      border: 2px rgb(180, 180, 180) solid;
+      border-radius: 2px;
+      box-shadow: 1px 1px 1px 0;
+      padding: 5px;
+    }
+
   </style>
 
 </head>
@@ -90,10 +99,11 @@
               </svg>
             </button>
           </div>
+          <div class="stop-watch" th:if="${nanos}>0" th:text=" '걸린 시간 (ms) : ' + ${mills} + ' 밀리초'"></div>
+          <div class="stop-watch" th:if="${nanos}>0" th:text=" '걸린 시간 (ns) : ' + ${nanos} + ' 나노초'"></div>
         </form>
       </div>
     </div>
-
 
     <div class="input-group">
       <div class="input-group-append">

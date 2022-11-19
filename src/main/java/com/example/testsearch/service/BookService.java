@@ -1,5 +1,8 @@
 package com.example.testsearch.service;
 
+import com.example.testsearch.customAnnotation.LogExecutionTime;
+import com.example.testsearch.customAnnotation.StopWatchRepository;
+import com.example.testsearch.customAnnotation.StopWatchTable;
 import com.example.testsearch.dto.BookResTestDto;
 import com.example.testsearch.dto.Pagination;
 import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
@@ -70,6 +73,7 @@ public class BookService {
         return new BookResTestDto(books);
     }
 
+    @LogExecutionTime
     @Transactional
     public ListBookResTestDtoAndPagination getSerachBooks(String word, int size, int page, String field, String mode) {
 
@@ -158,6 +162,7 @@ public class BookService {
     }
 
 
+    @LogExecutionTime
     public ListBookResTestDtoAndPagination searchFullTextQueryDsl(String word, String mode,int page, int size, String field) {
         int count = 0;
 

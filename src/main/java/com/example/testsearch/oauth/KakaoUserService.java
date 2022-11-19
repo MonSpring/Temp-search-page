@@ -1,4 +1,4 @@
-package com.example.testsearch.aouth;
+package com.example.testsearch.oauth;
 
 import com.example.testsearch.entity.Authority;
 import com.example.testsearch.entity.Member;

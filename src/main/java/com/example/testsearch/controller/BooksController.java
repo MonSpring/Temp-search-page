@@ -1,5 +1,7 @@
 package com.example.testsearch.controller;
 
+import com.example.testsearch.customAnnotation.StopWatchRepository;
+import com.example.testsearch.customAnnotation.StopWatchTable;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.dto.BookResTestDto;
 import com.example.testsearch.service.BookService;
@@ -28,6 +30,8 @@ public class BooksController extends HttpServlet {
 
     private final BookRepository bookRepository;
 
+    private final StopWatchRepository stopWatchRepository;
+
     // 기본 페이지
     @GetMapping("/index")
     public String main() {
@@ -54,7 +58,6 @@ public class BooksController extends HttpServlet {
     }
 
     // JPQL 검색
-    @LogExecutionTime
     @GetMapping("/searchJpql")
     public String jpqlSearch(Model model,
                              @RequestParam String word,
@@ -67,6 +70,7 @@ public class BooksController extends HttpServlet {
         log.info(mode);
 
         ListBookResTestDtoAndPagination listBookResTestDtoAndPagination = bookService.getSerachBooks(word, size, page, field, mode);
+
         // 검색 리스트 가져오는 용도
         model.addAttribute("data5", listBookResTestDtoAndPagination.getBookResTestDtoList());
         // page 버튼 뿌려주는 용도
@@ -75,10 +79,16 @@ public class BooksController extends HttpServlet {
         model.addAttribute("field", field);
         model.addAttribute("mode", mode);
 
+        // 메소드 검색 시간 체크 프론트에 뿌려주는 용도
+        StopWatchTable stopWatchTable = stopWatchRepository.findTopByOrderByIdDesc();
+        listBookResTestDtoAndPagination.updateStopWatch(stopWatchTable);
+        model.addAttribute("method", listBookResTestDtoAndPagination.getMethod());
+        model.addAttribute("mills", listBookResTestDtoAndPagination.getMills());
+        model.addAttribute("nanos", listBookResTestDtoAndPagination.getNanos());
+
         return "searchPage";
     }
 
-    @LogExecutionTime
     @GetMapping("/querydsl")
     public String querydsl(Model model,
                                          @RequestParam("word") String word,
@@ -94,6 +104,13 @@ public class BooksController extends HttpServlet {
         model.addAttribute("word", word);
         model.addAttribute("field", field);
         model.addAttribute("mode", mode);
+
+        // 메소드 검색 시간 체크 프론트에 뿌려주는 용도
+        StopWatchTable stopWatchTable = stopWatchRepository.findTopByOrderByIdDesc();
+        listBookResTestDtoAndPagination.updateStopWatch(stopWatchTable);
+        model.addAttribute("method", listBookResTestDtoAndPagination.getMethod());
+        model.addAttribute("mills", listBookResTestDtoAndPagination.getMills());
+        model.addAttribute("nanos", listBookResTestDtoAndPagination.getNanos());
 
         return "querydsl";
     }
