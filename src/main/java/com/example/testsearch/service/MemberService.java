@@ -1,6 +1,6 @@
 package com.example.testsearch.service;
 
-import com.example.testsearch.aouth.SignupRequestDto;
+import com.example.testsearch.oauth.SignupRequestDto;
 import com.example.testsearch.dto.*;
 import com.example.testsearch.entity.Authority;
 import com.example.testsearch.entity.Member;
@@ -14,7 +14,6 @@ import com.example.testsearch.security.MemberDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.TimeoutUtils;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.example.testsearch.aouth;
+package com.example.testsearch.oauth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

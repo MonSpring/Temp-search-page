@@ -1,7 +1,7 @@
 package com.example.testsearch.controller;
 
-import com.example.testsearch.aouth.KakaoUserService;
-import com.example.testsearch.aouth.SignupRequestDto;
+import com.example.testsearch.oauth.KakaoUserService;
+import com.example.testsearch.oauth.SignupRequestDto;
 import com.example.testsearch.dto.*;
 import com.example.testsearch.service.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Slf4j
 @Controller
@@ -33,7 +31,6 @@ public class MemberController {
     // 로그인 요청 처리
     @PostMapping("/login")
     public String loginProc(LoginReqDto loginReqDto, Model model) {
-        log.info("logindto : " + loginReqDto);
         ResponseEntity<?> responseEntity = memberService.loginAccount(loginReqDto);
         model.addAttribute(responseEntity);
         return "search";
