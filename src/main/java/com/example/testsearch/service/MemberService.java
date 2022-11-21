@@ -4,12 +4,10 @@ import com.example.testsearch.oauth.SignupRequestDto;
 import com.example.testsearch.dto.*;
 import com.example.testsearch.entity.Authority;
 import com.example.testsearch.entity.Member;
-import com.example.testsearch.entity.RefreshToken;
 import com.example.testsearch.dto.TokenDto;
 import com.example.testsearch.jwt.JwtFilter;
 import com.example.testsearch.jwt.TokenProvider;
 import com.example.testsearch.repository.MemberRepository;
-import com.example.testsearch.repository.RefreshTokenRepository;
 import com.example.testsearch.security.MemberDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +37,6 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     private final StringRedisTemplate stringRedisTemplate;
 
@@ -93,11 +90,6 @@ public class MemberService implements UserDetailsService {
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
-        RefreshToken refreshToken = RefreshToken.builder()
-                .key(authentication.getName())
-                .value(tokenDto.getRefreshToken())
-                .build();
-
         //refreshTokenRepository.save(refreshToken);
 
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
@@ -119,28 +111,25 @@ public class MemberService implements UserDetailsService {
         return new ResponseEntity<>(ResponseDto.success(memberDto), httpHeaders, HttpStatus.OK);
     }
 
-    // 토큰 재발급
-    @Transactional
-    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
-        if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException(("Refresh Token 유효하지 않습니다"));
-        }
-
-        Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
-
-        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(()->new RuntimeException("로그아웃 된 사용자입니다"));
-
-        if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다");
-        }
-
-        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-
-        RefreshToken refreshRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
-        refreshTokenRepository.save(refreshRefreshToken);
-
-        return tokenDto;
-    }
+//    // 토큰 재발급
+//    @Transactional
+//    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
+//        if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
+//            throw new RuntimeException(("Refresh Token 유효하지 않습니다"));
+//        }
+//
+//        Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
+//
+//        if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
+//            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다");
+//        }
+//
+//        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+//
+//        RefreshToken refreshRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
+//        refreshTokenRepository.save(refreshRefreshToken);
+//
+//        return tokenDto;
+//    }
 
 }

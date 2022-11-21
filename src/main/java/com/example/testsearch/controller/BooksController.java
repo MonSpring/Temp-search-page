@@ -2,6 +2,7 @@ package com.example.testsearch.controller;
 
 import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
+import com.example.testsearch.mailing.EmailService;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.dto.BookResTestDto;
 import com.example.testsearch.service.BookService;
@@ -17,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -91,11 +93,11 @@ public class BooksController extends HttpServlet {
 
     @GetMapping("/querydsl")
     public String querydsl(Model model,
-                                         @RequestParam("word") String word,
-                                         @RequestParam("mode") String mode,
-                                         @RequestParam String field,
-                                         @RequestParam(defaultValue = "1", name = "page") int page,
-                                         @RequestParam(defaultValue = "10", name = "size") int size){
+                           @RequestParam("word") String word,
+                           @RequestParam("mode") String mode,
+                           @RequestParam String field,
+                           @RequestParam(defaultValue = "1", name = "page") int page,
+                           @RequestParam(defaultValue = "10", name = "size") int size){
 
         ListBookResTestDtoAndPagination listBookResTestDtoAndPagination = bookService.searchFullTextQueryDsl(word, mode, page, size, field);
 

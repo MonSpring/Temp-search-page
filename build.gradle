@@ -65,6 +65,9 @@ dependencies {
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 
+	//	mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.5'
+	
 }
 
 tasks.named('test') {

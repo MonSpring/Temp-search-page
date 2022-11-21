@@ -1,5 +1,6 @@
 package com.example.testsearch.customAnnotation;
 
+import com.example.testsearch.mailing.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -18,6 +19,8 @@ import javax.transaction.Transactional;
 public class LogAspect {
 
     private final StopWatchRepository stopWatchRepository;
+
+    private final EmailService emailService;
 
     @Around("@annotation(LogExecutionTime)")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -39,6 +42,11 @@ public class LogAspect {
                 .build();
 
         stopWatchRepository.save(stopWatchTable);
+
+        // SlowQuery Checking & Send To BackEnd Developers
+        if(stopWatchTable.getMills() > 10000) {
+            emailService.sendMailDevelopersToSlowQuery(stopWatchTable);
+        }
 
         return proceed;
     }

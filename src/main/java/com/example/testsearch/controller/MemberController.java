@@ -56,9 +56,9 @@ public class MemberController {
         return "search";
     }
 
-    // 토큰 재발급
-    @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
-    }
+//    // 토큰 재발급
+//    @PostMapping("/reissue")
+//    public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+//        return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
+//    }
 }

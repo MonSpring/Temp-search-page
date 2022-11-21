@@ -6,6 +6,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.FileNotFoundException;
+
 @RestControllerAdvice
 public class RestApiExceptionHandler {
 
@@ -28,6 +30,17 @@ public class RestApiExceptionHandler {
 
         restApiException.setHttpStatus(HttpStatus.UNAUTHORIZED);
         restApiException.setErrorMessage("일치하는 계정이 없습니다.");
+
+        return new ResponseEntity<>(restApiException, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(value = {FileNotFoundException.class})
+    public ResponseEntity<?> fileNotFountException() {
+
+        RestApiException restApiException = new RestApiException();
+
+        restApiException.setHttpStatus(HttpStatus.CHECKPOINT);
+        restApiException.setErrorMessage("체크 포인트 에러입니다.");
 
         return new ResponseEntity<>(restApiException, HttpStatus.UNAUTHORIZED);
     }
