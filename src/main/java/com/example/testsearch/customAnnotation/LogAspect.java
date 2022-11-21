@@ -48,7 +48,7 @@ public class LogAspect {
         if(stopWatchTable.getMills() > 10000) {
             emailService.sendMailDevelopersToSlowQuery(stopWatchTable);
             String text = stopWatchTable.getMethod() + " 서비스 메소드에서 " + stopWatchTable.getMills() / 1000 + "초 이상 걸리는 Slow Query가 발생했습니다";
-            SlackConfig.send(text);
+            slackConfig.send(text);
         }
 
         return proceed;
