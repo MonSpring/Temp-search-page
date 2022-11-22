@@ -42,6 +42,11 @@ dependencies {
 	//	ElasticSearch
 	implementation 'org.springframework.data:spring-data-elasticsearch:4.4.5'
 
+	// Scheduler
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// XML 처리
+	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.11.3'
 
 	//	QueryDSL
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
