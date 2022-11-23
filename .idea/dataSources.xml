@@ -8,11 +8,14 @@
       <jdbc-url>jdbc:mysql://localhost:3306/backend_library</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="@localhost" uuid="f3289b8e-e808-4399-866c-f7c263fa88f3">
+    <data-source source="LOCAL" name="@localhost" uuid="36985f6b-c6d9-46c4-93a2-f52eed70b79e">
       <driver-ref>elasticsearch</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.elasticsearch.xpack.sql.jdbc.EsDriver</jdbc-driver>
       <jdbc-url>jdbc:es://localhost:9200/</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="database.jdbc.dont.escape" value="true" />
+      </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

@@ -40,7 +40,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	//	ElasticSearch
-	implementation 'org.springframework.data:spring-data-elasticsearch:4.4.5'
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch' //tomcat
+//	implementation 'org.springframework.data:spring-data-elasticsearch:4.4.5' // nginx
+//	implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.6'
 
 
 	//	QueryDSL
