@@ -44,6 +44,11 @@ dependencies {
 //	implementation 'org.springframework.data:spring-data-elasticsearch:4.4.5' // nginx
 //	implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.6'
 
+	// Scheduler
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// XML 처리
+	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.11.3'
 
 	//	QueryDSL
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
@@ -69,6 +74,13 @@ dependencies {
 
 	//	mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.5'
+
+	// slack
+	implementation('com.slack.api:slack-api-client:1.26.1')
+	compile group: 'com.slack.api', name: 'slack-api-client', version: '1.26.1'
+	compile group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+	compile group: 'com.slack.api', name: 'slack-api-model', version: '1.1.3'
+	compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.8.1'
 	
 }
 
