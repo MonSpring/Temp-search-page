@@ -19,6 +19,7 @@ public class BookDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
     @Column
     private String description;
 

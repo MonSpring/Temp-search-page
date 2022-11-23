@@ -10,24 +10,23 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class BookTask {
 
+    // List 돌려서 각 key값으로 변경 예정 (하루 2,000건 가능)
     @Value("#{environment['naru.key']}")
     public String informationNaruKey;
 
@@ -35,30 +34,26 @@ public class BookTask {
 
     private final BookDetailTaskRepository bookDetailTaskRepository;
 
-    // 500 건씩 가져올 수 있음
-    // 새벽 5시
-    /*@Scheduled(cron = "* * 5 * * *")*/
-    // 10초에 한번씩
-    @Scheduled(cron = "0/10 * * * * *")
-    public void getBookDetail() throws IOException, SAXException {
+    // 하루 500 건씩 가져올 수 있음
+    @Scheduled(cron = "0 30 4 * * *")
+    // 10초에 한번씩 테스트
+    /*@Scheduled(cron = "0/10 * * * * *")*/
+    public void getBookDetail() {
 
-
-        Set<Long> isbnList = new HashSet<>();
+        List<Long> isbnList = new ArrayList<>();
 
         Long maxIsbn;
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-        DocumentBuilder builder = null;
+        DocumentBuilder builder;
 
         if(bookDetailTaskRepository.count() == 0){
-
             isbnList = bookTaskRepository.findTopByOrderByIsbnDesc();
         } else {
+                maxIsbn = bookDetailTaskRepository.findTop1ByOrderByIsbnAsc().getIsbn();
 
-            maxIsbn = bookDetailTaskRepository.findTop1ByOrderByIsbnAsc().getIsbn();
-
-            isbnList = bookTaskRepository.findTopByIsbnLessThanOrderByIsbnDesc(maxIsbn);
+                isbnList = bookTaskRepository.findTopByIsbnLessThanOrderByIsbnDesc(maxIsbn);
         }
 
         try {
@@ -93,30 +88,40 @@ public class BookTask {
 
                 if(document.getElementsByTagName("error").getLength() > 0){
                     log.info(document.getElementsByTagName("error").item(0).getChildNodes().item(0).getNodeValue());
+
+                    BookDetails saveData = BookDetails.builder()
+                            .isbn(aLong)
+                            .description(null)
+                            .thumbnail(null)
+                            .build();
+
+                    bookDetailTaskRepository.save(saveData);
+
                 } else {
-                    // API 통신이 되고, description, image 가 null 이 아닌 경우 insert
-                    if(document.getElementsByTagName("description").item(0).getChildNodes().getLength() > 0
-                            && document.getElementsByTagName("bookImageURL").item(0).getChildNodes().getLength() > 0){
 
-                        String responseIsbn = document.getElementsByTagName("isbn13").item(0).getChildNodes().item(0).getNodeValue();
-                        String responseDescription = document.getElementsByTagName("description").item(0).getChildNodes().item(0).getNodeValue();
-                        String responseBookImageURL = document.getElementsByTagName("bookImageURL").item(0).getChildNodes().item(0).getNodeValue();
+                    String responseIsbn = document.getElementsByTagName("isbn13").item(0).getChildNodes().item(0).getNodeValue();
+                    String responseDescription = null;
+                    String responseBookImageURL = null;
 
-                        BookDetails saveData = BookDetails.builder()
-                                .isbn(Long.valueOf(responseIsbn))
-                                .description(responseDescription)
-                                .thumbnail(responseBookImageURL)
-                                .build();
-
-                        bookDetailTaskRepository.save(saveData);
+                    if(document.getElementsByTagName("description").item(0).getChildNodes().getLength() > 0) {
+                        responseDescription = document.getElementsByTagName("description").item(0).getChildNodes().item(0).getNodeValue();
                     }
+                    if(document.getElementsByTagName("bookImageURL").item(0).getChildNodes().getLength() > 0) {
+                        responseBookImageURL = document.getElementsByTagName("bookImageURL").item(0).getChildNodes().item(0).getNodeValue();
+                    }
+
+                    BookDetails saveData = BookDetails.builder()
+                            .isbn(Long.valueOf(responseIsbn))
+                            .description(responseDescription)
+                            .thumbnail(responseBookImageURL)
+                            .build();
+
+                    bookDetailTaskRepository.save(saveData);
                 }
             }
         } catch (Exception e) {
             log.error(e.toString());
         }
-
-
 
 /*
 
@@ -175,6 +180,16 @@ public class BookTask {
         }
 */
 
+    }
+
+    // 4시 40분에 가져온 데이터중 NULL값 삭제
+    @Scheduled(cron = "0 40 4 * * *")
+    public void fixedDelayScheduler() {
+        Long minimumIsbn = bookDetailTaskRepository.findTop1ByOrderByIsbnAsc().getIsbn();
+
+        List<Long> isbnList = bookDetailTaskRepository.findIsbnExceptMinimun(minimumIsbn);
+
+        bookDetailTaskRepository.deleteAllByIsbnIn(isbnList);
     }
 
     // 카카오 OPEN API (데이터 부정확함)
