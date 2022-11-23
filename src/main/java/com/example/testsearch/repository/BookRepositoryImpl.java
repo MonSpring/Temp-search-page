@@ -117,6 +117,44 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
         return Integer.parseInt(String.valueOf(count));
     }
 
+    @Override
+    public List<BookResTestDto> forExcelQuery(String word, String mode, String field) {
+        BooleanBuilder builder=new BooleanBuilder();
+
+        NumberTemplate booleanTemplate= Expressions.numberTemplate(Double.class,
+                "function('match',{0},{1})", bookEq(field), word);
+
+        NumberTemplate booleanTemplate2= Expressions.numberTemplate(Double.class,
+                "function('match2',{0},{1})", bookEq(field), word);
+
+        if(Objects.equals(mode, "boolean")) {
+            builder.and(booleanTemplate.gt(1));
+        } else {
+            builder.and(booleanTemplate2.gt(1));
+        }
+
+        List<BookResTestDto> result = queryFactory
+                .select(
+                        new QBookResTestDto(
+                                books.id,
+                                books.title,
+                                books.author,
+                                books.publisher,
+                                books.publicationYear,
+                                books.isbn,
+                                books.regDate,
+                                books.librarys.libcode,
+                                books.bookCount
+                        )
+                )
+                .from(books)
+                .where(builder)
+                .fetch();
+
+        return result;
+    }
+
+
 
     private Object bookEq(String field) {
         switch (field) {

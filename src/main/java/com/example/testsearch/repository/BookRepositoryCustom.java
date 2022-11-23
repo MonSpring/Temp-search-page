@@ -11,4 +11,6 @@ public interface BookRepositoryCustom{
     int searchByFullTextBooleanCount(@Param("word") String word,String mode, String field);
 
     int searchByIsbnCountQuery(@Param("word") String word,String mode, String field);
+
+    List<BookResTestDto> forExcelQuery(String word, String mode, String field);
 }
