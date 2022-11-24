@@ -2,7 +2,6 @@ package com.example.testsearch.controller;
 
 import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
-import com.example.testsearch.mailing.EmailService;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.dto.BookResTestDto;
 import com.example.testsearch.service.BookService;
@@ -11,19 +10,16 @@ import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -135,7 +131,8 @@ public class BooksController extends HttpServlet {
     ) throws IOException {
 
         List<BookResTestDto> excelList = bookService.Excel(word, mode, field);
-        Workbook wb = new HSSFWorkbook();
+        //Workbook wb = new HSSFWorkbook();
+        Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("시트");
         Row row = null;
         Cell cell = null;
@@ -176,11 +173,11 @@ public class BooksController extends HttpServlet {
         // 컨텐츠 타입과 파일명 지정
         response.setContentType("ms-vnd/excel");
 //        response.setHeader("Content-Disposition", "attachment;filename=example.xls");
-        response.setHeader("Content-Disposition", "attachment;filename=excel.xls");
+        response.setHeader("Content-Disposition", "attachment;filename=excel.xlsx");
 
         // Excel File Output
         wb.write(response.getOutputStream());
-        wb.close();
+        //wb.close
     }
 
 }

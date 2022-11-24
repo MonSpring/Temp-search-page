@@ -92,7 +92,11 @@ dependencies {
 	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.11.3'
 
 	// excel
-	implementation group: 'org.apache.poi', name: 'poi', version: '3.17'
+	//implementation group: 'org.apache.poi', name: 'poi', version: '3.17'
+	// https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.9'
+	compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'        // HSSFWorkbook 사용가능
+	compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'  // XSSFWorkbook 사용가능
 	
 }
 
