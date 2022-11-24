@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,7 +27,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookTask {
 
-    // List 돌려서 각 key값으로 변경 예정 (하루 2,000건 가능)
     @Value("#{environment['naru.key']}")
     public String informationNaruKey;
 
@@ -35,41 +35,39 @@ public class BookTask {
     private final BookDetailTaskRepository bookDetailTaskRepository;
 
     // 하루 500 건씩 가져올 수 있음
-    @Scheduled(cron = "0 30 4 * * *")
+    @Scheduled(cron = "0 40 4 * * *")
     // 10초에 한번씩 테스트
     /*@Scheduled(cron = "0/10 * * * * *")*/
-    public void getBookDetail() {
+    public void getBookDetailTask() {
 
         List<Long> isbnList = new ArrayList<>();
 
-        Long maxIsbn;
+        Long deatilMinIsbn;
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
         DocumentBuilder builder;
 
-        if(bookDetailTaskRepository.count() == 0){
+        if (bookDetailTaskRepository.count() == 0) {
             isbnList = bookTaskRepository.findTopByOrderByIsbnDesc();
         } else {
-                maxIsbn = bookDetailTaskRepository.findTop1ByOrderByIsbnAsc().getIsbn();
+            deatilMinIsbn = bookDetailTaskRepository.findTop1ByOrderByIsbnAsc().getIsbn();
 
-                isbnList = bookTaskRepository.findTopByIsbnLessThanOrderByIsbnDesc(maxIsbn);
+            isbnList = bookTaskRepository.findTopByIsbnLessThanOrderByIsbnDesc(deatilMinIsbn);
         }
-
-        try {
-
-            for (Long aLong : isbnList) {
+        for (Long aLong : isbnList) {
+            try {
 
                 String apiURL = "http://data4library.kr/api/srchDtlList?authKey=" + informationNaruKey
-                        + "&isbn13=" + aLong + "&loaninfoYN=Y";
+                        + "&isbn13=" + aLong + "&loaninfoYN=N";
                 URL url = new URL(apiURL);
-                HttpURLConnection con = (HttpURLConnection)url.openConnection();
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
                 con.setRequestMethod("GET");
                 int responseCode = con.getResponseCode();
                 BufferedReader br;
 
-                if(responseCode==200) { // 정상 호출
+                if (responseCode == 200) { // 정상 호출
                     br = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 } else {  // 에러 발생
                     br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
@@ -86,7 +84,7 @@ public class BookTask {
                 builder = factory.newDocumentBuilder();
                 Document document = builder.parse(new InputSource(new StringReader(responseXml)));
 
-                if(document.getElementsByTagName("error").getLength() > 0){
+                if (document.getElementsByTagName("error").getLength() > 0) {
                     log.info(document.getElementsByTagName("error").item(0).getChildNodes().item(0).getNodeValue());
 
                     BookDetails saveData = BookDetails.builder()
@@ -103,10 +101,10 @@ public class BookTask {
                     String responseDescription = null;
                     String responseBookImageURL = null;
 
-                    if(document.getElementsByTagName("description").item(0).getChildNodes().getLength() > 0) {
+                    if (document.getElementsByTagName("description").item(0).getChildNodes().getLength() > 0) {
                         responseDescription = document.getElementsByTagName("description").item(0).getChildNodes().item(0).getNodeValue();
                     }
-                    if(document.getElementsByTagName("bookImageURL").item(0).getChildNodes().getLength() > 0) {
+                    if (document.getElementsByTagName("bookImageURL").item(0).getChildNodes().getLength() > 0) {
                         responseBookImageURL = document.getElementsByTagName("bookImageURL").item(0).getChildNodes().item(0).getNodeValue();
                     }
 
@@ -118,12 +116,58 @@ public class BookTask {
 
                     bookDetailTaskRepository.save(saveData);
                 }
+            } catch(SAXParseException e){
+                log.error(e.toString());
+            } catch(Exception e){
+                log.error(e.toString());
             }
+        }
+    }
+
+    // 4시 45분에 가져온 데이터중 NULL값 삭제
+    @Scheduled(cron = "0 45 4 * * *")
+    public void deleteNullDataTask() {
+        Long minimumIsbn = bookDetailTaskRepository.findTop1ByOrderByIsbnAsc().getIsbn();
+
+        List<Long> isbnList = bookDetailTaskRepository.findIsbnExceptMinimun(minimumIsbn);
+
+        bookDetailTaskRepository.deleteAllByIsbnIn(isbnList);
+    }
+
+    // 카카오 OPEN API (데이터 부정확함)
+    /*@Scheduled(cron = "0 0 3 * * *")*/
+    public void kakaoGetBookDetail(){
+        try {
+            long bookIsbn = 9791160949612L;
+            String kakaoKey = "4ae013ba08eac80bfa8bb08ad6636365";
+
+            String apiURL = "https://dapi.kakao.com/v2/search/web?target=isbn&sort=accuracy&page=1&size=1&query=isbn+%3A+9791160949612" + bookIsbn;
+            URL url = new URL(apiURL);
+            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Authorization", "KakaoAK " + kakaoKey);
+            int responseCode = con.getResponseCode();
+            BufferedReader br;
+
+            if(responseCode==200) { // 정상 호출
+                br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            } else {  // 에러 발생
+                br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+            }
+
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+            if ((inputLine = br.readLine()) != null) {
+                response.append(inputLine);
+            }
+            br.close();
+            log.info(response.toString());
         } catch (Exception e) {
             log.error(e.toString());
         }
-
-/*
+    }
+/* 테스트 데이터
 
         // 테스트용 데이터
         String xmlTest = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
@@ -179,52 +223,5 @@ public class BookTask {
             throw new RuntimeException(e);
         }
 */
-
-    }
-
-    // 4시 40분에 가져온 데이터중 NULL값 삭제
-    @Scheduled(cron = "0 40 4 * * *")
-    public void fixedDelayScheduler() {
-        Long minimumIsbn = bookDetailTaskRepository.findTop1ByOrderByIsbnAsc().getIsbn();
-
-        List<Long> isbnList = bookDetailTaskRepository.findIsbnExceptMinimun(minimumIsbn);
-
-        bookDetailTaskRepository.deleteAllByIsbnIn(isbnList);
-    }
-
-    // 카카오 OPEN API (데이터 부정확함)
-    /*@Scheduled(cron = "0 0 3 * * *")*/
-    public void kakaoGetBookDetail(){
-        try {
-            long bookIsbn = 9791160949612L;
-            String kakaoKey = "4ae013ba08eac80bfa8bb08ad6636365";
-
-            String apiURL = "https://dapi.kakao.com/v2/search/web?target=isbn&sort=accuracy&page=1&size=1&query=isbn+%3A+9791160949612" + bookIsbn;
-            URL url = new URL(apiURL);
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-
-            con.setRequestMethod("GET");
-            con.setRequestProperty("Authorization", "KakaoAK " + kakaoKey);
-            int responseCode = con.getResponseCode();
-            BufferedReader br;
-
-            if(responseCode==200) { // 정상 호출
-                br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            } else {  // 에러 발생
-                br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-            }
-
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-            if ((inputLine = br.readLine()) != null) {
-                response.append(inputLine);
-            }
-            br.close();
-            log.info(response.toString());
-        } catch (Exception e) {
-            log.error(e.toString());
-        }
-    }
-
 
 }
