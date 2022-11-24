@@ -187,4 +187,49 @@ public class BookService {
 
         return BookResTestDto;
     }
+
+    public List<BookResTestDto> JpqlExcel(String word, String mode, String field) {
+
+        List<Books> booksList = new ArrayList<>();
+
+        // List 가져오는 SEQ
+        if (mode.equals("boolean mode")) {
+            switch (field) {
+                case "title":
+                    booksList = bookRepository.titleForExcel(word);
+                    break;
+                case "author":
+                    booksList = bookRepository.authorForExcel(word);
+                    break;
+                case "publisher":
+                    booksList = bookRepository.publisherForExcel(word);
+                    break;
+                default:
+                    booksList = bookRepository.isbnForExcel(word);
+                    break;
+            }
+        } else {
+            switch (field) {
+                case "title":
+                    booksList = bookRepository.titleNatureForExcel(word);
+                    break;
+                case "author":
+                    booksList = bookRepository.authorNatureForExcel(word);
+                    break;
+                case "publisher":
+                    booksList = bookRepository.publisherNatureForExcel(word);
+                    break;
+                default:
+                    booksList = bookRepository.isbnForExcel(word);
+                    break;
+            }
+        }
+
+        List<BookResTestDto> bookResTestDtoList = new ArrayList<>();
+        for (Books books : booksList) {
+            bookResTestDtoList.add(new BookResTestDto(books));
+        }
+
+        return bookResTestDtoList;
+    }
 }
