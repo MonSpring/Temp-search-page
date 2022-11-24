@@ -74,6 +74,11 @@
   <div class="left-flex">
     <div class="input-group">
       <div class="input-group-append">
+
+        <a class="btn btn-success pd-l" th:href="@{/jpql/excel/download?field={field}&word={word}&mode={mode} (field = ${field}, word = ${word}, mode = ${mode})}">
+          <span>Native Query Excel 다운로드</span>
+        </a>
+
         <h1>Native Query 방식</h1>
         <form class="pager" method="get" action="/searchJpql">
           <select name="field" class="form-select" aria-label="Default select example">
@@ -99,6 +104,7 @@
               </svg>
             </button>
           </div>
+
           <div class="stop-watch" th:if="${nanos}>0" th:text=" '걸린 시간 (ms) : ' + ${mills} + ' 밀리초'"></div>
           <div class="stop-watch" th:if="${nanos}>0" th:text=" '걸린 시간 (ns) : ' + ${nanos} + ' 나노초'"></div>
         </form>

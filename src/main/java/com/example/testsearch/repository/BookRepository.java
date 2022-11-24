@@ -82,4 +82,27 @@ public interface BookRepository  extends JpaRepository<Books, Long>, BookReposit
 
     @Query(value = "SELECT * FROM books WHERE isbn LIKE :isbn", nativeQuery = true)
     boolean findAllByIsbnContains(@Param("isbn") String isbn);
+
+
+    // excel용
+    @Query(value = "SELECT * FROM books WHERE MATCH(title) AGAINST(:word in boolean mode)", nativeQuery = true)
+    List<Books> titleForExcel(@Param("word") String word);
+
+    @Query(value = "SELECT * FROM books WHERE MATCH(author) AGAINST(:word in boolean mode)", nativeQuery = true)
+    List<Books> authorForExcel(@Param("word") String word);
+
+    @Query(value = "SELECT * FROM books WHERE MATCH(Publisher) AGAINST(:word in boolean mode)", nativeQuery = true)
+    List<Books> publisherForExcel(@Param("word") String word);
+
+    @Query(value = "SELECT * FROM books WHERE isbn=:word", nativeQuery = true)
+    List<Books> isbnForExcel(@Param("word") String word);
+
+    @Query(value = "SELECT * FROM books WHERE MATCH(title) AGAINST(:word in natural language mode)", nativeQuery = true)
+    List<Books> titleNatureForExcel(@Param("word") String word);
+
+    @Query(value = "SELECT * FROM books WHERE MATCH(author) AGAINST(:word in natural language mode)", nativeQuery = true)
+    List<Books> authorNatureForExcel(@Param("word") String word);
+
+    @Query(value = "SELECT * FROM books WHERE MATCH(Publisher) AGAINST(:word in natural language mode)", nativeQuery = true)
+    List<Books> publisherNatureForExcel(@Param("word") String word);
 }

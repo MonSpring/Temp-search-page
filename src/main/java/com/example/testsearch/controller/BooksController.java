@@ -121,7 +121,7 @@ public class BooksController extends HttpServlet {
     }
 
     /**
-     * excel
+     * querydsl excel
      */
     @GetMapping("/excel/download")
     public void excelDownload(HttpServletResponse response,
@@ -179,5 +179,67 @@ public class BooksController extends HttpServlet {
         wb.write(response.getOutputStream());
         //wb.close
     }
+
+    /**
+     * jpql excel
+     */
+    @GetMapping("/jpql/excel/download")
+    public void jpqlExcelDownload(HttpServletResponse response,
+                              @RequestParam("word") String word,
+                              @RequestParam("mode") String mode,
+                              @RequestParam String field
+    ) throws IOException {
+
+        List<BookResTestDto> excelList = bookService.JpqlExcel(word, mode, field);
+        //Workbook wb = new HSSFWorkbook();
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("시트");
+        Row row = null;
+        Cell cell = null;
+        int rowNum = 0;
+
+        // Header
+        row = sheet.createRow(rowNum++);
+        cell = row.createCell(0);
+        cell.setCellValue("번호");
+        cell = row.createCell(1);
+        cell.setCellValue("책이름");
+        cell = row.createCell(2);
+        cell.setCellValue("작가");
+        cell = row.createCell(3);
+        cell.setCellValue("출판사");
+        cell = row.createCell(4);
+        cell.setCellValue("권수");
+        cell = row.createCell(5);
+        cell.setCellValue("isbn");
+
+        // Body
+        for (int i=0; i<excelList.size(); i++) {
+            row = sheet.createRow(rowNum++);
+            cell = row.createCell(0);
+            cell.setCellValue(i);
+            cell = row.createCell(1);
+            cell.setCellValue(excelList.get(i).getTitle());
+            cell = row.createCell(2);
+            cell.setCellValue(excelList.get(i).getAuthor());
+            cell = row.createCell(3);
+            cell.setCellValue(excelList.get(i).getBookCount());
+            cell = row.createCell(4);
+            cell.setCellValue(excelList.get(i).getBookCount());
+            cell = row.createCell(5);
+            cell.setCellValue(excelList.get(i).getIsbn());
+        }
+
+        // 컨텐츠 타입과 파일명 지정
+        response.setContentType("ms-vnd/excel");
+//        response.setHeader("Content-Disposition", "attachment;filename=example.xls");
+        response.setHeader("Content-Disposition", "attachment;filename=excel.xlsx");
+
+        // Excel File Output
+        wb.write(response.getOutputStream());
+        //wb.close
+    }
+
+
 
 }
