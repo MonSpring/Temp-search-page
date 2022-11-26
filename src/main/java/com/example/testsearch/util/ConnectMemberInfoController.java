@@ -30,7 +30,7 @@ public class ConnectMemberInfoController {
         SpreadFrontUtil.spreadFrontCalender(model);
         model.addAttribute("logdata", logMemberAddressService.searchAllMemberAddressLog(startDatetime, endDatetime));
 
-        return "logInfoPageView";
+        return "logInfoPage";
     }
 
 }
