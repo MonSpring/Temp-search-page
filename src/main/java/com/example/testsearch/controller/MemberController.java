@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Slf4j
 @Controller
 @RequestMapping("/user")
@@ -30,8 +32,8 @@ public class MemberController {
 
     // 로그인 요청 처리
     @PostMapping("/login")
-    public String loginProc(LoginReqDto loginReqDto, Model model) {
-        ResponseEntity<?> responseEntity = memberService.loginAccount(loginReqDto);
+    public String loginProc(LoginReqDto loginReqDto, Model model, HttpServletRequest request) {
+        ResponseEntity<?> responseEntity = memberService.loginAccount(loginReqDto, request);
         model.addAttribute(responseEntity);
         return "search";
     }

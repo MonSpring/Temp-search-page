@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원 접속 이력 로그</title>
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <style>
+
+    .wrap {
+      width: 80%;
+      margin: 0 auto;
+    }
+
+    .input-group {
+      margin: 2em -1em;
+      justify-content: center;
+    }
+
+    .stop-watch {
+      display: inline-flex;
+      margin-left: 5px;
+      border: 2px rgb(180, 180, 180) solid;
+      border-radius: 2px;
+      box-shadow: 1px 1px 1px 0;
+      padding: 5px;
+    }
+
+    .btn-dark {
+      display: block;
+      margin-top: 10px;
+      margin-left: 35%;
+    }
+
+    .date-lab {
+      margin-top: 15px;
+    }
+  </style>
+
+</head>
+<body>
+<div class="wrap">
+  <form class="go-home" action="/user/login" method="get"><button input="submit">로그인 페이지</button></form>
+  <div class="input-group">
+    <div class="input-group-append">
+
+      <h1>회원 접속 이력 로그 조회</h1>
+      <form class="connectMember" method="post" action="/log/info">
+        <div class="date-lab">
+          <label for="start">Start date:</label>
+          <input type="date" id="start" name="startDatetime"
+                 th:value="${localdate}"
+                 th:min="${beforemonth}" th:max="${localdate}">
+          <label for="start">End date:</label>
+          <input type="date" id="end" name="endDatetime"
+                 th:value="${localdate}"
+                 th:min="${beforemonth}" th:max="${localdate}">
+        </div>
+        <!--            <div class="stop-watch" th:if="${nanos}>0" th:text=" '걸린 시간 (ms) : ' + ${mills} + ' 밀리초'"></div>-->
+        <!--            <div class="stop-watch" th:if="${nanos}>0" th:text=" '걸린 시간 (ns) : ' + ${nanos} + ' 나노초'"></div>-->
+        <button type="submit" class="btn btn-dark" >접속 로그 확인</button>
+      </form>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">회원 ID</th>
+      <th scope="col">접속 IP</th>
+      <th scope="col">접속 시간</th>
+    </tr>
+    </thead>
+    <tbody class="getLog">
+    <tr th:each="li:${logdata}">
+      <td th:text="${li.username}"></td>
+      <td th:text="${li.memberIp}"></td>
+      <td th:text="${li.loginTime}"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

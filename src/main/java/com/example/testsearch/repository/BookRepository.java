@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface BookRepository  extends JpaRepository<Books, Long>, BookRepositoryCustom {
+public interface BookRepository extends JpaRepository<Books, Long>, BookRepositoryCustom {
 
     // 검색 기능   ========================================(개선의 여지 있음)====================================
 

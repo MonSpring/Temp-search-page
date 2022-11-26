@@ -1,5 +1,6 @@
 package com.example.testsearch.service;
 
+import com.example.testsearch.entity.MemberLoginInfo;
 import com.example.testsearch.oauth.SignupRequestDto;
 import com.example.testsearch.dto.*;
 import com.example.testsearch.entity.Authority;
@@ -7,8 +8,10 @@ import com.example.testsearch.entity.Member;
 import com.example.testsearch.dto.TokenDto;
 import com.example.testsearch.jwt.JwtFilter;
 import com.example.testsearch.jwt.TokenProvider;
+import com.example.testsearch.repository.MemberLoginInfoRepository;
 import com.example.testsearch.repository.MemberRepository;
 import com.example.testsearch.security.MemberDetails;
+import com.example.testsearch.util.BackOfficeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -25,7 +28,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -37,8 +42,8 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
-
     private final StringRedisTemplate stringRedisTemplate;
+    private final MemberLoginInfoRepository memberLoginInfoRepository;
 
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
@@ -77,7 +82,7 @@ public class MemberService implements UserDetailsService {
 
     // 로그인
     @Transactional
-    public ResponseEntity<?> loginAccount(LoginReqDto loginReqDto) {
+    public ResponseEntity<?> loginAccount(LoginReqDto loginReqDto, HttpServletRequest request) {
 
         Member member = memberRepository.findByUsername(loginReqDto.getUsername()).orElseThrow(()->new RuntimeException("존재하지 않는 유저입니다"));
 
@@ -107,6 +112,19 @@ public class MemberService implements UserDetailsService {
         httpHeaders.add("Refresh-Token", tokenDto.getRefreshToken());
 
         MemberDto memberDto = new MemberDto(member);
+
+        // 접속 유저 로그인 정보 저장 (vm arguments option으로 -Djava.net.preferIPv4Stack=true 옵션 줘야 IPv6가 아닌 IPv4 값 불러옴)
+        String memberIp = BackOfficeUtil.getClientIP(request);
+        LocalDateTime now = LocalDateTime.now();
+        // 존드 데이트 타임
+
+        MemberLoginInfo memberLoginInfo = MemberLoginInfo.builder()
+                .username(loginReqDto.getUsername())
+                .memberIp(memberIp)
+                .loginTime(now)
+                .build();
+
+        memberLoginInfoRepository.save(memberLoginInfo);
 
         return new ResponseEntity<>(ResponseDto.success(memberDto), httpHeaders, HttpStatus.OK);
     }

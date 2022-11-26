@@ -31,8 +31,4 @@ public class Orders extends Timestamped {
         this.member = member;
     }
 
-    public void changeOrderForMember(Member member) {
-        this.member = member;
-        member.getOrdersList().add(this);
-    }
 }

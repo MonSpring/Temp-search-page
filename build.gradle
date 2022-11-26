@@ -36,19 +36,11 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.json:json:20220924'
 
-	//redis
+	//  redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	//	ElasticSearch
-	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch' //tomcat
-//	implementation 'org.springframework.data:spring-data-elasticsearch:4.4.5' // nginx
-//	implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.6'
-
-	// Scheduler
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-
-	// XML 처리
-	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.11.3'
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
 	//	QueryDSL
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
@@ -75,25 +67,17 @@ dependencies {
 	//	mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.5'
 
-	// slack
-	implementation('com.slack.api:slack-api-client:1.26.1')
-	compile group: 'com.slack.api', name: 'slack-api-client', version: '1.26.1'
-	compile group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+	//  slack
+	implementation('com.slack.api:slack-api-client:1.27.1')
+	compile group: 'com.slack.api', name: 'slack-api-client', version: '1.27.1'
+	compile group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
 	compile group: 'com.slack.api', name: 'slack-api-model', version: '1.1.3'
 	compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.8.1'
-
-	// elasticsearch
-	implementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '7.10.2'
-
-	// Scheduler
-	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	// XML 처리
 	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.11.3'
 
 	// excel
-	//implementation group: 'org.apache.poi', name: 'poi', version: '3.17'
-	// https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
 	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.9'
 	compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'        // HSSFWorkbook 사용가능
 	compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'  // XSSFWorkbook 사용가능

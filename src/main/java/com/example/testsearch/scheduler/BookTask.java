@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
+import org.yaml.snakeyaml.emitter.Emitter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,6 +20,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +38,7 @@ public class BookTask {
     private final BookDetailTaskRepository bookDetailTaskRepository;
 
     // 하루 500 건씩 가져올 수 있음
-    @Scheduled(cron = "0 40 4 * * *")
+//    @Scheduled(cron = "0 40 4 * * *")
     // 10초에 한번씩 테스트
     /*@Scheduled(cron = "0/10 * * * * *")*/
     public void getBookDetailTask() {
@@ -125,7 +128,7 @@ public class BookTask {
     }
 
     // 4시 45분에 가져온 데이터중 NULL값 삭제
-    @Scheduled(cron = "0 45 4 * * *")
+    @Scheduled(cron = "0 0/10 * * * *")
     public void deleteNullDataTask() {
         Long minimumIsbn = bookDetailTaskRepository.findTop1ByOrderByIsbnAsc().getIsbn();
 

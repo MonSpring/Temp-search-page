@@ -38,9 +38,6 @@ public class Member extends Timestamped {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-    @OneToMany(mappedBy = "member")
-    private List<Orders> ordersList = new ArrayList<>();
-
     @Builder
     public Member(String username, String password, String email, Authority authority) {
         this.username = username;
