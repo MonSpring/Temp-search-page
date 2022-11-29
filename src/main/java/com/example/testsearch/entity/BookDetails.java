@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -14,9 +15,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class BookDetails {
 
+    private static final String PROCEDURE_PARAM = "AAA";
+
     @Id
     @Column(name = "book_detail_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "a")
+    @GenericGenerator(name = "a" , strategy = "increment")
     private Long id;
 
     @Lob
