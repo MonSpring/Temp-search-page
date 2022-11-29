@@ -15,8 +15,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class BookDetails {
 
-    private static final String PROCEDURE_PARAM = "AAA";
-
     @Id
     @Column(name = "book_detail_id")
     @GeneratedValue(generator = "a")
