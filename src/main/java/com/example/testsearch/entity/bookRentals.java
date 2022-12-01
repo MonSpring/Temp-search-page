@@ -1,17 +1,15 @@
 package com.example.testsearch.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Getter
 @Entity
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class bookRentals {
 
     @Id
@@ -28,8 +26,18 @@ public class bookRentals {
     private Member member;
 
     @Column
-    private String rentalDate;
+    private Date rentalDate;
 
     @Column
-    private String returnDate;
+    private Date returnDate;
+
+    @Builder
+    public bookRentals(Long id, Books books, Member member, Date rentalDate, Date returnDate) {
+
+        this.id = id;
+        this.books = books;
+        this.member = member;
+        this.rentalDate = rentalDate;
+        this.returnDate = returnDate;
+    }
 }
