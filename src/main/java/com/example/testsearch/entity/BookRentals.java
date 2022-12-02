@@ -10,7 +10,7 @@ import java.util.Date;
 @Getter
 @Entity
 @NoArgsConstructor
-public class bookRentals {
+public class BookRentals {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class bookRentals {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id")
-    private Books books;
+    private Books book;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -32,10 +32,10 @@ public class bookRentals {
     private Date returnDate;
 
     @Builder
-    public bookRentals(Long id, Books books, Member member, Date rentalDate, Date returnDate) {
+    public BookRentals(Long id, Books book, Member member, Date rentalDate, Date returnDate) {
 
         this.id = id;
-        this.books = books;
+        this.book = book;
         this.member = member;
         this.rentalDate = rentalDate;
         this.returnDate = returnDate;
