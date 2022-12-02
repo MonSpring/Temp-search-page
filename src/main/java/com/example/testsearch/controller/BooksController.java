@@ -240,6 +240,16 @@ public class BooksController extends HttpServlet {
         //wb.close
     }
 
+    @GetMapping("/books/{id}/detail/{isbn}")
+    public String detailModal(Model model,
+                              @PathVariable(name = "id") Long bookId,
+                              @PathVariable(name = "isbn") Long isbn){
+
+        model.addAttribute("data", bookService.searchDetail(bookId, isbn));
+
+        return "bookDetail";
+    }
+
 
 
 }

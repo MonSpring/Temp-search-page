@@ -12,6 +12,8 @@ public class BookDetailResDto {
 
     private Long id;
     private String title;
+
+    private String author;
     private String description;
     private String thumbnail;
     private Long isbn;
@@ -21,6 +23,7 @@ public class BookDetailResDto {
     public BookDetailResDto(Books books, BookDetails bookDetails) {
         this.id = books.getId();
         this.title = books.getTitle();
+        this.author = books.getAuthor();
         this.description = bookDetails.getDescription();
         this.thumbnail = bookDetails.getThumbnail();
         this.isbn = books.getIsbn();

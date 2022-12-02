@@ -1,10 +1,13 @@
 package com.example.testsearch.service;
 
 import com.example.testsearch.customAnnotation.LogExecutionTime;
+import com.example.testsearch.dto.BookDetailResDto;
 import com.example.testsearch.dto.BookResTestDto;
-import com.example.testsearch.dto.Pagination;
 import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
+import com.example.testsearch.dto.Pagination;
+import com.example.testsearch.entity.BookDetails;
 import com.example.testsearch.entity.Books;
+import com.example.testsearch.repository.BookDetailRepository;
 import com.example.testsearch.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +27,8 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+
+    private final BookDetailRepository bookDetailRepository;
 
     // 1630만개 끌고오기
     public List<BookResTestDto> getAll() {
@@ -231,5 +236,16 @@ public class BookService {
         }
 
         return bookResTestDtoList;
+    }
+
+    public BookDetailResDto searchDetail(Long bookId, Long isbn) {
+        BookDetails bookDetail = bookDetailRepository.findByIsbn(isbn);
+
+        Books book = bookRepository.findById(bookId).orElseThrow();
+
+        return BookDetailResDto.builder()
+                .bookDetails(bookDetail)
+                .books(book)
+                .build();
     }
 }
