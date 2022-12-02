@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>제목</th>
+            <th>설명</th>
+            <th>저자</th>
+            <th>isbn</th>
+            <th>썸네일</th>
+            <th>재고</th>
+            <th>대여/반납</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="data : ${data}">
+            <td th:text="${data.title}"></td>
+            <td th:text="${data.description}"></td>
+            <td th:text="${data.author}"></td>
+            <td th:text="${data.isbn}"></td>
+            <td th:text="${data.thumbnail}"></td>
+            <td th:text="${data.book_count}"></td>
+            <td>
+                <a href="#" th:href="@{/books/{id}/detail (id=${data.book_id})}" class="btn btn-primary" role="button">수정</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
