@@ -41,10 +41,17 @@
         }
     </style>
 
+    <script>
+
+    </script>
+
 </head>
 <body>
 <div class="wrap">
     <form class="go-home" action="/user/login" method="get"><button input="submit">로그인 페이지</button></form>
+    <a th:if="${startDatetime}" class="btn btn-success pd-l" th:href="@{/log/excel?startDatetime={startDatetime}&endDatetime={endDatetime} (startDatetime = ${startDatetime}, endDatetime = ${endDatetime})}">
+        <span>로그인 정보 Excel 다운로드</span>
+    </a>
     <div class="input-group">
         <div class="input-group-append">
 
