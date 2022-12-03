@@ -2,6 +2,7 @@ package com.example.testsearch.controller;
 
 import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
+import com.example.testsearch.dto.BookInfiniteResDto;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.dto.BookResTestDto;
 import com.example.testsearch.service.BookService;
