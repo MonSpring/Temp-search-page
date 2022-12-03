@@ -2,9 +2,11 @@ package com.example.testsearch.controller;
 
 import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
-import com.example.testsearch.dto.*;
 import com.example.testsearch.repository.BookRepository;
+import com.example.testsearch.dto.BookResTestDto;
 import com.example.testsearch.service.BookService;
+import com.example.testsearch.dto.Pagination;
+import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,16 +15,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -242,6 +243,16 @@ public class BooksController extends HttpServlet {
         // Excel File Output
         wb.write(response.getOutputStream());
         //wb.close
+    }
+
+    @GetMapping("/books/{id}/detail/{isbn}")
+    public String detailModal(Model model,
+                              @PathVariable(name = "id") Long bookId,
+                              @PathVariable(name = "isbn") Long isbn){
+
+        model.addAttribute("data", bookService.searchDetail(bookId, isbn));
+
+        return "bookDetail";
     }
 
     // 무한 스크롤 서치 페이지
