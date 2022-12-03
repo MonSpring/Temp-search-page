@@ -134,7 +134,7 @@ public class BookTask {
     }
 
     // 4시 45분에 가져온 데이터중 NULL값 삭제
-    @Scheduled(cron = "0 21 6 * * *")
+//    @Scheduled(cron = "0 21 6 * * *")
     public void deleteNullDataTask() {
         Long minimumIsbn = bookDetailTaskRepository.findTop1ByOrderByIsbnAsc().getIsbn();
 
@@ -146,7 +146,7 @@ public class BookTask {
 
     // jdbc 방식
     @LogExecutionTime
-    @Scheduled(cron = "0 0/7 * * * *")
+//    @Scheduled(cron = "0 0/7 * * * *")
     // 10초에 한번씩 테스트
     //@Scheduled(cron = "0 0/10 * * * *")
     public void getBookDetailTask2() {

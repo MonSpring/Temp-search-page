@@ -2,11 +2,9 @@ package com.example.testsearch.controller;
 
 import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
+import com.example.testsearch.dto.*;
 import com.example.testsearch.repository.BookRepository;
-import com.example.testsearch.dto.BookResTestDto;
 import com.example.testsearch.service.BookService;
-import com.example.testsearch.dto.Pagination;
-import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +13,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +22,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -37,6 +37,10 @@ public class BooksController extends HttpServlet {
 
     private final StopWatchRepository stopWatchRepository;
 
+    private int callCount = 0;
+
+    private int lastIdChange = 0;
+
     // 기본 페이지
     @GetMapping("/index")
     public String main() {
@@ -50,7 +54,7 @@ public class BooksController extends HttpServlet {
                                  @RequestParam(defaultValue = "1", name = "page") int page,
                                  @RequestParam(defaultValue = "10", name = "size") int size,
                                  @RequestParam(defaultValue = "id", name = "orderBy") String orderBy,
-                                 @RequestParam(defaultValue = "false", name = "isAsc")boolean isAsc){
+                                 @RequestParam(defaultValue = "false", name = "isAsc") boolean isAsc) {
         // 총 게시물 수
         int totalListCnt = (int) bookRepository.count();
 
@@ -69,7 +73,7 @@ public class BooksController extends HttpServlet {
                              @RequestParam(defaultValue = "1", name = "page") int page,
                              @RequestParam(defaultValue = "10", name = "size") int size,
                              @RequestParam String field,
-                             @RequestParam String mode){
+                             @RequestParam String mode) {
 
         log.info(field);
         log.info(mode);
@@ -100,7 +104,7 @@ public class BooksController extends HttpServlet {
                            @RequestParam("mode") String mode,
                            @RequestParam String field,
                            @RequestParam(defaultValue = "1", name = "page") int page,
-                           @RequestParam(defaultValue = "10", name = "size") int size){
+                           @RequestParam(defaultValue = "10", name = "size") int size) {
 
         ListBookResTestDtoAndPagination listBookResTestDtoAndPagination = bookService.searchFullTextQueryDsl(word, mode, page, size, field);
 
@@ -154,7 +158,7 @@ public class BooksController extends HttpServlet {
         cell.setCellValue("isbn");
 
         // Body
-        for (int i=0; i<excelList.size(); i++) {
+        for (int i = 0; i < excelList.size(); i++) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
             cell.setCellValue(i);
@@ -185,9 +189,9 @@ public class BooksController extends HttpServlet {
      */
     @GetMapping("/jpql/excel/download")
     public void jpqlExcelDownload(HttpServletResponse response,
-                              @RequestParam("word") String word,
-                              @RequestParam("mode") String mode,
-                              @RequestParam String field
+                                  @RequestParam("word") String word,
+                                  @RequestParam("mode") String mode,
+                                  @RequestParam String field
     ) throws IOException {
 
         List<BookResTestDto> excelList = bookService.JpqlExcel(word, mode, field);
@@ -214,7 +218,7 @@ public class BooksController extends HttpServlet {
         cell.setCellValue("isbn");
 
         // Body
-        for (int i=0; i<excelList.size(); i++) {
+        for (int i = 0; i < excelList.size(); i++) {
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
             cell.setCellValue(i);
@@ -240,6 +244,26 @@ public class BooksController extends HttpServlet {
         //wb.close
     }
 
+    // 무한 스크롤 서치 페이지
+    @GetMapping("/search")
+    public String search() {
+        callCount = 0;
+        lastIdChange = 0;
+        return "search";
+    }
 
-
+    @PostMapping("/infinitescroll")
+    public ResponseEntity getInfiniteBooksList() {
+        List<BookInfiniteResDto> bookInfiniteResDtoList;
+        int limitSize = 30;
+        if (callCount == 0) {
+            bookInfiniteResDtoList = bookService.getInfiniteBooksList(lastIdChange, limitSize);
+            callCount += 1;
+        } else {
+            lastIdChange += limitSize;
+            bookInfiniteResDtoList = bookService.getInfiniteBooksList(lastIdChange, limitSize);
+            callCount += 1;
+        }
+        return ResponseEntity.ok().body(bookInfiniteResDtoList);
+    }
 }

@@ -11,6 +11,10 @@ import java.util.List;
 
 public interface BookRepository extends JpaRepository<Books, Long>, BookRepositoryCustom {
 
+    // Cursor Based InfinityScroll
+    @Query(value = "SELECT * FROM books WHERE book_id > :lastId LIMIT :limitSize", nativeQuery = true)
+    List<Books> searchBookListForInfinityScroll(int lastId, int limitSize);
+
     // 검색 기능   ========================================(개선의 여지 있음)====================================
 
     // Title

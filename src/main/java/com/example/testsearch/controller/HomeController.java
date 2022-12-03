@@ -14,9 +14,4 @@ public class HomeController {
         return "login";
     }
 
-    // 서치 페이지
-    @GetMapping("/search")
-    public String search() {
-        return "search";
-    }
 }

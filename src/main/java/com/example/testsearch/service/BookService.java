@@ -1,6 +1,7 @@
 package com.example.testsearch.service;
 
 import com.example.testsearch.customAnnotation.LogExecutionTime;
+import com.example.testsearch.dto.BookInfiniteResDto;
 import com.example.testsearch.dto.BookResTestDto;
 import com.example.testsearch.dto.Pagination;
 import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
@@ -229,7 +230,15 @@ public class BookService {
         for (Books books : booksList) {
             bookResTestDtoList.add(new BookResTestDto(books));
         }
-
         return bookResTestDtoList;
+    }
+
+    public List<BookInfiniteResDto> getInfiniteBooksList(int lastId, int limitSize) {
+        List<Books> booksList = bookRepository.searchBookListForInfinityScroll(lastId, limitSize);
+        List<BookInfiniteResDto> bookInfiniteResDtoList = new ArrayList<>();
+        for (Books books : booksList) {
+            bookInfiniteResDtoList.add(new BookInfiniteResDto(books));
+        }
+        return bookInfiniteResDtoList;
     }
 }

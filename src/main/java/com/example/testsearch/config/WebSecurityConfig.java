@@ -76,6 +76,8 @@ public class WebSecurityConfig {
                 // 홈 회원가입, 로그인 허용
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 //                .antMatchers("/**").permitAll()
+                // static 폴더를 login 없이 허용
+                .antMatchers("/static/**").permitAll()
                 // image 폴더를 login 없이 허용
                 .antMatchers("/images/**").permitAll()
                 // css 폴더를 login 없이 허용

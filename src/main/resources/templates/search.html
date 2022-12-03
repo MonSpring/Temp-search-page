@@ -55,14 +55,18 @@
       display: flex;
     }
 
+    .infinite {
+      padding-top: 35px;
+      display: grid;
+    }
+
+    .infinite-h1 {
+      line-height: 1.045;
+    }
   </style>
 </head>
+
 <body>
-
-<script>
-
-</script>
-
 <div class="wrap">
 
   <form action="/log" method="get"><button input="submit">회원 로그 조회 페이지</button></form>
@@ -99,6 +103,12 @@
       </div>
     </div>
 
+    <div>
+      <div class="infinite">
+        <h1 class="infinite-h1">커서 기반 무한스크롤 방식</h1>
+        <button class="btn btn-secondary" onclick="getList()">실행</button>
+      </div>
+    </div>
 
     <div class="input-group">
       <div class="input-group-append">
@@ -146,30 +156,18 @@
     </tr>
     </thead>
     <tbody class="getAllSearch">
-      <tr th:each="li : ${data}">
-        <td th:text="${li.id}"></td>
-        <td th:text="${li.title}"></td>
-        <td th:text="${li.author}"></td>
-        <td th:text="${li.publisher}"></td>
-        <td th:text="${li.bookCount}"></td>
-        <td th:text="${li.isbn}"></td>
-      </tr>
     </tbody>
-    <tbody class="getAllSearch2">
-    <tr th:each="li : ${data2}">
-      <td th:text="${li.id}"></td>
-      <td th:text="${li.title}"></td>
-      <td th:text="${li.author}"></td>
-      <td th:text="${li.publisher}"></td>
-      <td th:text="${li.bookCount}"></td>
-      <td th:text="${li.isbn}"></td>
-    </tr>
-    </tbody>
-
   </table>
 
 </div>
 
 </body>
+
+<script src="/basic.js">
+  // function ready() {
+  //   getList();
+  // }
+  // document.addEventListener("DOMContentLoaded", ready);
+</script>
 
 </html>
