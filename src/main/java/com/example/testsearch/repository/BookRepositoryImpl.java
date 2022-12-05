@@ -31,10 +31,7 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
                                     books.title,
                                     books.author,
                                     books.publisher,
-                                    books.publicationYear,
                                     books.isbn,
-                                    books.regDate,
-                                    books.librarys.libcode,
                                     books.bookCount
                             )
                     )
@@ -65,10 +62,7 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
                                 books.title,
                                 books.author,
                                 books.publisher,
-                                books.publicationYear,
                                 books.isbn,
-                                books.regDate,
-                                books.librarys.libcode,
                                 books.bookCount
                         )
                 )
@@ -140,10 +134,7 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
                                 books.title,
                                 books.author,
                                 books.publisher,
-                                books.publicationYear,
                                 books.isbn,
-                                books.regDate,
-                                books.librarys.libcode,
                                 books.bookCount
                         )
                 )
@@ -153,8 +144,6 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
 
         return result;
     }
-
-
 
     private Object bookEq(String field) {
         switch (field) {
