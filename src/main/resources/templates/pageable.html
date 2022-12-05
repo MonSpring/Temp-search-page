@@ -68,6 +68,7 @@
     <th scope="col">출판사</th>
     <th scope="col">권수</th>
     <th scope="col">isbn</th>
+    <th scope="col">상세</th>
   </tr>
   </thead>
   <tbody class="getAllSearch">
@@ -78,6 +79,10 @@
       <td th:text="${li.publisher}"></td>
       <td th:text="${li.bookCount}"></td>
       <td th:text="${li.isbn}"></td>
+      <td>
+        <a href="#" th:href="@{/books/{id}/detail/{isbn} (id=${li.id}, isbn=${li.isbn})}"
+           class="btn btn-primary" role="button">상세</a>
+      </td>
     </tr>
   </tbody>
   <tbody class="getAllSearch2">
@@ -88,6 +93,10 @@
     <td th:text="${li.publisher}"></td>
     <td th:text="${li.bookCount}"></td>
     <td th:text="${li.isbn}"></td>
+    <td>
+      <a href="#" th:href="@{/books/{id}/detail/{isbn} (id=${li.id}, isbn=${li.isbn})}"
+         class="btn btn-primary" role="button">상세</a>
+    </td>
   </tr>
   </tbody>
 </table>

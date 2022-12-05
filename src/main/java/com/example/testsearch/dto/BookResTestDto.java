@@ -23,15 +23,12 @@ public class BookResTestDto {
 
 
     @QueryProjection
-    public BookResTestDto(Long id, String title, String author, String publisher, Date publicationYear, Long isbn, Date regDate, Long libcode, String bookCount) {
+    public BookResTestDto(Long id, String title, String author, String publisher,Long isbn, String bookCount) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
-        this.publicationYear = publicationYear;
         this.isbn = isbn;
-        this.regDate = regDate;
-        this.libcode = libcode;
         this.bookCount = bookCount;
     }
 

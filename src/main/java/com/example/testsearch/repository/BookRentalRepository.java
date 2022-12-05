@@ -8,4 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface BookRentalRepository extends JpaRepository<BookRentals,Long> {
 
     void deleteByBookAndMember(Books book, Member member);
+
+    Long countByBook(Books book);
+
+
 }
