@@ -35,7 +35,7 @@ public class MemberController {
     public String loginProc(LoginReqDto loginReqDto, Model model, HttpServletRequest request) {
         ResponseEntity<?> responseEntity = memberService.loginAccount(loginReqDto, request);
         model.addAttribute(responseEntity);
-        return "search";
+        return "redirect:/search";
     }
 
     // 회원 가입 페이지
@@ -55,7 +55,7 @@ public class MemberController {
     @GetMapping("/kakao/callback")
     public String kakaoLogin(@RequestParam String code) throws JsonProcessingException {
         kakaoUserService.kakaoLogin(code);
-        return "search";
+        return "redirect:/search";
     }
 
 //    // 토큰 재발급

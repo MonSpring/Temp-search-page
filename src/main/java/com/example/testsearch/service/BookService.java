@@ -1,11 +1,7 @@
 package com.example.testsearch.service;
 
 import com.example.testsearch.customAnnotation.LogExecutionTime;
-import com.example.testsearch.dto.BookDetailResDto;
-import com.example.testsearch.dto.BookInfiniteResDto;
-import com.example.testsearch.dto.BookResTestDto;
-import com.example.testsearch.dto.Pagination;
-import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
+import com.example.testsearch.dto.*;
 import com.example.testsearch.dto.Pagination;
 import com.example.testsearch.entity.BookDetails;
 import com.example.testsearch.entity.Books;
@@ -82,7 +78,7 @@ public class BookService {
     @Transactional
     public ListBookResTestDtoAndPagination getSerachBooks(String word, int size, int page, String field, String mode) {
 
-        List<Books> booksList = new ArrayList<>();
+        List<Books> booksList;
         int totalListCnt = 0;
 
         // Total Rows 가져오는 SEQ
@@ -250,12 +246,11 @@ public class BookService {
                 .build();
     }
 
-    public List<BookInfiniteResDto> getInfiniteBooksList(int lastId, int limitSize) {
-        List<Books> booksList = bookRepository.searchBookListForInfinityScroll(lastId, limitSize);
-        List<BookInfiniteResDto> bookInfiniteResDtoList = new ArrayList<>();
-        for (Books books : booksList) {
-            bookInfiniteResDtoList.add(new BookInfiniteResDto(books));
-        }
-        return bookInfiniteResDtoList;
+    public List<BookInfiniteRepoResDto> getInfiniteBooksList(int lastId, int limitSize) {
+        return bookRepository.searchBookListForInfinityScroll(lastId, limitSize);
+    }
+
+    public int searchInfinityCount() {
+        return bookRepository.searchInfinityCountMaxNum();
     }
 }

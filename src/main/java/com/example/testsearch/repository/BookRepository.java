@@ -1,5 +1,7 @@
 package com.example.testsearch.repository;
 
+import com.example.testsearch.dto.BookInfiniteRepoResDto;
+import com.example.testsearch.dto.BookInfiniteResDto;
 import com.example.testsearch.entity.Books;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,8 +14,13 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Books, Long>, BookRepositoryCustom {
 
     // Cursor Based InfinityScroll
-    @Query(value = "SELECT * FROM books WHERE book_id > :lastId LIMIT :limitSize", nativeQuery = true)
-    List<Books> searchBookListForInfinityScroll(int lastId, int limitSize);
+    @Query(value = "SELECT book_id, title, author, publisher, book_count, isbn FROM books WHERE book_id <= :lastId ORDER BY book_id DESC LIMIT :limitSize", nativeQuery = true)
+    List<BookInfiniteRepoResDto> searchBookListForInfinityScroll(int lastId, int limitSize);
+    //    book_id, title, author, publisher, book_count, isbn
+
+    // Max Book Query
+    @Query(value = "SELECT max(book_id) FROM books", nativeQuery = true)
+    int searchInfinityCountMaxNum();
 
     // 검색 기능   ========================================(개선의 여지 있음)====================================
 

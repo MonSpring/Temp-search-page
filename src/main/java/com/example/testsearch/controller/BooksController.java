@@ -2,12 +2,9 @@ package com.example.testsearch.controller;
 
 import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
-import com.example.testsearch.dto.BookInfiniteResDto;
+import com.example.testsearch.dto.*;
 import com.example.testsearch.repository.BookRepository;
-import com.example.testsearch.dto.BookResTestDto;
 import com.example.testsearch.service.BookService;
-import com.example.testsearch.dto.Pagination;
-import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -260,19 +257,19 @@ public class BooksController extends HttpServlet {
     @GetMapping("/search")
     public String search() {
         callCount = 0;
-        lastIdChange = 0;
+        lastIdChange = bookService.searchInfinityCount();
         return "search";
     }
 
     @PostMapping("/infinitescroll")
     public ResponseEntity getInfiniteBooksList() {
-        List<BookInfiniteResDto> bookInfiniteResDtoList;
+        List<BookInfiniteRepoResDto> bookInfiniteResDtoList;
         int limitSize = 30;
         if (callCount == 0) {
             bookInfiniteResDtoList = bookService.getInfiniteBooksList(lastIdChange, limitSize);
             callCount += 1;
         } else {
-            lastIdChange += limitSize;
+            lastIdChange -= limitSize;
             bookInfiniteResDtoList = bookService.getInfiniteBooksList(lastIdChange, limitSize);
             callCount += 1;
         }

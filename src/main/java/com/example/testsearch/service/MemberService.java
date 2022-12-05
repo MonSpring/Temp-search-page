@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -84,9 +85,12 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public ResponseEntity<?> loginAccount(LoginReqDto loginReqDto, HttpServletRequest request) {
 
-        Member member = memberRepository.findByUsername(loginReqDto.getUsername()).orElseThrow(()->new RuntimeException("존재하지 않는 유저입니다"));
+        Member member;
 
-        if (member == null) {
+        if (memberRepository.existsByUsername(loginReqDto.getUsername())) {
+            Optional<Member> memberOptinal = memberRepository.findByUsername(loginReqDto.getUsername());
+            member = memberOptinal.get();
+        } else {
             return new ResponseEntity<>(ResponseDto.fail("유저 정보를 찾을 수 없습니다"), HttpStatus.NOT_FOUND);
         }
 

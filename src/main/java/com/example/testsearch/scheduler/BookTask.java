@@ -237,7 +237,7 @@ public class BookTask {
             }
         }
         int batchSize = 1000;
-        String sql = "INSERT INTO book_details  (description , isbn , thumbnail) values (?,?,?)";
+        String sql = "INSERT INTO book_details (description , isbn , thumbnail) values (?,?,?)";
         jdbcTemplate.batchUpdate(sql,bookDetails,batchSize, ((ps, arg) -> {
             ps.setString(1, arg.getDescription());
             ps.setLong(2, arg.getIsbn());

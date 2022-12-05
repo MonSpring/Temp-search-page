@@ -9,13 +9,13 @@ const TABLE_ELE = document.querySelector(".getAllSearch");
 const drawList = (DATA) => {
     let listHtml = "";
     DATA.forEach((item) => {
-        const { id, title, author, publisher, bookCount, isbn } = item;
+        const { book_id, title, author, publisher, book_count, isbn } = item;
         const TR_ELE = document.createElement('tr');
-        listHtml = `<td>${id}</td>
+        listHtml = `<td>${book_id}</td>
         <td>${title}</td>
         <td>${author}</td>
         <td>${publisher}</td>
-        <td>${bookCount}</td>
+        <td>${book_count}</td>
         <td>${isbn}</td>`;
 
         // if (index === DATA.length - 1) {
