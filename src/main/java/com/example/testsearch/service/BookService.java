@@ -1,15 +1,11 @@
 package com.example.testsearch.service;
 
 import com.example.testsearch.customAnnotation.LogExecutionTime;
-import com.example.testsearch.dto.BookDetailResDto;
-import com.example.testsearch.dto.BookInfiniteResDto;
-import com.example.testsearch.dto.BookResTestDto;
-import com.example.testsearch.dto.Pagination;
-import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
-import com.example.testsearch.dto.Pagination;
+import com.example.testsearch.dto.*;
 import com.example.testsearch.entity.BookDetails;
 import com.example.testsearch.entity.Books;
 import com.example.testsearch.repository.BookDetailRepository;
+import com.example.testsearch.repository.BookRentalRepository;
 import com.example.testsearch.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +27,8 @@ public class BookService {
     private final BookRepository bookRepository;
 
     private final BookDetailRepository bookDetailRepository;
+
+    private final BookRentalRepository bookRentalRepository;
 
     // 1630만개 끌고오기
     public List<BookResTestDto> getAll() {
@@ -244,10 +242,11 @@ public class BookService {
 
         Books book = bookRepository.findById(bookId).orElseThrow();
 
-        return BookDetailResDto.builder()
-                .bookDetails(bookDetail)
-                .books(book)
-                .build();
+        Long rentalBook = bookRentalRepository.countByBook(book);
+
+        Long bookCount = Long.parseLong(book.getBookCount()) - rentalBook;
+
+        return new BookDetailResDto(bookDetail, book, bookCount);
     }
 
     public List<BookInfiniteResDto> getInfiniteBooksList(int lastId, int limitSize) {

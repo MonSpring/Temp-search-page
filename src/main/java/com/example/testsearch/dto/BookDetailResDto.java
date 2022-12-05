@@ -12,22 +12,21 @@ public class BookDetailResDto {
 
     private Long id;
     private String title;
-
     private String author;
     private String description;
     private String thumbnail;
     private Long isbn;
-    private String bookCount;
+    private Long bookCount;
 
     @Builder
-    public BookDetailResDto(Books books, BookDetails bookDetails) {
+    public BookDetailResDto(BookDetails bookDetails, Books books, Long bookCount) {
         this.id = books.getId();
         this.title = books.getTitle();
         this.author = books.getAuthor();
         this.description = bookDetails.getDescription();
         this.thumbnail = bookDetails.getThumbnail();
         this.isbn = books.getIsbn();
-        this.bookCount = books.getBookCount();
+        this.bookCount = bookCount;
     }
 
 }
