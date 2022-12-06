@@ -36,7 +36,7 @@
             <input type="text" name="bookCount" id="bookCount" class="form-control" th:value="${data.bookCount}" readonly/>
         </div>
         <div class="form-group">
-            <!--<a href="#" th:href="@{/books/{id}/rental (id=${data.id})}" class="btn btn-primary" role="button">대여예약</a>-->
+            <a href="#" th:href="@{/books/{id}/rental (id=${data.id})}" class="btn btn-primary" role="button">대여예약</a>
             <a href="javascript:history.back();" class="btn btn-secondary" role="button">뒤로가기</a>
         </div>
     </form>

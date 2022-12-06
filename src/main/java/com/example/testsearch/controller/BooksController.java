@@ -1,11 +1,14 @@
 package com.example.testsearch.controller;
 
+import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
-import com.example.testsearch.dto.*;
+import com.example.testsearch.dto.BookInfiniteRepoResDto;
+import com.example.testsearch.dto.BookResTestDto;
+import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
+import com.example.testsearch.dto.Pagination;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.service.BookService;
-import com.example.testsearch.customAnnotation.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -13,13 +16,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
@@ -62,6 +67,7 @@ public class BooksController extends HttpServlet {
 
         model.addAttribute("data2", bookService.searchPageable(page, size, orderBy, isAsc));
         model.addAttribute("pagination", pagination);
+
         return "pageable";
     }
 
@@ -258,6 +264,7 @@ public class BooksController extends HttpServlet {
     public String search() {
         callCount = 0;
         lastIdChange = bookService.searchInfinityCount();
+
         return "search";
     }
 

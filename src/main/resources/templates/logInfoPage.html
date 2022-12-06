@@ -42,13 +42,16 @@
     </style>
 
     <script>
-
+        function logout(){
+            document.cookie = 'username=; expires=Thu, 01 Jan 1999 00:00:10 GMT;domain=localhost;path=/;'
+            location.href = "/user/login"
+        }
     </script>
 
 </head>
 <body>
 <div class="wrap">
-    <form class="go-home" action="/user/login" method="get"><button input="submit">로그인 페이지</button></form>
+    <button type="button" class="btn btn-dark" onclick="logout();">로그아웃</button>
     <a th:if="${startDatetime}" class="btn btn-success pd-l" th:href="@{/log/excel?startDatetime={startDatetime}&endDatetime={endDatetime} (startDatetime = ${startDatetime}, endDatetime = ${endDatetime})}">
         <span>로그인 정보 Excel 다운로드</span>
     </a>

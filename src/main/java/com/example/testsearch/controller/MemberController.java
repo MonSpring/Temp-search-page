@@ -1,8 +1,8 @@
 package com.example.testsearch.controller;
 
+import com.example.testsearch.dto.LoginReqDto;
 import com.example.testsearch.oauth.KakaoUserService;
 import com.example.testsearch.oauth.SignupRequestDto;
-import com.example.testsearch.dto.*;
 import com.example.testsearch.service.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,6 +30,18 @@ public class MemberController {
     // 회원 로그인 페이지
     @GetMapping("/login")
     public String login() {
+
+        // spring 쿠키 삭제
+        /*
+        HttpServletRequest request, HttpServletResponse response
+        for (Cookie cookie : request.getCookies()) {
+            if(cookie.getName().equals("username")){
+                cookie.setMaxAge(0);
+                response.addCookie(cookie);
+            }
+        }
+        */
+
         return "login";
     }
 
@@ -34,8 +49,17 @@ public class MemberController {
     @PostMapping("/login")
     public String loginProc(LoginReqDto loginReqDto, Model model, HttpServletRequest request) {
         ResponseEntity<?> responseEntity = memberService.loginAccount(loginReqDto, request);
-        model.addAttribute(responseEntity);
-        return "redirect:/search";
+
+        // username 쿠키 1시간
+        /*
+        Cookie cookie = new Cookie("username",loginReqDto.getUsername());
+        cookie.setMaxAge(3600);
+        response.addCookie(cookie);
+        */
+
+        model.addAttribute("username", loginReqDto.getUsername());
+
+        return "/search";
     }
 
     // 회원 가입 페이지
