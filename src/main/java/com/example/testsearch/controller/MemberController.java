@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,15 +48,14 @@ public class MemberController {
 
     // 로그인 요청 처리
     @PostMapping("/login")
-    public String loginProc(LoginReqDto loginReqDto, Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String loginProc(LoginReqDto loginReqDto, HttpServletRequest request, HttpServletResponse response) {
         ResponseEntity<?> responseEntity = memberService.loginAccount(loginReqDto, request);
 
         // username 쿠키 1시간
         Cookie cookie = new Cookie("username",loginReqDto.getUsername());
         cookie.setMaxAge(3600);
+        cookie.setPath("/");
         response.addCookie(cookie);
-
-        model.addAttribute("username", loginReqDto.getUsername());
 
         return "redirect:/search";
     }

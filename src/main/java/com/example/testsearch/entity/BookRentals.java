@@ -5,12 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Getter
 @Entity
 @NoArgsConstructor
-public class BookRentals {
+public class BookRentals extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,14 +24,10 @@ public class BookRentals {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column
-    private Date rentalDate;
-
     @Builder
-    public BookRentals(Books book, Member member, Date rentalDate, Date returnDate) {
+    public BookRentals(Books book, Member member) {
 
         this.book = book;
         this.member = member;
-        this.rentalDate = rentalDate;
     }
 }
