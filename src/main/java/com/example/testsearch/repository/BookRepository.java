@@ -1,7 +1,6 @@
 package com.example.testsearch.repository;
 
 import com.example.testsearch.dto.BookInfiniteRepoResDto;
-import com.example.testsearch.dto.BookInfiniteResDto;
 import com.example.testsearch.entity.Books;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -116,4 +115,7 @@ public interface BookRepository extends JpaRepository<Books, Long>, BookReposito
 
     @Query(value = "SELECT * FROM books WHERE MATCH(Publisher) AGAINST(:word in natural language mode)", nativeQuery = true)
     List<Books> publisherNatureForExcel(@Param("word") String word);
+
+    @Query(value = "SELECT b.isbn FROM Books b WHERE b.id=:bookId")
+    Long isbnFindById(Long bookId);
 }

@@ -17,9 +17,10 @@ public class BookDetailResDto {
     private String thumbnail;
     private Long isbn;
     private Long bookCount;
+    private boolean record;
 
     @Builder
-    public BookDetailResDto(BookDetails bookDetails, Books books, Long bookCount) {
+    public BookDetailResDto(BookDetails bookDetails, Books books, Long bookCount, boolean record) {
         this.id = books.getId();
         this.title = books.getTitle();
         this.author = books.getAuthor();
@@ -27,6 +28,17 @@ public class BookDetailResDto {
         this.thumbnail = bookDetails.getThumbnail();
         this.isbn = books.getIsbn();
         this.bookCount = bookCount;
+        this.record = record;
+    }
+
+    @Builder
+    public BookDetailResDto(Books books, Long bookCount, boolean record) {
+        this.id = books.getId();
+        this.title = books.getTitle();
+        this.author = books.getAuthor();
+        this.isbn = books.getIsbn();
+        this.bookCount = bookCount;
+        this.record = record;
     }
 
 }

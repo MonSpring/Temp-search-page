@@ -28,16 +28,11 @@ public class BookRentals {
     @Column
     private Date rentalDate;
 
-    @Column
-    private Date returnDate;
-
     @Builder
-    public BookRentals(Long id, Books book, Member member, Date rentalDate, Date returnDate) {
+    public BookRentals(Books book, Member member, Date rentalDate, Date returnDate) {
 
-        this.id = id;
         this.book = book;
         this.member = member;
         this.rentalDate = rentalDate;
-        this.returnDate = returnDate;
     }
 }

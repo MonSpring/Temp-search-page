@@ -2,12 +2,14 @@ package com.example.testsearch.service;
 
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.dto.*;
-import com.example.testsearch.dto.Pagination;
 import com.example.testsearch.entity.BookDetails;
+import com.example.testsearch.entity.BookRentals;
 import com.example.testsearch.entity.Books;
+import com.example.testsearch.entity.Member;
 import com.example.testsearch.repository.BookDetailRepository;
 import com.example.testsearch.repository.BookRentalRepository;
 import com.example.testsearch.repository.BookRepository;
+import com.example.testsearch.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,6 +32,8 @@ public class BookService {
     private final BookDetailRepository bookDetailRepository;
 
     private final BookRentalRepository bookRentalRepository;
+
+    private final MemberRepository memberRepository;
 
     // 1630만개 끌고오기
     public List<BookResTestDto> getAll() {
@@ -238,17 +242,61 @@ public class BookService {
         return bookResTestDtoList;
     }
 
-    public BookDetailResDto searchDetail(Long bookId, Long isbn) {
-        BookDetails bookDetail = bookDetailRepository.findByIsbn(isbn);
+    public BookDetailResDto searchDetail(Long bookId, Long isbn, String username) {
 
         Books book = bookRepository.findById(bookId).orElseThrow();
+
+        Member member = memberRepository.findByUsername(username).orElseThrow();
 
         Long rentalBook = bookRentalRepository.countByBook(book);
 
         Long bookCount = Long.parseLong(book.getBookCount()) - rentalBook;
 
-        return new BookDetailResDto(bookDetail, book, bookCount);
+        boolean record = bookRentalRepository.existsByBookAndMember(book, member);
+
+        log.info("record : " + record);
+
+        if(bookDetailRepository.existsByIsbn(isbn)){
+            BookDetails bookDetail = bookDetailRepository.findByIsbn(isbn);
+            return new BookDetailResDto(bookDetail, book, bookCount, record);
+        }
+        return new BookDetailResDto(book, bookCount, record);
     }
+
+    public int rentalBook(Long bookId, String username) {
+
+        Books book = bookRepository.findById(bookId).orElseThrow();
+
+        Member member = memberRepository.findByUsername(username).orElseThrow();
+
+        Long rentalBook = bookRentalRepository.countByBook(book);
+
+        Long bookCount = Long.parseLong(book.getBookCount()) - rentalBook;
+
+        if (bookRentalRepository.existsByBookAndMember(book, member)) {
+            bookRentalRepository.deleteByBookAndMember(book, member);
+            return 1;
+        }
+
+        if(bookCount > 0) {
+
+            BookRentals bookRental = BookRentals.builder()
+                    .book(book)
+                    .member(member)
+                    .build();
+
+            bookRentalRepository.save(bookRental);
+
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public Long findIsbn(Long bookId) {
+        return bookRepository.isbnFindById(bookId);
+    }
+
 
     public List<BookInfiniteRepoResDto> getInfiniteBooksList(int lastId, int limitSize) {
         return bookRepository.searchBookListForInfinityScroll(lastId, limitSize);
@@ -257,4 +305,5 @@ public class BookService {
     public int searchInfinityCount() {
         return bookRepository.searchInfinityCountMaxNum();
     }
+
 }

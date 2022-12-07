@@ -251,12 +251,50 @@ public class BooksController extends HttpServlet {
 
     @GetMapping("/books/{id}/detail/{isbn}")
     public String detailModal(Model model,
-                              @PathVariable(name = "id") Long bookId,
-                              @PathVariable(name = "isbn") Long isbn){
+                              @PathVariable(name="id")Long bookId,
+                              @PathVariable(name="isbn")Long isbn,
+                              HttpServletRequest request){
 
-        model.addAttribute("data", bookService.searchDetail(bookId, isbn));
+        String username = null;
+
+        model.addAttribute("countPost", -1);
+
+        for (Cookie cookie : request.getCookies()) {
+            if(cookie.getName().equals("username")){
+                username = cookie.getValue();
+            }
+
+            if(cookie.getName().equals("countPost")){
+                model.addAttribute("countPost", Integer.parseInt(cookie.getValue()));
+            }
+        }
+
+        model.addAttribute("data", bookService.searchDetail(bookId, isbn, username));
 
         return "bookDetail";
+    }
+
+    @PostMapping("/books/{id}/rental")
+    public String borrowBooks(Model model,
+                              @PathVariable(name="id")Long bookId,
+                              HttpServletRequest request){
+
+        String username = null;
+
+        for (Cookie cookie : request.getCookies()) {
+            if(cookie.getName().equals("username")){
+                username = cookie.getValue();
+            }
+        }
+
+        int successCode = bookService.rentalBook(bookId, username);
+
+        Long isbn = bookService.findIsbn(bookId);
+
+        model.addAttribute("code", successCode);
+        model.addAttribute("data", bookService.searchDetail(bookId, isbn, username));
+
+        return "redirect:/books/" + bookId + "/detail/" + isbn;
     }
 
     // 무한 스크롤 서치 페이지
