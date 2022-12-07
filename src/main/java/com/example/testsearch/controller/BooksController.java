@@ -299,9 +299,15 @@ public class BooksController extends HttpServlet {
 
     // 무한 스크롤 서치 페이지
     @GetMapping("/search")
-    public String search() {
+    public String search(HttpServletRequest request, Model model) {
         callCount = 0;
         lastIdChange = bookService.searchInfinityCount();
+
+        for (Cookie cookie : request.getCookies()) {
+            if(cookie.getName().equals("username")){
+                model.addAttribute("username", cookie.getValue());
+            }
+        }
 
         return "search";
     }

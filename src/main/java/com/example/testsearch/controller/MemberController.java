@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @Controller
@@ -47,19 +49,17 @@ public class MemberController {
 
     // 로그인 요청 처리
     @PostMapping("/login")
-    public String loginProc(LoginReqDto loginReqDto, Model model, HttpServletRequest request) {
+    public String loginProc(LoginReqDto loginReqDto, Model model, HttpServletRequest request, HttpServletResponse response) {
         ResponseEntity<?> responseEntity = memberService.loginAccount(loginReqDto, request);
 
         // username 쿠키 1시간
-        /*
         Cookie cookie = new Cookie("username",loginReqDto.getUsername());
         cookie.setMaxAge(3600);
         response.addCookie(cookie);
-        */
 
         model.addAttribute("username", loginReqDto.getUsername());
 
-        return "/search";
+        return "redirect:/search";
     }
 
     // 회원 가입 페이지
