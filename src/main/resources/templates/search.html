@@ -63,7 +63,54 @@
     .infinite-h1 {
       line-height: 1.045;
     }
+
+    .myBox {
+      border: none;
+      padding: 5px;
+      font: 24px/36px sans-serif;
+      width: 70%;
+      height: 200px;
+      overflow: scroll;
+    }
+    ::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      border: 1px solid yellowgreen;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: black;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #88ba1c;
+    }
+
   </style>
+  <script>
+    const eventSource = new EventSource(`/api/subscribe?id=${Math.random()}`);
+
+    eventSource.onopen = (e) => {
+      console.log(e);
+    };
+
+    eventSource.onerror = (e) => {
+      console.log(e);
+    };
+
+    eventSource.onmessage = (e) => {
+      document.querySelector("#messages").appendChild(document.createTextNode(e.data + "\n"));
+    };
+
+    document.querySelector("#send").addEventListener("click", () => {
+      fetch(`/api/publish?message=${document.querySelector("#input").value}`);
+    });
+  </script>
 </head>
 
 <body>
@@ -142,7 +189,12 @@
         </form>
       </div>
     </div>
+
+    <div class="myBox"><pre id="messages"></pre></div>
+
   </div>
+
+  <div id="messages" style="height:100px;width:140px;overflow:auto;background-color:white;color:black;scrollbar-base-color:gold;font-family:sans-serif;padding:10px;"></div>
 
   <table class="table table-striped">
     <thead>

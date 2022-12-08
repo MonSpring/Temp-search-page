@@ -1,5 +1,6 @@
 package com.example.testsearch.service;
 
+import com.example.testsearch.controller.SseController;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.dto.*;
 import com.example.testsearch.entity.BookDetails;
@@ -34,6 +35,8 @@ public class BookService {
     private final BookRentalRepository bookRentalRepository;
 
     private final MemberRepository memberRepository;
+
+    private final SseController sseController;
 
     // 1630만개 끌고오기
     public List<BookResTestDto> getAll() {
@@ -285,6 +288,11 @@ public class BookService {
                     .member(member)
                     .build();
 
+            StringBuilder sb = new StringBuilder();
+            sb.append(book.getTitle()).append(member.getUsername()+"님이 대여하셨습니다.");
+
+            sseController.publish(String.valueOf(sb));
+
             bookRentalRepository.save(bookRental);
 
             return 1;
@@ -296,7 +304,6 @@ public class BookService {
     public Long findIsbn(Long bookId) {
         return bookRepository.isbnFindById(bookId);
     }
-
 
     public List<BookInfiniteRepoResDto> getInfiniteBooksList(int lastId, int limitSize) {
         return bookRepository.searchBookListForInfinityScroll(lastId, limitSize);
