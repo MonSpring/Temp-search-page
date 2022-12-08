@@ -257,8 +257,6 @@ public class BookService {
 
         boolean record = bookRentalRepository.existsByBookAndMember(book, member);
 
-        log.info("record : " + record);
-
         if(bookDetailRepository.existsByIsbn(isbn)){
             BookDetails bookDetail = bookDetailRepository.findByIsbn(isbn);
             return new BookDetailResDto(bookDetail, book, bookCount, record);
@@ -266,6 +264,7 @@ public class BookService {
         return new BookDetailResDto(book, bookCount, record);
     }
 
+    @Transactional
     public int rentalBook(Long bookId, String username) {
 
         Books book = bookRepository.findById(bookId).orElseThrow();
@@ -277,6 +276,12 @@ public class BookService {
         Long bookCount = Long.parseLong(book.getBookCount()) - rentalBook;
 
         if (bookRentalRepository.existsByBookAndMember(book, member)) {
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("반납 안내 : ").append(book.getTitle()).append("도서를 ").append(member.getUsername()).append("님이 반납하셨습니다.");
+
+            sseController.publish(String.valueOf(sb));
+
             bookRentalRepository.deleteByBookAndMember(book, member);
             return 1;
         }
@@ -289,7 +294,7 @@ public class BookService {
                     .build();
 
             StringBuilder sb = new StringBuilder();
-            sb.append(book.getTitle()).append("도서를 ").append(member.getUsername()).append("님이 대여하셨습니다.");
+            sb.append("대여 안내 : ").append(book.getTitle()).append("도서를 ").append(member.getUsername()).append("님이 대여하셨습니다.");
 
             sseController.publish(String.valueOf(sb));
 
