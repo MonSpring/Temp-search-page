@@ -15,6 +15,14 @@
       margin: 0 auto;
     }
 
+    .input-group {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      width: 76% !important;
+    }
+
     /* Bootstrap 4 text input with search icon */
 
     .has-search .form-control {
@@ -66,11 +74,14 @@
 
     .myBox {
       border: none;
-      padding: 5px;
       font: 24px/36px sans-serif;
       width: 70%;
       height: 200px;
       overflow: scroll;
+      margin-top: 25px;
+    }
+    .myBox h2 {
+      text-align: center;
     }
     ::-webkit-scrollbar {
       width: 12px;
@@ -190,7 +201,7 @@
       </div>
     </div>
 
-    <div class="myBox"><pre id="messages"></pre></div>
+    <div class="myBox"><h2>실시간 알림 메세지</h2><pre id="messages"></pre></div>
 
   </div>
 

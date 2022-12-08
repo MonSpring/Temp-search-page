@@ -289,7 +289,7 @@ public class BookService {
                     .build();
 
             StringBuilder sb = new StringBuilder();
-            sb.append(book.getTitle()).append(member.getUsername()+"님이 대여하셨습니다.");
+            sb.append(book.getTitle()).append("도서를 ").append(member.getUsername()).append("님이 대여하셨습니다.");
 
             sseController.publish(String.valueOf(sb));
 
