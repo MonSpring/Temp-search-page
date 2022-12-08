@@ -32,17 +32,6 @@ public class MemberController {
     @GetMapping("/login")
     public String login() {
 
-        // spring 쿠키 삭제
-        /*
-        HttpServletRequest request, HttpServletResponse response
-        for (Cookie cookie : request.getCookies()) {
-            if(cookie.getName().equals("username")){
-                cookie.setMaxAge(0);
-                response.addCookie(cookie);
-            }
-        }
-        */
-
         return "login";
     }
 
@@ -75,8 +64,9 @@ public class MemberController {
 
     // 카카오 로그인
     @GetMapping("/kakao/callback")
-    public String kakaoLogin(@RequestParam String code) throws JsonProcessingException {
+    public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         kakaoUserService.kakaoLogin(code);
+        kakaoUserService.setCookie(response);
         return "redirect:/search";
     }
 

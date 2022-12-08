@@ -22,6 +22,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @Service
@@ -31,6 +33,8 @@ public class KakaoUserService {
 
     @Value("#{environment['kakao.Key']}")
     private String key;
+
+    private String nickname = "";
 
     @Autowired
     public KakaoUserService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
@@ -103,12 +107,13 @@ public class KakaoUserService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long id = jsonNode.get("id").asLong();
-        String nickname = jsonNode.get("properties")
+        nickname = jsonNode.get("properties")
                 .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
 
         System.out.println("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
+
         return new KakaoUserInfoDto(id, nickname, email);
     }
 
@@ -151,5 +156,12 @@ public class KakaoUserService {
         MemberDetails memberDetails = new MemberDetails(kakaoMember);
         Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetails, null, memberDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    public void setCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("username",nickname);
+        cookie.setMaxAge(3600);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }
