@@ -109,6 +109,37 @@
       </div>
     </div>
 
+    <div class="input-group">
+      <div class="input-group-append">
+        <h1>ElasticSearch 검색</h1>
+        <form class="pager" method="get" action="/elasticsearch">
+          <select name="field" class="form-select" aria-label="Default select example">
+            <option value="title" selected>제목</option>
+            <option value="author">작가</option>
+            <option value="publisher">출판사</option>
+            <option value="isbn">ISBN</option>
+          </select>
+          <div class="search-detail">
+            <tr>
+              <th>검색 상세설정 : </th>
+              <td class="text-align-left text-indent text-strong text-orange" colspan="3">
+                <input type="radio" name="mode" value="boolean mode" id="rd_1"><label for="rd_1">&nbsp정확도순</label>
+                <input type="radio" name="mode" value="natural language mode" id="rd_2" checked><label for="rd_2">&nbsp연관성순</label>
+              </td>
+            </tr>
+          </div>
+          <div class="search-box">
+            <input type="text" id="search_word" class="form-control" placeholder="Search this blog" name="word">
+            <button class="btn btn-secondary" type="submit">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
 
     <div class="input-group">
       <div class="input-group-append">
@@ -147,6 +178,7 @@
 
           <div class="stop-watch mt2" th:if="${nanos}>0" th:text=" '걸린 시간 (ms) : ' + ${mills} + ' 밀리초'"></div>
           <div class="stop-watch mt2" th:if="${nanos}>0" th:text=" '걸린 시간 (ns) : ' + ${nanos} + ' 나노초'"></div>
+          <div class="stop-watch" th:if="${nanos}>0" th:text=" '검색 결과 (rows) : ' + ${pagination.totalListCnt} + ' 개'"></div>
         </form>
       </div>
     </div>

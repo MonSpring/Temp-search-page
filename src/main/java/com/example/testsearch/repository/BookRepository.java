@@ -21,50 +21,49 @@ public interface BookRepository extends JpaRepository<Books, Long>, BookReposito
     @Query(value = "SELECT max(book_id) FROM books", nativeQuery = true)
     int searchInfinityCountMaxNum();
 
-    // 검색 기능   ========================================(개선의 여지 있음)====================================
-
+    // 검색 기능
     // Title
-    @Query(value = "SELECT * FROM books WHERE MATCH(title) AGAINST(:word in boolean mode) LIMIT :size OFFSET :page", nativeQuery = true)
-    List<Books> searchTitleFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
+    @Query(value = "SELECT book_id, title, author, publisher, book_count, isbn FROM books WHERE MATCH(title) AGAINST(:word in boolean mode) ORDER BY book_id DESC LIMIT :size OFFSET :page", nativeQuery = true)
+    List<BookInfiniteRepoResDto> searchTitleFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
 
     @Query(value = "SELECT count(1) FROM books WHERE MATCH(title) AGAINST(:word in boolean mode)", nativeQuery = true)
     int searchTitleFullTextCount(@Param("word") String word);
 
-    @Query(value = "SELECT * FROM books WHERE MATCH(title) AGAINST(:word in natural language mode) LIMIT :size OFFSET :page", nativeQuery = true)
-    List<Books> searchNativeTitleFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
+    @Query(value = "SELECT book_id, title, author, publisher, book_count, isbn FROM books WHERE MATCH(title) AGAINST(:word in natural language mode) ORDER BY book_id DESC LIMIT :size OFFSET :page", nativeQuery = true)
+    List<BookInfiniteRepoResDto> searchNativeTitleFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
 
     @Query(value = "SELECT count(1) FROM books WHERE MATCH(title) AGAINST(:word in natural language mode)", nativeQuery = true)
     int searchNativeTitleFullTextCount(@Param("word") String word);
 
     // Author
-    @Query(value = "SELECT * FROM books WHERE MATCH(author) AGAINST(:word in boolean mode) LIMIT :size OFFSET :page", nativeQuery = true)
-    List<Books> searchAuthorFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
+    @Query(value = "SELECT book_id, title, author, publisher, book_count, isbn FROM books WHERE MATCH(author) AGAINST(:word in boolean mode) ORDER BY book_id DESC LIMIT :size OFFSET :page", nativeQuery = true)
+    List<BookInfiniteRepoResDto> searchAuthorFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
 
     @Query(value = "SELECT count(1) FROM books WHERE MATCH(author) AGAINST(:word in boolean mode)", nativeQuery = true)
     int searchAuthorFullTextCount(@Param("word") String word);
 
-    @Query(value = "SELECT * FROM books WHERE MATCH(author) AGAINST(:word in natural language mode) LIMIT :size OFFSET :page", nativeQuery = true)
-    List<Books> searchNativeAuthorFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
+    @Query(value = "SELECT book_id, title, author, publisher, book_count, isbn FROM books WHERE MATCH(author) AGAINST(:word in natural language mode) ORDER BY book_id DESC LIMIT :size OFFSET :page", nativeQuery = true)
+    List<BookInfiniteRepoResDto> searchNativeAuthorFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
 
     @Query(value = "SELECT count(1) FROM books WHERE MATCH(author) AGAINST(:word in natural language mode)", nativeQuery = true)
     int searchNativeAuthorFullTextCount(@Param("word") String word);
 
     // Publisher
-    @Query(value = "SELECT * FROM books WHERE MATCH(Publisher) AGAINST(:word in boolean mode) LIMIT :size OFFSET :page", nativeQuery = true)
-    List<Books> searchPublisherFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
+    @Query(value = "SELECT book_id, title, author, publisher, book_count, isbn FROM books WHERE MATCH(Publisher) AGAINST(:word in boolean mode) ORDER BY book_id DESC LIMIT :size OFFSET :page", nativeQuery = true)
+    List<BookInfiniteRepoResDto> searchPublisherFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
 
     @Query(value = "SELECT count(1) FROM books WHERE MATCH(Publisher) AGAINST(:word in boolean mode)", nativeQuery = true)
     int searchPublisherFullTextCount(@Param("word") String word);
 
-    @Query(value = "SELECT * FROM books WHERE MATCH(Publisher) AGAINST(:word in natural language mode) LIMIT :size OFFSET :page", nativeQuery = true)
-    List<Books> searchNativePublisherFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
+    @Query(value = "SELECT book_id, title, author, publisher, book_count, isbn FROM books WHERE MATCH(Publisher) AGAINST(:word in natural language mode) ORDER BY book_id DESC LIMIT :size OFFSET :page", nativeQuery = true)
+    List<BookInfiniteRepoResDto> searchNativePublisherFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
 
     @Query(value = "SELECT count(1) FROM books WHERE MATCH(Publisher) AGAINST(:word in natural language mode)", nativeQuery = true)
     int searchNativePublisherFullTextCount(@Param("word") String word);
 
     // isbn
-    @Query(value = "SELECT * FROM books WHERE isbn=:word LIMIT :size OFFSET :page", nativeQuery = true)
-    List<Books> searchIsbn(@Param("word") String word, @Param("size") int size, @Param("page") int page);
+    @Query(value = "SELECT book_id, title, author, publisher, book_count, isbn FROM books WHERE isbn=:word ORDER BY book_id DESC LIMIT :size OFFSET :page", nativeQuery = true)
+    List<BookInfiniteRepoResDto> searchIsbn(@Param("word") String word, @Param("size") int size, @Param("page") int page);
 
     @Query(value = "SELECT count(1) FROM books WHERE isbn=:word ", nativeQuery = true)
     int searchIsbnTextCount(@Param("word") String word);
@@ -118,4 +117,5 @@ public interface BookRepository extends JpaRepository<Books, Long>, BookReposito
 
     @Query(value = "SELECT b.isbn FROM Books b WHERE b.id=:bookId")
     Long isbnFindById(Long bookId);
+
 }

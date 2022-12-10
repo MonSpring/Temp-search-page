@@ -1,25 +1,27 @@
-package com.example.testsearch.dto;
+package com.example.testsearch.controller;
 
 import com.example.testsearch.customAnnotation.StopWatchTable;
+import com.example.testsearch.dto.Pagination;
+import com.example.testsearch.service.ElasticBooksResDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.poi.ss.formula.functions.T;
 
 import java.util.List;
 
-@Getter @Setter
-public class ListBookResTestDtoAndPagination {
+@Getter
+@Setter
+public class ListElasticBookResTestDtoAndPagination {
 
-    private List<?> bookResTestDtoList;
+    private List<ElasticBooksResDto> elasticBooksResDtoList;
     private Pagination pagination;
     private String method;
     private Long mills;
     private Long nanos;
 
     @Builder
-    public ListBookResTestDtoAndPagination(List<?> bookResTestDtoList, Pagination pagination) {
-        this.bookResTestDtoList = bookResTestDtoList;
+    public ListElasticBookResTestDtoAndPagination(List<ElasticBooksResDto> elasticBooksResDtoList, Pagination pagination) {
+        this.elasticBooksResDtoList = elasticBooksResDtoList;
         this.pagination = pagination;
     }
 

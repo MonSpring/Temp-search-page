@@ -7,8 +7,10 @@ import com.example.testsearch.dto.BookInfiniteRepoResDto;
 import com.example.testsearch.dto.BookResTestDto;
 import com.example.testsearch.dto.ListBookResTestDtoAndPagination;
 import com.example.testsearch.dto.Pagination;
+import com.example.testsearch.entity.ElasticBooks;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.service.BookService;
+import com.example.testsearch.service.ElasticBooksResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -16,13 +18,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.*;
 import javax.transaction.Transactional;
@@ -71,7 +72,7 @@ public class BooksController extends HttpServlet {
         return "pageable";
     }
 
-    // JPQL 검색
+    // nativeQuery 검색
     @GetMapping("/searchJpql")
     public String jpqlSearch(Model model,
                              @RequestParam String word,
@@ -325,5 +326,35 @@ public class BooksController extends HttpServlet {
             callCount += 1;
         }
         return ResponseEntity.ok().body(bookInfiniteResDtoList);
+    }
+
+    // ElasticSearch 검색
+    @GetMapping("/elasticsearch")
+    public String elasticSearch(Model model,
+                                                  @RequestParam String word,
+                                                  @RequestParam(defaultValue = "1", name = "page") int page,
+                                                  @RequestParam(defaultValue = "10", name = "size") int size,
+                                                  @RequestParam String field,
+                                                  @RequestParam String mode) {
+
+        ListElasticBookResTestDtoAndPagination listElasticBookResTestDtoAndPagination = bookService.getElasticBooksSearch(word, size, page, field, mode);
+
+        // 검색 리스트 가져오는 용도
+        model.addAttribute("data7", listElasticBookResTestDtoAndPagination.getElasticBooksResDtoList());
+
+        // page 버튼 뿌려주는 용도
+        model.addAttribute("pagination", listElasticBookResTestDtoAndPagination.getPagination());
+        model.addAttribute("word", word);
+        model.addAttribute("field", field);
+        model.addAttribute("mode", mode);
+
+        // 메소드 검색 시간 체크 프론트에 뿌려주는 용도
+        StopWatchTable stopWatchTable = stopWatchRepository.findTopByOrderByIdDesc();
+        listElasticBookResTestDtoAndPagination.updateStopWatch(stopWatchTable);
+        model.addAttribute("method", listElasticBookResTestDtoAndPagination.getMethod());
+        model.addAttribute("mills", listElasticBookResTestDtoAndPagination.getMills());
+        model.addAttribute("nanos", listElasticBookResTestDtoAndPagination.getNanos());
+
+        return "elasticsearch";
     }
 }

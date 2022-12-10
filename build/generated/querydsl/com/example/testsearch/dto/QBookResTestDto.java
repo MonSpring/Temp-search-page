@@ -13,8 +13,8 @@ public class QBookResTestDto extends ConstructorExpression<BookResTestDto> {
 
     private static final long serialVersionUID = 1650248840L;
 
-    public QBookResTestDto(com.querydsl.core.types.Expression<Long> id, com.querydsl.core.types.Expression<String> title, com.querydsl.core.types.Expression<String> author, com.querydsl.core.types.Expression<String> publisher, com.querydsl.core.types.Expression<? extends java.util.Date> publicationYear, com.querydsl.core.types.Expression<Long> isbn, com.querydsl.core.types.Expression<? extends java.util.Date> regDate, com.querydsl.core.types.Expression<Long> libcode, com.querydsl.core.types.Expression<String> bookCount) {
-        super(BookResTestDto.class, new Class<?>[]{long.class, String.class, String.class, String.class, java.util.Date.class, long.class, java.util.Date.class, long.class, String.class}, id, title, author, publisher, publicationYear, isbn, regDate, libcode, bookCount);
+    public QBookResTestDto(com.querydsl.core.types.Expression<Long> id, com.querydsl.core.types.Expression<String> title, com.querydsl.core.types.Expression<String> author, com.querydsl.core.types.Expression<String> publisher, com.querydsl.core.types.Expression<Long> isbn, com.querydsl.core.types.Expression<String> bookCount) {
+        super(BookResTestDto.class, new Class<?>[]{long.class, String.class, String.class, String.class, long.class, String.class}, id, title, author, publisher, isbn, bookCount);
     }
 
 }

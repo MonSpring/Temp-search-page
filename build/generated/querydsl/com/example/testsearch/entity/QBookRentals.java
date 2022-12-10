@@ -22,15 +22,19 @@ public class QBookRentals extends EntityPathBase<BookRentals> {
 
     public static final QBookRentals bookRentals = new QBookRentals("bookRentals");
 
+    public final QTimestamped _super = new QTimestamped(this);
+
     public final QBooks book;
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QMember member;
 
-    public final DateTimePath<java.util.Date> rentalDate = createDateTime("rentalDate", java.util.Date.class);
-
-    public final DateTimePath<java.util.Date> returnDate = createDateTime("returnDate", java.util.Date.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
 
     public QBookRentals(String variable) {
         this(BookRentals.class, forVariable(variable), INITS);

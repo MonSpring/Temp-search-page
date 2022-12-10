@@ -91,7 +91,7 @@ public class MemberService implements UserDetailsService {
             Optional<Member> memberOptinal = memberRepository.findByUsername(loginReqDto.getUsername());
             member = memberOptinal.get();
         } else {
-            return new ResponseEntity<>(ResponseDto.fail("유저 정보를 찾을 수 없습니다"), HttpStatus.NOT_FOUND);
+            throw new RuntimeException("유저 정보를 찾을 수 없습니다");
         }
 
         UsernamePasswordAuthenticationToken authenticationToken = loginReqDto.toAuthentication();
