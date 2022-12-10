@@ -21,7 +21,7 @@ public interface BookRepository extends JpaRepository<Books, Long>, BookReposito
     @Query(value = "SELECT max(book_id) FROM books", nativeQuery = true)
     int searchInfinityCountMaxNum();
 
-    // 검색 기능
+    // 검색 기능 ( Select Optimization Complete )
     // Title
     @Query(value = "SELECT book_id, title, author, publisher, book_count, isbn FROM books WHERE MATCH(title) AGAINST(:word in boolean mode) ORDER BY book_id DESC LIMIT :size OFFSET :page", nativeQuery = true)
     List<BookInfiniteRepoResDto> searchTitleFullText(@Param("word") String word, @Param("size") int size, @Param("page") int page);
