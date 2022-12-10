@@ -35,6 +35,21 @@ public interface ElasticBooksRepository extends ElasticsearchRepository<ElasticB
     List<ElasticBooks> findAllByAuthorKeywordContains(String word, Pageable pageable);
 
     List<ElasticBooks> findAllByPublisherKeywordContains(String word, Pageable pageable);
+
+    // Excel Needed
+    List<ElasticBooks> findAllByTitleContains(String word);
+
+    List<ElasticBooks> findAllByAuthorContains(String word);
+
+    List<ElasticBooks> findAllByPublisherContains(String word);
+
+    List<ElasticBooks> findAllByIsbnContains(String word);
+
+    List<ElasticBooks> findAllByTitleKeywordContains(String word);
+
+    List<ElasticBooks> findAllByAuthorKeywordContains(String word);
+
+    List<ElasticBooks> findAllByPublisherKeywordContains(String word);
 }
 
 

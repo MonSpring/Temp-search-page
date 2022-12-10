@@ -8,13 +8,20 @@ import com.example.testsearch.entity.*;
 import com.example.testsearch.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -402,5 +409,93 @@ public class BookService {
                 .elasticBooksResDtoList(elasticBooksResDtoList)
                 .pagination(pagination)
                 .build();
+    }
+
+    public List<ElasticBooksResDto> searchElasticForExcel(String word, String mode, String field) {
+
+        List<ElasticBooks> elasticBooksList;
+
+        if (mode.equals("text")) {
+            switch (field) {
+                case "title":
+                    elasticBooksList = elasticBooksRepository.findAllByTitleContains(word);
+                    break;
+                case "author":
+                    elasticBooksList = elasticBooksRepository.findAllByAuthorContains(word);
+                    break;
+                case "publisher":
+                    elasticBooksList = elasticBooksRepository.findAllByPublisherContains(word);
+                    break;
+                default:
+                    elasticBooksList = elasticBooksRepository.findAllByIsbnContains(word);
+                    break;
+            }
+        } else {
+            switch (field) {
+                case "title":
+                    elasticBooksList = elasticBooksRepository.findAllByTitleKeywordContains(word);
+                    break;
+                case "author":
+                    elasticBooksList = elasticBooksRepository.findAllByAuthorKeywordContains(word);
+                    break;
+                case "publisher":
+                    elasticBooksList = elasticBooksRepository.findAllByPublisherKeywordContains(word);
+                    break;
+                default:
+                    elasticBooksList = elasticBooksRepository.findAllByIsbnContains(word);
+                    break;
+            }
+        }
+        List<ElasticBooksResDto> elasticBooksResDtoList = new ArrayList<>();
+
+        for (ElasticBooks books:elasticBooksList) {
+            ElasticBooksResDto elasticBooksResDto = new ElasticBooksResDto(books);
+            elasticBooksResDtoList.add(elasticBooksResDto);
+        }
+
+        return elasticBooksResDtoList;
+    }
+
+    public void outputExcelForElastic(List<ElasticBooksResDto> elasticBooksResDtoList, HttpServletResponse res) throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("시트");
+        Row row = null;
+        Cell cell = null;
+        int rowNum = 0;
+
+        row = sheet.createRow(rowNum++);
+        cell = row.createCell(0);
+        cell.setCellValue("번호");
+        cell = row.createCell(1);
+        cell.setCellValue("책이름");
+        cell = row.createCell(2);
+        cell.setCellValue("작가");
+        cell = row.createCell(3);
+        cell.setCellValue("출판사");
+        cell = row.createCell(4);
+        cell.setCellValue("권수");
+        cell = row.createCell(5);
+        cell.setCellValue("isbn");
+
+        for (int i = 0; i < elasticBooksResDtoList.size(); i++) {
+            row = sheet.createRow(rowNum++);
+            cell = row.createCell(0);
+            cell.setCellValue(i+1);
+            cell = row.createCell(1);
+            cell.setCellValue(elasticBooksResDtoList.get(i).getTitle());
+            cell = row.createCell(2);
+            cell.setCellValue(elasticBooksResDtoList.get(i).getAuthor());
+            cell = row.createCell(3);
+            cell.setCellValue(elasticBooksResDtoList.get(i).getPublisher());
+            cell = row.createCell(4);
+            cell.setCellValue(elasticBooksResDtoList.get(i).getBookCount());
+            cell = row.createCell(5);
+            cell.setCellValue(elasticBooksResDtoList.get(i).getIsbn());
+        }
+
+        res.setContentType("ms-vnd/excel");
+        res.setHeader("Content-Disposition", "attachment;filename=excel.xlsx");
+
+        wb.write(res.getOutputStream());
     }
 }

@@ -6,6 +6,8 @@ import com.example.testsearch.customAnnotation.StopWatchTable;
 import com.example.testsearch.dto.*;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.service.BookService;
+import com.example.testsearch.service.ElasticBooksResDto;
+import com.example.testsearch.util.MemberLoginInfoResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -166,7 +168,7 @@ public class BooksController extends HttpServlet {
             cell = row.createCell(2);
             cell.setCellValue(excelList.get(i).getAuthor());
             cell = row.createCell(3);
-            cell.setCellValue(excelList.get(i).getBookCount());
+            cell.setCellValue(excelList.get(i).getPublisher());
             cell = row.createCell(4);
             cell.setCellValue(excelList.get(i).getBookCount());
             cell = row.createCell(5);
@@ -226,7 +228,7 @@ public class BooksController extends HttpServlet {
             cell = row.createCell(2);
             cell.setCellValue(excelList.get(i).getAuthor());
             cell = row.createCell(3);
-            cell.setCellValue(excelList.get(i).getBookCount());
+            cell.setCellValue(excelList.get(i).getPublisher());
             cell = row.createCell(4);
             cell.setCellValue(excelList.get(i).getBookCount());
             cell = row.createCell(5);
@@ -349,5 +351,14 @@ public class BooksController extends HttpServlet {
         model.addAttribute("nanos", listElasticBookResTestDtoAndPagination.getNanos());
 
         return "elasticsearch";
+    }
+
+    @GetMapping("/elasticsearch/excel")
+    public void searchElasticSearchBooksListOutputExcel(HttpServletResponse res,
+                                                        @RequestParam String word,
+                                                        @RequestParam String mode,
+                                                        @RequestParam String field) throws IOException {
+        List<ElasticBooksResDto> elasticBooksResDtoList = bookService.searchElasticForExcel(word, mode, field);;
+        bookService.outputExcelForElastic(elasticBooksResDtoList, res);
     }
 }
