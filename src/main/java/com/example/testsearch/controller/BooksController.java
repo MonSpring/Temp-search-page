@@ -4,6 +4,7 @@ import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
 import com.example.testsearch.dto.*;
+import com.example.testsearch.entity.Books;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.service.BookService;
 import com.example.testsearch.service.ElasticBooksResDto;
@@ -360,5 +361,17 @@ public class BooksController extends HttpServlet {
                                                         @RequestParam String field) throws IOException {
         List<ElasticBooksResDto> elasticBooksResDtoList = bookService.searchElasticForExcel(word, mode, field);;
         bookService.outputExcelForElastic(elasticBooksResDtoList, res);
+    }
+
+    @ResponseBody
+    @GetMapping("/books/{code}")
+    public List<Books> searchLibrary(@PathVariable(name ="code") Long libcode) {
+        return bookService.searchLibrary(libcode);
+    }
+
+    @ResponseBody
+    @GetMapping("/book/{code}")
+    public List<LibrarysResDto> searchLibraryv2(@PathVariable(name ="code") Long libcode) {
+        return bookService.searchLibraryV2(libcode);
     }
 }

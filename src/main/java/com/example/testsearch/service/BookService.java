@@ -498,4 +498,12 @@ public class BookService {
 
         wb.write(res.getOutputStream());
     }
+
+    public List<Books> searchLibrary(Long libcode) {
+        return bookRepository.getBooksByLibrarys(libcode);
+    }
+
+    public List<LibrarysResDto> searchLibraryV2(Long libcode) {
+        return bookRepository.getBooksByLibrarysV2(libcode);
+    }
 }
