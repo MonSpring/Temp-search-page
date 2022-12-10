@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface ElasticBooksRepository extends ElasticsearchRepository<ElasticBooks, String> {
 
-    int countBy(String word);
-
     int countAllByTitleContains(String word);
 
     int countAllByAuthorContains(String word);
@@ -23,9 +21,6 @@ public interface ElasticBooksRepository extends ElasticsearchRepository<ElasticB
     int countAllByAuthorKeywordContains(String word);
 
     int countAllByPublisherKeywordContains(String word);
-
-
-    List<ElasticBooks> findAllBy(String word, Pageable pageable);
 
     List<ElasticBooks> findAllByTitleContains(String word, Pageable pageable);
 

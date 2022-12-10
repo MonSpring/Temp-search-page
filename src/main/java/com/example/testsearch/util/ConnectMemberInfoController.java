@@ -45,42 +45,7 @@ public class ConnectMemberInfoController {
                               @RequestParam("startDatetime") String startDatetime,
                               @RequestParam("endDatetime") String endDatetime
     ) throws IOException {
-
         List<MemberLoginInfoResDto> excelList = logMemberAddressService.searchAllMemberAddressLog(startDatetime, endDatetime);
-        //Workbook wb = new HSSFWorkbook();
-        Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("시트");
-        Row row = null;
-        Cell cell = null;
-        int rowNum = 0;
-
-        // Header
-        row = sheet.createRow(rowNum++);
-        cell = row.createCell(0);
-        cell.setCellValue("회원");
-        cell = row.createCell(1);
-        cell.setCellValue("IP");
-        cell = row.createCell(2);
-        cell.setCellValue("접속시간");
-
-        // Body
-        for (MemberLoginInfoResDto memberLoginInfoResDto : excelList) {
-            row = sheet.createRow(rowNum++);
-            cell = row.createCell(0);
-            cell.setCellValue(memberLoginInfoResDto.getUsername());
-            cell = row.createCell(1);
-            cell.setCellValue(memberLoginInfoResDto.getMemberIp());
-            cell = row.createCell(2);
-            cell.setCellValue(memberLoginInfoResDto.getLoginTime());
-        }
-
-        // 컨텐츠 타입과 파일명 지정
-        response.setContentType("ms-vnd/excel");
-//        response.setHeader("Content-Disposition", "attachment;filename=example.xls");
-        response.setHeader("Content-Disposition", "attachment;filename=excel.xlsx");
-
-        // Excel File Output
-        wb.write(response.getOutputStream());
-        //wb.close
+        logMemberAddressService.outputExcel(excelList, response);
     }
 }

@@ -1,6 +1,6 @@
 package com.example.testsearch.service;
 
-import com.example.testsearch.controller.ListElasticBookResTestDtoAndPagination;
+import com.example.testsearch.dto.ListElasticBookResTestDtoAndPagination;
 import com.example.testsearch.controller.SseController;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.dto.*;
@@ -8,12 +8,10 @@ import com.example.testsearch.entity.*;
 import com.example.testsearch.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -325,22 +323,7 @@ public class BookService {
         List<ElasticBooks> elasticBooksList;
 
         // Total Rows 가져오는 SEQ
-        if (mode.equals("boolean mode")) {
-            switch (field) {
-                case "title":
-                    totalListCnt = elasticBooksRepository.countAllByTitleKeywordContains(word);
-                    break;
-                case "author":
-                    totalListCnt = elasticBooksRepository.countAllByAuthorKeywordContains(word);
-                    break;
-                case "publisher":
-                    totalListCnt = elasticBooksRepository.countAllByPublisherKeywordContains(word);
-                    break;
-                default:
-                    totalListCnt = elasticBooksRepository.countAllByIsbnContains(word);
-                    break;
-            }
-        } else {
+        if (mode.equals("text")) {
             switch (field) {
                 case "title":
                     totalListCnt = elasticBooksRepository.countAllByTitleContains(word);
@@ -355,28 +338,28 @@ public class BookService {
                     totalListCnt = elasticBooksRepository.countAllByIsbnContains(word);
                     break;
             }
+        } else {
+            switch (field) {
+                case "title":
+                    totalListCnt = elasticBooksRepository.countAllByTitleKeywordContains(word);
+                    break;
+                case "author":
+                    totalListCnt = elasticBooksRepository.countAllByAuthorKeywordContains(word);
+                    break;
+                case "publisher":
+                    totalListCnt = elasticBooksRepository.countAllByPublisherKeywordContains(word);
+                    break;
+                default:
+                    totalListCnt = elasticBooksRepository.countAllByIsbnContains(word);
+                    break;
+            }
         }
 
         Pagination pagination = new Pagination(totalListCnt, page);
         log.info("total rows : " + totalListCnt);
 
         // List 가져오는 SEQ
-        if (mode.equals("boolean mode")) {
-            switch (field) {
-                case "title":
-                    elasticBooksList = elasticBooksRepository.findAllByTitleKeywordContains(word, pageable);
-                    break;
-                case "author":
-                    elasticBooksList = elasticBooksRepository.findAllByAuthorKeywordContains(word, pageable);
-                    break;
-                case "publisher":
-                    elasticBooksList = elasticBooksRepository.findAllByPublisherKeywordContains(word, pageable);
-                    break;
-                default:
-                    elasticBooksList = elasticBooksRepository.findAllByIsbnContains(word, pageable);
-                    break;
-            }
-        } else {
+        if (mode.equals("text")) {
             switch (field) {
                 case "title":
                     elasticBooksList = elasticBooksRepository.findAllByTitleContains(word, pageable);
@@ -386,6 +369,21 @@ public class BookService {
                     break;
                 case "publisher":
                     elasticBooksList = elasticBooksRepository.findAllByPublisherContains(word, pageable);
+                    break;
+                default:
+                    elasticBooksList = elasticBooksRepository.findAllByIsbnContains(word, pageable);
+                    break;
+            }
+        } else {
+            switch (field) {
+                case "title":
+                    elasticBooksList = elasticBooksRepository.findAllByTitleKeywordContains(word, pageable);
+                    break;
+                case "author":
+                    elasticBooksList = elasticBooksRepository.findAllByAuthorKeywordContains(word, pageable);
+                    break;
+                case "publisher":
+                    elasticBooksList = elasticBooksRepository.findAllByPublisherKeywordContains(word, pageable);
                     break;
                 default:
                     elasticBooksList = elasticBooksRepository.findAllByIsbnContains(word, pageable);
@@ -405,5 +403,4 @@ public class BookService {
                 .pagination(pagination)
                 .build();
     }
-
 }

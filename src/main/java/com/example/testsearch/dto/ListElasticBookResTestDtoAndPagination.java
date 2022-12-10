@@ -1,4 +1,4 @@
-package com.example.testsearch.controller;
+package com.example.testsearch.dto;
 
 import com.example.testsearch.customAnnotation.StopWatchTable;
 import com.example.testsearch.dto.Pagination;
