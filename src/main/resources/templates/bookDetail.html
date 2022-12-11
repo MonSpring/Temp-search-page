@@ -9,6 +9,37 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+    <style>
+        .myBox {
+            border: none;
+            font: 24px/36px sans-serif;
+            width: 70%;
+            height: 200px;
+            overflow: scroll;
+            margin-top: 25px;
+        }
+        .myBox h2 {
+            text-align: center;
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            border: 1px solid yellowgreen;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: black;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #88ba1c;
+        }
+    </style>
     <script th:inline="javascript">
 
         window.onload = function () {
@@ -35,49 +66,56 @@
             history.go(goPage);
         }
     </script>
+
+    <script src="/basic.js">
+
+    </script>
 </head>
 <body>
 <div class="container">
-    <div class="form-group">
-        <div th:if="${not #strings.isEmpty(data.thumbnail)}">
-            <img id="y_thumbnail" th:src="${data.thumbnail}" alt="썸네일" th:if="${data.thumbnail != null}"  src=""/>
+    <form th:action="${data.record} ? @{/books/{id}/return (id=${data.id})} : @{/books/{id}/rental (id=${data.id})}" method="post">
+        <div class="form-group">
+            <div th:if="${not #strings.isEmpty(data.thumbnail)}">
+                <img id="y_thumbnail" th:src="${data.thumbnail}" alt="썸네일" th:if="${data.thumbnail != null}"  src=""/>
+            </div>
+            <div th:unless="${not #strings.isEmpty(data.thumbnail)}">
+                <span>정보나루에 썸네일 데이터가 존재하지 않습니다.</span>
+            </div>
         </div>
-        <div th:unless="${not #strings.isEmpty(data.thumbnail)}">
-            <span>정보나루에 썸네일 데이터가 존재하지 않습니다.</span>
+        <div class="form-group">
+            <label for="title">제목</label>
+            <input type="text" name="title" id="title" class="form-control" th:value="${data.title}" readonly/>
         </div>
-    </div>
-    <div class="form-group">
-        <label for="title">제목</label>
-        <input type="text" name="title" id="title" class="form-control" th:value="${data.title}" readonly/>
-    </div>
-    <div class="form-group">
-        <div th:if="${not #strings.isEmpty(data.description)}">
-            <label for="y_description">설명</label>
-            <textarea type="text" name="description" id="y_description"  class="form-control" th:text="${data.description}" readonly></textarea>
+        <div class="form-group">
+            <div th:if="${not #strings.isEmpty(data.description)}">
+                <label for="y_description">설명</label>
+                <textarea type="text" name="description" id="y_description"  class="form-control" th:text="${data.description}" readonly></textarea>
+            </div>
+            <div th:unless="${not #strings.isEmpty(data.description)}">
+                <span>정보나루에 책 설명에 대한 데이터가 존재하지 않습니다.</span>
+            </div>
         </div>
-        <div th:unless="${not #strings.isEmpty(data.description)}">
-            <span>정보나루에 책 설명에 대한 데이터가 존재하지 않습니다.</span>
+        <div class="form-group">
+            <label for="author">저자</label>
+            <input type="text" name="author" id="author" class="form-control" th:value="${data.author}" readonly/>
         </div>
-    </div>
-    <div class="form-group">
-        <label for="author">저자</label>
-        <input type="text" name="author" id="author" class="form-control" th:value="${data.author}" readonly/>
-    </div>
-    <div class="form-group">
-        <label for="isbn">isbn</label>
-        <input type="text" name="isbn" id="isbn" class="form-control" th:value="${data.isbn}" readonly/>
-    </div>
-    <div class="form-group">
-        <label for="bookCount">재고</label>
-        <input type="text" name="bookCount" id="bookCount" class="form-control" th:value="${data.bookCount}" readonly/>
-    </div>
-    <form th:action="@{/books/{id}/rental (id=${data.id})}" method="post">
+        <div class="form-group">
+            <label for="isbn">isbn</label>
+            <input type="text" name="isbn" id="isbn" class="form-control" th:value="${data.isbn}" readonly/>
+        </div>
+        <div class="form-group">
+            <label for="bookCount">재고</label>
+            <input type="text" name="bookCount" id="bookCount" class="form-control" th:value="${data.bookCount}" readonly/>
+        </div>
         <div class="form-group mt-2">
             <button onclick="cookieCount();" th:if="${data.record == true}" class="btn btn-primary" type="submit">반납</button>
             <button onclick="cookieCount();" th:if="${data.record == false}" class="btn btn-primary" type="submit">대여</button>
             <button type="button" onclick="historyBack()" class="btn btn-secondary">목록</button>
         </div>
     </form>
+
+    <div class="myBox"><h2>실시간 알림 메세지</h2><pre id="messagesBox"></pre></div>
+    <div id="messages" style="height:100px;width:140px;overflow:auto;background-color:white;color:black;scrollbar-base-color:gold;font-family:sans-serif;padding:10px;"></div>
 </div>
 </body>
 </html>
