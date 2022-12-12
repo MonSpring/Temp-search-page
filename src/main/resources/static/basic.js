@@ -56,3 +56,23 @@ window.addEventListener("scroll", function () {
         getList();
     }
 });
+
+
+/* sse */
+const eventSource = new EventSource(`/api/subscribe?id=${Math.random()}`);
+
+eventSource.onopen = (e) => {
+    console.log(e);
+};
+
+eventSource.onerror = (e) => {
+    console.log(e);
+};
+
+eventSource.onmessage = (e) => {
+    document.querySelector("#messages").appendChild(document.createTextNode(e.data + "\n"));
+};
+
+document.querySelector("#send").addEventListener("click", () => {
+    fetch(`/api/publish?message=${document.querySelector("#input").value}`);
+});

@@ -8,7 +8,6 @@ import com.example.testsearch.entity.Books;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.service.BookService;
 import com.example.testsearch.service.ElasticBooksResDto;
-import com.example.testsearch.util.MemberLoginInfoResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,9 +20,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -41,6 +44,8 @@ public class BooksController extends HttpServlet {
     private int callCount = 0;
 
     private int lastIdChange = 0;
+
+    List<Long> memberIdList = new ArrayList<>();
 
     // 기본 페이지
     @GetMapping("/index")
@@ -264,6 +269,10 @@ public class BooksController extends HttpServlet {
             if(cookie.getName().equals("countPost")){
                 model.addAttribute("countPost", Integer.parseInt(cookie.getValue()));
             }
+            if(cookie.getName().equals("event")){
+                model.addAttribute("event", cookie.getValue());
+            }
+
         }
 
         model.addAttribute("data", bookService.searchDetail(bookId, isbn, username));
@@ -272,9 +281,10 @@ public class BooksController extends HttpServlet {
     }
 
     @PostMapping("/books/{id}/rental")
-    public String borrowBooks(Model model,
+    public String rentalBooks(Model model,
                               @PathVariable(name="id")Long bookId,
-                              HttpServletRequest request){
+                              HttpServletRequest request,
+                              HttpServletResponse response){
 
         String username = null;
 
@@ -282,16 +292,102 @@ public class BooksController extends HttpServlet {
             if(cookie.getName().equals("username")){
                 username = cookie.getValue();
             }
+
+            if(cookie.getName().equals("countPost")){
+                log.info(cookie.getValue());
+            }
         }
 
-        int successCode = bookService.rentalBook(bookId, username);
+        String successMessage = bookService.rentalBook(bookId, username);
+
+        // username 쿠키 1시간
+        Cookie cookie = new Cookie("event", successMessage);
+        cookie.setMaxAge(3600);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        if (cookie.getName().equals("event")) {
+            log.info(cookie.getValue());
+        }
 
         Long isbn = bookService.findIsbn(bookId);
 
-        model.addAttribute("code", successCode);
-        model.addAttribute("data", bookService.searchDetail(bookId, isbn, username));
+        return "redirect:/books/" + bookId + "/detail/" + isbn;
+    }
+
+    @PostMapping("/books/{id}/return")
+    public String returnBooks(Model model,
+                              @PathVariable(name="id")Long bookId,
+                              HttpServletRequest request,
+                              HttpServletResponse response){
+
+        String username = null;
+
+        for (Cookie cookie : request.getCookies()) {
+            if(cookie.getName().equals("username")){
+                username = cookie.getValue();
+            }
+
+            if(cookie.getName().equals("countPost")){
+                log.info(cookie.getValue());
+            }
+        }
+
+        String successMessage = bookService.returnBook(bookId, username);
+
+        // username 쿠키 1시간
+        Cookie cookie = new Cookie("event", successMessage);
+        cookie.setMaxAge(3600);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        if (cookie.getName().equals("event")) {
+            log.info(cookie.getValue());
+        }
+
+        Long isbn = bookService.findIsbn(bookId);
 
         return "redirect:/books/" + bookId + "/detail/" + isbn;
+    }
+
+    @PostMapping("/books/{id}/rental/JMeterTest/{member_id}")
+    public String rentalBooksJMeterTest(@PathVariable(name="id")Long bookId,
+                                        @PathVariable(name="member_id")Long memberId,
+                                        HttpServletResponse response){
+
+        memberIdList.add(memberId);
+
+        Long bookCount = bookService.countRentalBookTest(bookId);
+
+        for(int i = 0; i < memberIdList.size(); i++){
+            if(i < bookCount) {
+                String successMessage = bookService.rentalBookTest(bookId, memberIdList.get(i));
+
+                // username 쿠키 1시간
+                Cookie cookie = new Cookie("event", successMessage);
+                cookie.setMaxAge(3600);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+
+                if (cookie.getName().equals("event")) {
+                    log.info(cookie.getValue());
+                }
+            } else {
+                Cookie cookie = new Cookie("event", "수량부족");
+                cookie.setMaxAge(3600);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+
+                if (cookie.getName().equals("event")) {
+                    log.info(cookie.getValue());
+                }
+            }
+
+        }
+
+        return "redirect:/search";
+
+
     }
 
     // 무한 스크롤 서치 페이지
@@ -369,9 +465,9 @@ public class BooksController extends HttpServlet {
         return bookService.searchLibrary(libcode);
     }
 
-    @ResponseBody
+/*    @ResponseBody
     @GetMapping("/book/{code}")
     public List<LibrarysResDto> searchLibraryv2(@PathVariable(name ="code") Long libcode) {
         return bookService.searchLibraryV2(libcode);
-    }
+    }*/
 }
