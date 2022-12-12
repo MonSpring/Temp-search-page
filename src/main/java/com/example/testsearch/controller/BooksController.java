@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -43,6 +44,8 @@ public class BooksController extends HttpServlet {
     private int callCount = 0;
 
     private int lastIdChange = 0;
+
+    List<Long> memberIdList = new ArrayList<>();
 
     // 기본 페이지
     @GetMapping("/index")
@@ -352,30 +355,34 @@ public class BooksController extends HttpServlet {
                                         @PathVariable(name="member_id")Long memberId,
                                         HttpServletResponse response){
 
+        memberIdList.add(memberId);
+
         Long bookCount = bookService.countRentalBookTest(bookId);
 
-        if(bookCount > 0) {
-            String successMessage = bookService.rentalBookTest(bookId, memberId);
+        for(int i = 0; i < memberIdList.size(); i++){
+            if(i < bookCount) {
+                String successMessage = bookService.rentalBookTest(bookId, memberIdList.get(i));
 
-            // username 쿠키 1시간
-            Cookie cookie = new Cookie("event", successMessage);
-            cookie.setMaxAge(3600);
-            cookie.setPath("/");
-            response.addCookie(cookie);
+                // username 쿠키 1시간
+                Cookie cookie = new Cookie("event", successMessage);
+                cookie.setMaxAge(3600);
+                cookie.setPath("/");
+                response.addCookie(cookie);
 
-            if (cookie.getName().equals("event")) {
-                log.info(cookie.getValue());
+                if (cookie.getName().equals("event")) {
+                    log.info(cookie.getValue());
+                }
+            } else {
+                Cookie cookie = new Cookie("event", "수량부족");
+                cookie.setMaxAge(3600);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+
+                if (cookie.getName().equals("event")) {
+                    log.info(cookie.getValue());
+                }
             }
-        } else {
-            // username 쿠키 1시간
-            Cookie cookie = new Cookie("event", "수량부족");
-            cookie.setMaxAge(3600);
-            cookie.setPath("/");
-            response.addCookie(cookie);
 
-            if (cookie.getName().equals("event")) {
-                log.info(cookie.getValue());
-            }
         }
 
         return "redirect:/search";

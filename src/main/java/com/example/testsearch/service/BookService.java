@@ -350,11 +350,11 @@ public class BookService {
                 bookRentalTestRepository.save(bookRental);
                 */
 
-                    bookRentalTestRepository.saveBookRentalTest(bookId, memberId);
+                bookRentalTestRepository.saveBookRentalTest(bookId, memberId);
 
-                    sb.append("대여완료");
+                sb.append("대여완료");
 
-                    sseController.publish(String.valueOf(sb));
+                sseController.publish(String.valueOf(sb));
 
             }
         } else {
