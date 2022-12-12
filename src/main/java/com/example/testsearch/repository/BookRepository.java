@@ -1,7 +1,6 @@
 package com.example.testsearch.repository;
 
 import com.example.testsearch.dto.BookInfiniteRepoResDto;
-import com.example.testsearch.dto.LibrarysResDto;
 import com.example.testsearch.entity.Books;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -122,7 +121,7 @@ public interface BookRepository extends JpaRepository<Books, Long>, BookReposito
     @Query(value ="select b.*, l.lib_name from books b left join librarys l on l.libcode=b.libcode where b.libcode=:libcode Limit 10",nativeQuery = true)
     List<Books> getBooksByLibrarys(@Param("libcode") Long libcode);
 
-    @Query(value ="select b.*, l.lib_name from books b left join librarys l on l.libcode=b.libcode where b.libcode=:libcode Limit 10",nativeQuery = true)
-    List<LibrarysResDto> getBooksByLibrarysV2(@Param("libcode") Long libcode);
+/*    @Query(value ="select b.*, l.lib_name from books b left join librarys l on l.libcode=b.libcode where b.libcode=:libcode Limit 10",nativeQuery = true)
+    List<LibrarysResDto> getBooksByLibrarysV2(@Param("libcode") Long libcode);*/
 
 }

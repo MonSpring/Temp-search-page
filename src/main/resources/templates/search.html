@@ -104,7 +104,7 @@
 
   </style>
   <script>
-    const eventSource = new EventSource(`/api/subscribe?id=${Math.random()}`);
+    /*const eventSource = new EventSource(`/api/subscribe?id=${Math.random()}`);
 
     eventSource.onopen = (e) => {
       console.log(e);
@@ -120,7 +120,7 @@
 
     document.querySelector("#send").addEventListener("click", () => {
       fetch(`/api/publish?message=${document.querySelector("#input").value}`);
-    });
+    });*/
   </script>
 </head>
 

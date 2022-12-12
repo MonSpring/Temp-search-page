@@ -1,6 +1,5 @@
 package com.example.testsearch.service;
 
-import com.example.testsearch.dto.ListElasticBookResTestDtoAndPagination;
 import com.example.testsearch.controller.SseController;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.dto.*;
@@ -17,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -41,6 +43,12 @@ public class BookService {
     private final MemberRepository memberRepository;
 
     private final SseController sseController;
+
+    private final MemberTestRepository memberTestRepository;
+
+    private final StringRedisTemplate stringRedisTemplate;
+
+    private final BookRentalTestRepository bookRentalTestRepository;
 
     // 1630만개 끌고오기
     public List<BookResTestDto> getAll() {
@@ -265,28 +273,13 @@ public class BookService {
     }
 
     @Transactional
-    public int rentalBook(Long bookId, String username) {
+    public String rentalBook(Long bookId, String username) {
 
         Books book = bookRepository.findById(bookId).orElseThrow();
 
         Member member = memberRepository.findByUsername(username).orElseThrow();
 
-        Long rentalBook = bookRentalRepository.countByBook(book);
-
-        Long bookCount = Long.parseLong(book.getBookCount()) - rentalBook;
-
-        if (bookRentalRepository.existsByBookAndMember(book, member)) {
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("반납 안내 : ").append(book.getTitle()).append("도서를 ").append(member.getUsername()).append("님이 반납하셨습니다.");
-
-            sseController.publish(String.valueOf(sb));
-
-            bookRentalRepository.deleteByBookAndMember(book, member);
-            return 1;
-        }
-
-        if(bookCount > 0) {
+        if(Long.parseLong(book.getBookCount()) - bookRentalRepository.countByBook(book) > 0) {
 
             BookRentals bookRental = BookRentals.builder()
                     .book(book)
@@ -294,16 +287,119 @@ public class BookService {
                     .build();
 
             StringBuilder sb = new StringBuilder();
-            sb.append("대여 안내 : ").append(book.getTitle()).append("도서를 ").append(member.getUsername()).append("님이 대여하셨습니다.");
+            /*sb.append("대여 안내 : ").append(book.getTitle()).append("도서를 ").append(member.getUsername()).append("님이 대여하셨습니다.");*/
+            sb.append("대여");
 
             sseController.publish(String.valueOf(sb));
 
             bookRentalRepository.save(bookRental);
 
-            return 1;
+            return String.valueOf(sb);
         } else {
-            return 0;
+            return "";
         }
+    }
+
+    @Transactional
+    public String returnBook(Long bookId, String username){
+
+        StringBuilder sb = new StringBuilder();
+
+        Books book = bookRepository.findById(bookId).orElseThrow();
+
+        Member member = memberRepository.findByUsername(username).orElseThrow();
+
+        bookRentalRepository.deleteByBookAndMember(book, member);
+
+        sb.append("반납완료");
+
+        return String.valueOf(sb);
+    }
+
+    public boolean isValidationRental(String username) {
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+
+        if(stringStringValueOperations.get(String.valueOf(username)) != null) {
+            return false;
+        }
+
+        // 1초
+        long LIMIT_TIME = 1000;
+        stringStringValueOperations.set(username, username, LIMIT_TIME, TimeUnit.MILLISECONDS);
+
+        return true;
+    }
+
+    @Transactional
+    public String rentalBookTest(Long bookId, Long memberId) {
+
+        StringBuilder sb = new StringBuilder();
+
+        if(isValidationRentalTest(memberId)) {
+
+            if(bookRentalTestRepository.existsByBookIdAndMemberId(bookId, memberId) > 0){
+                sb.append("중복대여");
+            } else {
+
+                /*
+                BookRentalTest bookRental = BookRentalTest.builder()
+                        .book(book)
+                        .member(member)
+                        .build();
+
+                bookRentalTestRepository.save(bookRental);
+                */
+
+                    bookRentalTestRepository.saveBookRentalTest(bookId, memberId);
+
+                    sb.append("대여완료");
+
+                    sseController.publish(String.valueOf(sb));
+
+            }
+        } else {
+            sb.append("중복클릭");
+        }
+        return String.valueOf(sb);
+    }
+
+    public Long countRentalBookTest(Long bookId) {
+
+        Books book = bookRepository.findById(bookId).orElseThrow();
+
+        Long rentalBook = bookRentalTestRepository.countByBook(book);
+
+        Long bookCount = Long.parseLong(book.getBookCount()) - rentalBook;
+
+        return bookCount;
+    }
+
+    public boolean isValidationRentalTest(Long memberId) {
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+
+        if(stringStringValueOperations.get(String.valueOf(memberId)) != null) {
+            return false;
+        }
+
+        // 1초
+        long LIMIT_TIME = 3000;
+        stringStringValueOperations.set(String.valueOf(memberId), String.valueOf(memberId), LIMIT_TIME, TimeUnit.MILLISECONDS);
+
+        return true;
+    }
+    public boolean isValidationRentalCountTest(Long bookCount) {
+
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+
+        if(bookCount < 1 || stringStringValueOperations.get(String.valueOf(bookCount)).equals("0")) {
+            return false;
+        }
+
+        // 1초
+        long LIMIT_TIME = 1000;
+        stringStringValueOperations.set(String.valueOf(bookCount), String.valueOf(bookCount), LIMIT_TIME, TimeUnit.MILLISECONDS);
+
+        return true;
     }
 
     public Long findIsbn(Long bookId) {
@@ -503,7 +599,7 @@ public class BookService {
         return bookRepository.getBooksByLibrarys(libcode);
     }
 
-    public List<LibrarysResDto> searchLibraryV2(Long libcode) {
+/*    public List<LibrarysResDto> searchLibraryV2(Long libcode) {
         return bookRepository.getBooksByLibrarysV2(libcode);
-    }
+    }*/
 }
