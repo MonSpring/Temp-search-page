@@ -21,4 +21,4 @@
 |SSE|서버 > 클라이언트 방향으로 이벤트 발생시 알림을 위해 사용|
 |POI|대용량 데이터 수집 및 엑셀 출력을 위해 사용|
 |Spring Batch|정보나루의 Book Detail 데이터 Open API 활용하여 데이터 수집을 위해 사용|
-|ElasticSearch + Kibana + Logstash|RDB(MySQL) 인덱싱, 튜닝과 비정형 데이터 조회 속도의 차이를 직접 테스트 해보고 마이그레이션 자동화가 가능한지 검증하기 위해 사용|
+|ELK <br/>(ElasticSearch + Kibana + Logstash)|RDB(MySQL) 인덱싱, 튜닝과 비정형 데이터 조회 속도의 차이를 직접 테스트 해보고 마이그레이션 자동화가 가능한지 검증하기 위해 사용|
