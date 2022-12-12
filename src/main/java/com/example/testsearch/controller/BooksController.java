@@ -5,9 +5,12 @@ import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
 import com.example.testsearch.dto.*;
 import com.example.testsearch.entity.Books;
+import com.example.testsearch.entity.Librarys;
 import com.example.testsearch.repository.BookRepository;
+import com.example.testsearch.repository.LibrarysRepository;
 import com.example.testsearch.service.BookService;
 import com.example.testsearch.service.ElasticBooksResDto;
+import com.example.testsearch.util.MemberLoginInfoResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -40,6 +43,7 @@ public class BooksController extends HttpServlet {
     private final BookRepository bookRepository;
 
     private final StopWatchRepository stopWatchRepository;
+    private final LibrarysRepository librarysRepository;
 
     private int callCount = 0;
 
@@ -402,6 +406,9 @@ public class BooksController extends HttpServlet {
             }
         }
 
+        List<LibraryResDtoV2> findLibrary = librarysRepository.findByLibrary();
+        model.addAttribute("library",findLibrary);
+
         return "search";
     }
 
@@ -459,15 +466,38 @@ public class BooksController extends HttpServlet {
         bookService.outputExcelForElastic(elasticBooksResDtoList, res);
     }
 
-    @ResponseBody
-    @GetMapping("/books/{code}")
-    public List<Books> searchLibrary(@PathVariable(name ="code") Long libcode) {
-        return bookService.searchLibrary(libcode);
+    @GetMapping("/library")
+    public String getLibrary() {
+        return "libraryPage";
     }
 
-/*    @ResponseBody
-    @GetMapping("/book/{code}")
-    public List<LibrarysResDto> searchLibraryv2(@PathVariable(name ="code") Long libcode) {
-        return bookService.searchLibraryV2(libcode);
-    }*/
+    @LogExecutionTime
+    @GetMapping("/library/info")
+    public String searchLibraryV2(
+            Model model,
+            @RequestParam(name ="libcode") Long  libcode,
+            @RequestParam(defaultValue = "1", name = "page") int page,
+            @RequestParam(defaultValue = "10", name = "size") int size) {
+
+        List<LibraryResDtoV2> findLibrary = librarysRepository.findByLibrary();
+        model.addAttribute("library",findLibrary);
+
+        ListBookResTestDtoAndPagination listBookResTestDtoAndPagination = bookService.searchLibraryV2(libcode, size, page);
+        // 검색 리스트 가져오는 용도
+        model.addAttribute("data10", listBookResTestDtoAndPagination.getBookResTestDtoList());
+        // page 버튼 뿌려주는 용도
+        model.addAttribute("pagination", listBookResTestDtoAndPagination.getPagination());
+        log.info("listBookResTestDtoAndPagination.getPagination(): " + listBookResTestDtoAndPagination.getPagination().getStartIndex());
+        model.addAttribute("libcode", libcode);
+
+        // 메소드 검색 시간 체크 프론트에 뿌려주는 용도
+        StopWatchTable stopWatchTable = stopWatchRepository.findTopByOrderByIdDesc();
+        listBookResTestDtoAndPagination.updateStopWatch(stopWatchTable);
+        model.addAttribute("method", listBookResTestDtoAndPagination.getMethod());
+        model.addAttribute("mills", listBookResTestDtoAndPagination.getMills());
+        model.addAttribute("nanos", listBookResTestDtoAndPagination.getNanos());
+
+        return "libraryPage";
+    }
+
 }

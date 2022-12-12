@@ -1,5 +1,6 @@
 package com.example.testsearch.service;
 
+import com.example.testsearch.dto.ListElasticBookResTestDtoAndPagination;
 import com.example.testsearch.controller.SseController;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.dto.*;
@@ -25,7 +26,6 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -595,11 +595,19 @@ public class BookService {
         wb.write(res.getOutputStream());
     }
 
-    public List<Books> searchLibrary(Long libcode) {
-        return bookRepository.getBooksByLibrarys(libcode);
-    }
+    public ListBookResTestDtoAndPagination searchLibraryV2(Long libcode,int size,int page) {
+        int count = bookRepository.getBooksByLibrarysV3Count(libcode);
+        log.info("count: "+String.valueOf(count));
 
-/*    public List<LibrarysResDto> searchLibraryV2(Long libcode) {
-        return bookRepository.getBooksByLibrarysV2(libcode);
-    }*/
+        Pagination pagination = new Pagination(count, page);
+        int pageOffset = pagination.getStartIndex();
+        log.info("pageOffset: "+String.valueOf(pageOffset));
+
+        List<LibRepoResDto> findLibrary = bookRepository.getBooksByLibrarysV3(libcode, size, pageOffset);
+
+        return ListBookResTestDtoAndPagination.builder()
+                .bookResTestDtoList(findLibrary)
+                .pagination(pagination)
+                .build();
+    }
 }
