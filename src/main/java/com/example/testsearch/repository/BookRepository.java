@@ -1,13 +1,15 @@
 package com.example.testsearch.repository;
 
 import com.example.testsearch.dto.BookInfiniteRepoResDto;
-import com.example.testsearch.dto.LibrarysResDto;
+import com.example.testsearch.dto.LibRepoResDto;
+import com.example.testsearch.dto.LibraryResDto;
 import com.example.testsearch.entity.Books;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
@@ -122,7 +124,11 @@ public interface BookRepository extends JpaRepository<Books, Long>, BookReposito
     @Query(value ="select b.*, l.lib_name from books b left join librarys l on l.libcode=b.libcode where b.libcode=:libcode Limit 10",nativeQuery = true)
     List<Books> getBooksByLibrarys(@Param("libcode") Long libcode);
 
-    @Query(value ="select b.*, l.lib_name from books b left join librarys l on l.libcode=b.libcode where b.libcode=:libcode Limit 10",nativeQuery = true)
-    List<LibrarysResDto> getBooksByLibrarysV2(@Param("libcode") Long libcode);
+    @Query(value ="select distinct b.*, l.lib_name from books b left join librarys l on l.libcode=b.libcode where b.libcode=:libcode LIMIT :size OFFSET :page",nativeQuery = true) // ORDER BY book_id DESC LIMIT :size OFFSET :page
+    List<LibRepoResDto> getBooksByLibrarysV3(@Param("libcode") Long libcode, @Param("size") int size, @Param("page") int page);
+
+
+    @Query(value ="select count(1) from books b left join librarys l on l.libcode=b.libcode where b.libcode=:libcode", nativeQuery = true)
+    int getBooksByLibrarysV3Count(@Param("libcode") Long libcode);
 
 }
