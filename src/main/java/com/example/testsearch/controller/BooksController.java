@@ -4,13 +4,10 @@ import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
 import com.example.testsearch.dto.*;
-import com.example.testsearch.entity.Books;
-import com.example.testsearch.entity.Librarys;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.repository.LibrarysRepository;
 import com.example.testsearch.service.BookService;
 import com.example.testsearch.service.ElasticBooksResDto;
-import com.example.testsearch.util.MemberLoginInfoResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -18,10 +15,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -29,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Controller
@@ -45,11 +47,14 @@ public class BooksController extends HttpServlet {
     private final StopWatchRepository stopWatchRepository;
     private final LibrarysRepository librarysRepository;
 
+    private final StringRedisTemplate stringRedisTemplate;
+
     private int callCount = 0;
 
     private int lastIdChange = 0;
 
-    List<Long> memberIdList = new ArrayList<>();
+    private static int countId = 0;
+
 
     // 기본 페이지
     @GetMapping("/index")
@@ -354,18 +359,51 @@ public class BooksController extends HttpServlet {
         return "redirect:/books/" + bookId + "/detail/" + isbn;
     }
 
+    public synchronized long minusBookCount(long bookId, long bookCount) {
+
+        bookCount = bookCount - countId++;
+
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+
+        while (stringStringValueOperations.get(bookId + String.valueOf(bookCount)) != null) {
+            bookCount--;
+            if(bookCount < 1)
+                break;
+        }
+
+        // 1초
+        long LIMIT_TIME = 3000;
+        stringStringValueOperations.set(bookId + String.valueOf(bookCount), String.valueOf(bookCount), LIMIT_TIME, TimeUnit.MILLISECONDS);
+
+        return bookCount;
+    }
+
+    public boolean isValidationRentalTest(Long memberId) {
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+
+        if(stringStringValueOperations.get(String.valueOf(memberId)) != null) {
+            return false;
+        }
+
+        // 1초
+        long LIMIT_TIME = 1000;
+        stringStringValueOperations.set(String.valueOf(memberId), String.valueOf(memberId), LIMIT_TIME, TimeUnit.MILLISECONDS);
+
+        return true;
+    }
+
     @PostMapping("/books/{id}/rental/JMeterTest/{member_id}")
     public String rentalBooksJMeterTest(@PathVariable(name="id")Long bookId,
                                         @PathVariable(name="member_id")Long memberId,
-                                        HttpServletResponse response){
+                                        HttpServletResponse response) {
 
-        memberIdList.add(memberId);
+        long bookCount = bookService.countRentalBookTest(bookId);
 
-        Long bookCount = bookService.countRentalBookTest(bookId);
+        long quantityOfBook = minusBookCount(bookId, bookCount);
 
-        for(int i = 0; i < memberIdList.size(); i++){
-            if(i < bookCount) {
-                String successMessage = bookService.rentalBookTest(bookId, memberIdList.get(i));
+        if(isValidationRentalTest(memberId)) {
+            if (quantityOfBook > 0) {
+                String successMessage = bookService.rentalBookTest(bookId, memberId);
 
                 // username 쿠키 1시간
                 Cookie cookie = new Cookie("event", successMessage);
@@ -386,10 +424,46 @@ public class BooksController extends HttpServlet {
                     log.info(cookie.getValue());
                 }
             }
+        } else {
+            Cookie cookie = new Cookie("event", "수량부족");
+            cookie.setMaxAge(3600);
+            cookie.setPath("/");
+            response.addCookie(cookie);
 
+            if (cookie.getName().equals("event")) {
+                log.info(cookie.getValue());
+            }
         }
 
-        return "redirect:/search";
+        countId = 0;
+
+/*
+        if(bookCount > memberIdList.size() - 1){
+            String successMessage = bookService.rentalBookTest(bookId, memberId);
+
+            // username 쿠키 1시간
+            Cookie cookie = new Cookie("event", successMessage);
+            cookie.setMaxAge(3600);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+
+            if (cookie.getName().equals("event")) {
+                log.info(cookie.getValue());
+            }
+        } else {
+            Cookie cookie = new Cookie("event", "수량부족");
+            cookie.setMaxAge(3600);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+
+            if (cookie.getName().equals("event")) {
+                log.info(cookie.getValue());
+            }
+        }
+
+        memberIdList.clear();*/
+
+        return "login";
 
 
     }

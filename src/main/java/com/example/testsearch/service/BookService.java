@@ -1,6 +1,5 @@
 package com.example.testsearch.service;
 
-import com.example.testsearch.dto.ListElasticBookResTestDtoAndPagination;
 import com.example.testsearch.controller.SseController;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.dto.*;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +24,6 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -317,54 +314,26 @@ public class BookService {
         return String.valueOf(sb);
     }
 
-    public boolean isValidationRental(String username) {
-        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
-
-        if(stringStringValueOperations.get(String.valueOf(username)) != null) {
-            return false;
-        }
-
-        // 1초
-        long LIMIT_TIME = 1000;
-        stringStringValueOperations.set(username, username, LIMIT_TIME, TimeUnit.MILLISECONDS);
-
-        return true;
-    }
-
     @Transactional
     public String rentalBookTest(Long bookId, Long memberId) {
 
         StringBuilder sb = new StringBuilder();
 
-        if(isValidationRentalTest(memberId)) {
-
-            if(bookRentalTestRepository.existsByBookIdAndMemberId(bookId, memberId) > 0){
-                sb.append("중복대여");
-            } else {
-
-                /*
-                BookRentalTest bookRental = BookRentalTest.builder()
-                        .book(book)
-                        .member(member)
-                        .build();
-
-                bookRentalTestRepository.save(bookRental);
-                */
-
-                bookRentalTestRepository.saveBookRentalTest(bookId, memberId);
-
-                sb.append("대여완료");
-
-                sseController.publish(String.valueOf(sb));
-
-            }
+        if(bookRentalTestRepository.existsByBookIdAndMemberId(bookId, memberId) > 0){
+            sb.append("중복대여");
         } else {
-            sb.append("중복클릭");
+
+            bookRentalTestRepository.saveBookRentalTest(bookId, memberId);
+
+            sb.append("대여완료");
+
+            sseController.publish(String.valueOf(sb));
+
         }
         return String.valueOf(sb);
     }
 
-    public Long countRentalBookTest(Long bookId) {
+    public synchronized Long countRentalBookTest(Long bookId) {
 
         Books book = bookRepository.findById(bookId).orElseThrow();
 
@@ -373,34 +342,6 @@ public class BookService {
         Long bookCount = Long.parseLong(book.getBookCount()) - rentalBook;
 
         return bookCount;
-    }
-
-    public boolean isValidationRentalTest(Long memberId) {
-        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
-
-        if(stringStringValueOperations.get(String.valueOf(memberId)) != null) {
-            return false;
-        }
-
-        // 1초
-        long LIMIT_TIME = 3000;
-        stringStringValueOperations.set(String.valueOf(memberId), String.valueOf(memberId), LIMIT_TIME, TimeUnit.MILLISECONDS);
-
-        return true;
-    }
-    public boolean isValidationRentalCountTest(Long bookCount) {
-
-        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
-
-        if(bookCount < 1 || stringStringValueOperations.get(String.valueOf(bookCount)).equals("0")) {
-            return false;
-        }
-
-        // 1초
-        long LIMIT_TIME = 1000;
-        stringStringValueOperations.set(String.valueOf(bookCount), String.valueOf(bookCount), LIMIT_TIME, TimeUnit.MILLISECONDS);
-
-        return true;
     }
 
     public Long findIsbn(Long bookId) {
