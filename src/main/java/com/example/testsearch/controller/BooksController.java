@@ -4,10 +4,14 @@ import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
 import com.example.testsearch.dto.*;
+import com.example.testsearch.entity.Books;
+import com.example.testsearch.entity.Librarys;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.repository.LibrarysRepository;
 import com.example.testsearch.service.BookService;
 import com.example.testsearch.service.ElasticBooksResDto;
+import com.example.testsearch.service.NotificationService;
+import com.example.testsearch.util.MemberLoginInfoResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -20,10 +24,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +49,10 @@ public class BooksController extends HttpServlet {
     private final StopWatchRepository stopWatchRepository;
     private final LibrarysRepository librarysRepository;
 
+    private final NotificationService notificationService;
+
     private final StringRedisTemplate stringRedisTemplate;
+
 
     private int callCount = 0;
 
@@ -55,6 +60,7 @@ public class BooksController extends HttpServlet {
 
     private static int countId = 0;
 
+    List<Long> memberIdList = new ArrayList<>();
 
     // 기본 페이지
     @GetMapping("/index")
@@ -306,18 +312,7 @@ public class BooksController extends HttpServlet {
                 log.info(cookie.getValue());
             }
         }
-
         String successMessage = bookService.rentalBook(bookId, username);
-
-        // username 쿠키 1시간
-        Cookie cookie = new Cookie("event", successMessage);
-        cookie.setMaxAge(3600);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-
-        if (cookie.getName().equals("event")) {
-            log.info(cookie.getValue());
-        }
 
         Long isbn = bookService.findIsbn(bookId);
 
@@ -343,16 +338,6 @@ public class BooksController extends HttpServlet {
         }
 
         String successMessage = bookService.returnBook(bookId, username);
-
-        // username 쿠키 1시간
-        Cookie cookie = new Cookie("event", successMessage);
-        cookie.setMaxAge(3600);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-
-        if (cookie.getName().equals("event")) {
-            log.info(cookie.getValue());
-        }
 
         Long isbn = bookService.findIsbn(bookId);
 
@@ -424,47 +409,9 @@ public class BooksController extends HttpServlet {
                     log.info(cookie.getValue());
                 }
             }
-        } else {
-            Cookie cookie = new Cookie("event", "수량부족");
-            cookie.setMaxAge(3600);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            if (cookie.getName().equals("event")) {
-                log.info(cookie.getValue());
-            }
         }
 
-        countId = 0;
-
-/*
-        if(bookCount > memberIdList.size() - 1){
-            String successMessage = bookService.rentalBookTest(bookId, memberId);
-
-            // username 쿠키 1시간
-            Cookie cookie = new Cookie("event", successMessage);
-            cookie.setMaxAge(3600);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            if (cookie.getName().equals("event")) {
-                log.info(cookie.getValue());
-            }
-        } else {
-            Cookie cookie = new Cookie("event", "수량부족");
-            cookie.setMaxAge(3600);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            if (cookie.getName().equals("event")) {
-                log.info(cookie.getValue());
-            }
-        }
-
-        memberIdList.clear();*/
-
-        return "login";
-
+        return "redirect:/search";
 
     }
 
@@ -482,6 +429,7 @@ public class BooksController extends HttpServlet {
 
         List<LibraryResDtoV2> findLibrary = librarysRepository.findByLibrary();
         model.addAttribute("library",findLibrary);
+        model.addAttribute("msg", notificationService.getMessage());
 
         return "search";
     }
