@@ -29,6 +29,10 @@
     </div>
   </form>
 </div>
+<a class="btn btn-success pd-l" th:href="@{/library/excel/download?libcode={libcode} (libcode = ${libcode})}">
+  <span>도서관별 Excel 다운로드(시간 오래걸림)</span>
+</a>
+<a class="btn btn-primary" th:href="@{/search}" role="button">Home</a>
 
 <div class="stop-watch mt2" th:if="${nanos}>0" th:text=" '걸린 시간 (ms) : ' + ${mills} + ' 밀리초'"></div>
 <div class="stop-watch mt2" th:if="${nanos}>0" th:text=" '걸린 시간 (ns) : ' + ${nanos} + ' 나노초'"></div>
