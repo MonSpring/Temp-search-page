@@ -1,8 +1,6 @@
 package com.example.testsearch.dto;
 
 import com.example.testsearch.customAnnotation.StopWatchTable;
-import com.example.testsearch.dto.Pagination;
-import com.example.testsearch.service.ElasticBooksResDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

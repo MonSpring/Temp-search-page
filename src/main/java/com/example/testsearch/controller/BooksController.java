@@ -6,8 +6,7 @@ import com.example.testsearch.customAnnotation.StopWatchTable;
 import com.example.testsearch.dto.*;
 import com.example.testsearch.repository.BookRepository;
 import com.example.testsearch.service.BookService;
-import com.example.testsearch.service.ElasticBooksResDto;
-import com.example.testsearch.util.MemberLoginInfoResDto;
+import com.example.testsearch.dto.ElasticBooksResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -330,7 +329,7 @@ public class BooksController extends HttpServlet {
                                                   @RequestParam(defaultValue = "1", name = "page") int page,
                                                   @RequestParam(defaultValue = "10", name = "size") int size,
                                                   @RequestParam String field,
-                                                  @RequestParam String mode) {
+                                                  @RequestParam(defaultValue = "text", name = "mode") String mode) {
 
         ListElasticBookResTestDtoAndPagination listElasticBookResTestDtoAndPagination = bookService.getElasticBooksSearch(word, size, page, field, mode);
 
@@ -356,7 +355,7 @@ public class BooksController extends HttpServlet {
     @GetMapping("/elasticsearch/excel")
     public void searchElasticSearchBooksListOutputExcel(HttpServletResponse res,
                                                         @RequestParam String word,
-                                                        @RequestParam String mode,
+                                                        @RequestParam(defaultValue = "text", name = "mode") String mode,
                                                         @RequestParam String field) throws IOException {
         List<ElasticBooksResDto> elasticBooksResDtoList = bookService.searchElasticForExcel(word, mode, field);;
         bookService.outputExcelForElastic(elasticBooksResDtoList, res);

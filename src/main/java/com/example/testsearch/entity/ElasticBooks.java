@@ -9,6 +9,7 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -32,7 +33,7 @@ public class ElasticBooks {
     private String publisher;
 
     @Column(name = "publication_year")
-    private String publicationYear;
+    private Date publicationYear;
 
     @Column
     private Long isbn;
@@ -44,7 +45,7 @@ public class ElasticBooks {
     private Long lendOutBookCount;
 
     @Column(name = "reg_date")
-    private String regDate;
+    private Date regDate;
 
     @Column
     private Long libcode;
@@ -61,20 +62,12 @@ public class ElasticBooks {
     @Field(type = FieldType.Keyword)
     private String publisherKeyword;
 
-    @Column(name = "publication_year.Keyword")
-    @Field(type = FieldType.Keyword)
-    private String publicationYearKeyword;
-
     @Column(name = "book_count.Keyword")
     @Field(type = FieldType.Keyword)
     private String bookCountKeyword;
 
-    @Column(name = "reg_date.Keyword")
-    @Field(type = FieldType.Keyword)
-    private String regDateKeyword;
-
     @Builder
-    public ElasticBooks(String id, Long book_id, String title, String author, String publisher, String publicationYear, Long isbn, String bookCount, Long lendOutBookCount, String regDate, Long libcode) {
+    public ElasticBooks(String id, Long book_id, String title, String author, String publisher, Date publicationYear, Long isbn, String bookCount, Long lendOutBookCount, Date regDate, Long libcode) {
         this.id = id;
         this.book_id = book_id;
         this.title = title;

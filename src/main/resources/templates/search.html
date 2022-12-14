@@ -102,26 +102,11 @@
       background: #88ba1c;
     }
 
+    .search-detail {
+      padding : 10px 0 0 0;
+    }
+
   </style>
-  <script>
-    const eventSource = new EventSource(`/api/subscribe?id=${Math.random()}`);
-
-    eventSource.onopen = (e) => {
-      console.log(e);
-    };
-
-    eventSource.onerror = (e) => {
-      console.log(e);
-    };
-
-    eventSource.onmessage = (e) => {
-      document.querySelector("#messages").appendChild(document.createTextNode(e.data + "\n"));
-    };
-
-    document.querySelector("#send").addEventListener("click", () => {
-      fetch(`/api/publish?message=${document.querySelector("#input").value}`);
-    });
-  </script>
 </head>
 
 <body>
@@ -173,11 +158,11 @@
           </select>
           <div class="search-detail">
             <tr>
-              <th>검색 상세설정 : </th>
-              <td class="text-align-left text-indent text-strong text-orange" colspan="3">
-                <input type="radio" name="mode" value="text" id="rd_1" checked><label for="rd_1">&nbsp전문검색</label>
-                <input type="radio" name="mode" value="keyword" id="rd_2"><label for="rd_2">&nbsp키워드검색 (공사중)</label>
-              </td>
+<!--              <th>검색 상세설정 : </th>-->
+<!--              <td class="text-align-left text-indent text-strong text-orange" colspan="3">-->
+<!--                <input type="radio" name="mode" value="text" id="rd_1" checked><label for="rd_1">&nbsp전문검색</label>-->
+<!--                <input type="radio" name="mode" value="keyword" id="rd_2"><label for="rd_2">&nbsp키워드검색 (공사중)</label>-->
+<!--              </td>-->
             </tr>
           </div>
           <div class="search-box">
@@ -267,10 +252,6 @@
 </script>
 
 <script src="/basic.js">
-  // function ready() {
-  //   getList();
-  // }
-  // document.addEventListener("DOMContentLoaded", ready);
 </script>
 
 </html>

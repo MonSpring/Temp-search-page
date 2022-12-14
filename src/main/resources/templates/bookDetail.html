@@ -34,9 +34,17 @@
             let goPage = [[${countPost}]]
             history.go(goPage);
         }
+
     </script>
+
 </head>
 <body>
+
+<div class="myBox"><h2>실시간 알림 메세지</h2><pre id="messages"></pre></div>
+<div id="messages" style="height:100px;width:140px;overflow:auto;background-color:white;color:black;scrollbar-base-color:gold;font-family:sans-serif;padding:10px;"></div>
+
+<div class="myBox"th:text="${sb}"><div>
+
 <div class="container">
     <div class="form-group">
         <div th:if="${not #strings.isEmpty(data.thumbnail)}">
@@ -80,4 +88,6 @@
     </form>
 </div>
 </body>
+<script src="/basic.js">
+</script>
 </html>

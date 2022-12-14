@@ -64,6 +64,10 @@
             padding: 5px;
         }
 
+        .search-detail {
+            padding : 10px 0 0 0;
+        }
+
     </style>
 
 </head>
@@ -113,7 +117,7 @@
                 </a>
 
                 <h1>ElasticSearch 검색</h1>
-                <form class="pager" method="get" action="/elasticsearch">
+                <form class="pager" method="get" action="/elasticsearch" accept-charset="UTF-8">
                     <select name="field" class="form-select" aria-label="Default select example">
                         <option value="title" selected>제목</option>
                         <option value="author">작가</option>
@@ -122,11 +126,11 @@
                     </select>
                     <div class="search-detail">
                         <tr>
-                            <th>검색 상세설정 : </th>
-                            <td class="text-align-left text-indent text-strong text-orange" colspan="3">
-                                <input type="radio" name="mode" value="text" id="rd_1" checked><label for="rd_1">&nbsp전문검색</label>
-                                <input type="radio" name="mode" value="keyword" id="rd_2"><label for="rd_2">&nbsp키워드검색 (공사중)</label>
-                            </td>
+<!--                            <th>검색 상세설정 : </th>-->
+<!--                            <td class="text-align-left text-indent text-strong text-orange" colspan="3">-->
+<!--                                <input type="radio" name="mode" value="text" id="rd_1" checked><label for="rd_1">&nbsp전문검색</label>-->
+<!--                                <input type="radio" name="mode" value="keyword" id="rd_2"><label for="rd_2">&nbsp키워드검색 (공사중)</label>-->
+<!--                            </td>-->
                         </tr>
                     </div>
                     <div class="search-box">
