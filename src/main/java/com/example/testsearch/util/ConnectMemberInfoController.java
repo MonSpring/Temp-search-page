@@ -1,6 +1,7 @@
 package com.example.testsearch.util;
 
 import com.example.testsearch.dto.BookResTestDto;
+import com.example.testsearch.dto.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -33,10 +34,14 @@ public class ConnectMemberInfoController {
         return "logInfoPage";
     }
 
-    @PostMapping("/info")
-    public String getLogList(Model model, String startDatetime, String endDatetime) {
+    @GetMapping("/info")
+    public String getLogList(Model model, String startDatetime, String endDatetime,
+                             @RequestParam(defaultValue = "1", name = "page") int page,
+                             @RequestParam(defaultValue = "10", name = "size") int size) {
         SpreadFrontUtil.spreadFrontCalender(model, startDatetime, endDatetime);
-        model.addAttribute("logdata", logMemberAddressService.searchAllMemberAddressLog(startDatetime, endDatetime));
+        MemberLoginInfoResControllerDto memberLoginInfoResControllerDto = logMemberAddressService.searchAllMemberAddressLog(startDatetime, endDatetime, page, size);
+        model.addAttribute("logdata", memberLoginInfoResControllerDto.getMemberLoginInfoResDtoList());
+        model.addAttribute("pagination", memberLoginInfoResControllerDto.getPagination());
         return "logInfoPage";
     }
 

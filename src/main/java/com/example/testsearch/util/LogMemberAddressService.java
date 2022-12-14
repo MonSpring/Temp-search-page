@@ -1,5 +1,6 @@
 package com.example.testsearch.util;
 
+import com.example.testsearch.dto.Pagination;
 import com.example.testsearch.entity.MemberLoginInfo;
 import com.example.testsearch.repository.MemberLoginInfoRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,14 +28,47 @@ public class LogMemberAddressService {
 
     private final MemberLoginInfoRepository memberLoginInfoRepository;
 
-    public List<MemberLoginInfoResDto> searchAllMemberAddressLog(String startDatetime, String endDatetime) {
+    public MemberLoginInfoResControllerDto searchAllMemberAddressLog(String startDatetime, String endDatetime, int page, int size) {
 
         // 타임존 설정 하는 법
         // ZoneId zoneid = ZoneId.of("Asia/Seoul");
         // long startDatetimeFromatMillSecond = startDatetimeFormatTemp.atZone(zoneid).toInstant().toEpochMilli();
         // long endDateTimeFromatMillSecond = endDateTimeFormatTemp.atZone(zoneid).toInstant().toEpochMilli();
         
-        // 엘라스틱 서치에서 한달이 지나면 저절로 삭제되는 구문 만드는 중
+        // Hot, Warm, Cold 아키텍처 적용 한 달 지나면 데이터 저절로 삭제됨
+
+        // Date Formatting
+        String startDatetimeTemp = startDatetime + " 00:00:00";
+        String endDatetimeTemp = endDatetime + " 24:00:00";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startDatetimeFormatTemp = LocalDateTime.parse(startDatetimeTemp, formatter);
+        LocalDateTime endDateTimeFormatTemp = LocalDateTime.parse(endDatetimeTemp, formatter);
+
+        int totaListCnt = memberLoginInfoRepository.countAllByLoginTimeBetween(startDatetimeFormatTemp, endDateTimeFormatTemp);
+        log.info("totaListCnt ? : " + totaListCnt);
+        Pagination pagination = new Pagination(totaListCnt, page);
+        int indexPage = page - 1;
+        Pageable pageable = PageRequest.of(indexPage, size);
+
+        Iterable<MemberLoginInfo> memberLoginInfoList = memberLoginInfoRepository.findAllByLoginTimeBetweenOrderByLoginTimeDesc(startDatetimeFormatTemp, endDateTimeFormatTemp, pageable);
+        List<MemberLoginInfoResDto> memberLoginInfoResDtoList = new ArrayList<>();
+
+        for (MemberLoginInfo memberLoginInfo:memberLoginInfoList) {
+            MemberLoginInfoResDto memberLoginInfoResDto = MemberLoginInfoResDto.builder()
+                    .username(memberLoginInfo.getUsername())
+                    .memberIp(memberLoginInfo.getMemberIp())
+                    .loginTime(memberLoginInfo.getLoginTime())
+                    .build();
+            memberLoginInfoResDtoList.add(memberLoginInfoResDto);
+        }
+
+        return MemberLoginInfoResControllerDto.builder()
+                .memberLoginInfoResDtoList(memberLoginInfoResDtoList)
+                .pagination(pagination)
+                .build();
+    }
+
+    public List<MemberLoginInfoResDto> searchAllMemberAddressLog(String startDatetime, String endDatetime) {
 
         String startDatetimeTemp = startDatetime + " 00:00:00";
         String endDatetimeTemp = endDatetime + " 24:00:00";
@@ -40,8 +76,6 @@ public class LogMemberAddressService {
         LocalDateTime startDatetimeFormatTemp = LocalDateTime.parse(startDatetimeTemp, formatter);
         LocalDateTime endDateTimeFormatTemp = LocalDateTime.parse(endDatetimeTemp, formatter);
 
-        // 엘라스틱서치 내부 Date 상태 "creation_date": "1669465728408"
-        // 얘가 내부적으로 SEQ 두번 날리는 듯
         Iterable<MemberLoginInfo> memberLoginInfoList = memberLoginInfoRepository.findAllByLoginTimeBetweenOrderByLoginTimeDesc(startDatetimeFormatTemp, endDateTimeFormatTemp);
         List<MemberLoginInfoResDto> memberLoginInfoResDtoList = new ArrayList<>();
 
