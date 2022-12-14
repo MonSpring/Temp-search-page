@@ -112,6 +112,10 @@
       top: 46px;
     }
 
+    .search-el {
+      padding : 10px 0 0 0;
+    }
+
   </style>
   <script>
 
@@ -211,16 +215,7 @@
             <option value="publisher">출판사</option>
             <option value="isbn">ISBN</option>
           </select>
-          <div class="search-detail">
-            <tr>
-              <th>검색 상세설정 : </th>
-              <td class="text-align-left text-indent text-strong text-orange" colspan="3">
-                <br>
-                <input type="radio" name="mode" value="text" id="rd_1" checked><label for="rd_1">&nbsp전문검색</label>
-                <br>
-                <input type="radio" name="mode" value="keyword" id="rd_2"><label for="rd_2">&nbsp키워드검색 (공사중)</label>
-              </td>
-            </tr>
+          <div class="search-el">
           </div>
           <div class="search-box">
             <input type="text" id="search_word" class="form-control" placeholder="Search this blog" name="word">
