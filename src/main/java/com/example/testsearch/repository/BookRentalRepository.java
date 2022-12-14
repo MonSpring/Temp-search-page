@@ -10,7 +10,6 @@ import javax.persistence.LockModeType;
 
 public interface BookRentalRepository extends JpaRepository<BookRentals,Long> {
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     boolean existsByBookAndMember(Books book, Member member);
 
     void deleteByBookAndMember(Books book, Member member);

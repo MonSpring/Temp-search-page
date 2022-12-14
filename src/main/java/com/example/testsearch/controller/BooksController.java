@@ -4,8 +4,14 @@ import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.customAnnotation.StopWatchRepository;
 import com.example.testsearch.customAnnotation.StopWatchTable;
 import com.example.testsearch.dto.*;
+import com.example.testsearch.entity.Books;
+import com.example.testsearch.entity.Librarys;
 import com.example.testsearch.repository.BookRepository;
+import com.example.testsearch.repository.LibrarysRepository;
 import com.example.testsearch.service.BookService;
+import com.example.testsearch.service.ElasticBooksResDto;
+import com.example.testsearch.service.NotificationService;
+import com.example.testsearch.util.MemberLoginInfoResDto;
 import com.example.testsearch.dto.ElasticBooksResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,15 +20,22 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Controller
@@ -35,10 +48,20 @@ public class BooksController extends HttpServlet {
     private final BookRepository bookRepository;
 
     private final StopWatchRepository stopWatchRepository;
+    private final LibrarysRepository librarysRepository;
+
+    private final NotificationService notificationService;
+
+    private final StringRedisTemplate stringRedisTemplate;
+
 
     private int callCount = 0;
 
     private int lastIdChange = 0;
+
+    private static int countId = 0;
+
+    List<Long> memberIdList = new ArrayList<>();
 
     // 기본 페이지
     @GetMapping("/index")
@@ -262,6 +285,10 @@ public class BooksController extends HttpServlet {
             if(cookie.getName().equals("countPost")){
                 model.addAttribute("countPost", Integer.parseInt(cookie.getValue()));
             }
+            if(cookie.getName().equals("event")){
+                model.addAttribute("event", cookie.getValue());
+            }
+
         }
 
         model.addAttribute("data", bookService.searchDetail(bookId, isbn, username));
@@ -270,9 +297,10 @@ public class BooksController extends HttpServlet {
     }
 
     @PostMapping("/books/{id}/rental")
-    public String borrowBooks(Model model,
+    public String rentalBooks(Model model,
                               @PathVariable(name="id")Long bookId,
-                              HttpServletRequest request){
+                              HttpServletRequest request,
+                              HttpServletResponse response){
 
         String username = null;
 
@@ -280,16 +308,112 @@ public class BooksController extends HttpServlet {
             if(cookie.getName().equals("username")){
                 username = cookie.getValue();
             }
-        }
 
-        int successCode = bookService.rentalBook(bookId, username);
+            if(cookie.getName().equals("countPost")){
+                log.info(cookie.getValue());
+            }
+        }
+        String successMessage = bookService.rentalBook(bookId, username);
 
         Long isbn = bookService.findIsbn(bookId);
 
-        model.addAttribute("code", successCode);
-        model.addAttribute("data", bookService.searchDetail(bookId, isbn, username));
+        return "redirect:/books/" + bookId + "/detail/" + isbn;
+    }
+
+    @PostMapping("/books/{id}/return")
+    public String returnBooks(Model model,
+                              @PathVariable(name="id")Long bookId,
+                              HttpServletRequest request,
+                              HttpServletResponse response){
+
+        String username = null;
+
+        for (Cookie cookie : request.getCookies()) {
+            if(cookie.getName().equals("username")){
+                username = cookie.getValue();
+            }
+
+            if(cookie.getName().equals("countPost")){
+                log.info(cookie.getValue());
+            }
+        }
+
+        String successMessage = bookService.returnBook(bookId, username);
+
+        Long isbn = bookService.findIsbn(bookId);
 
         return "redirect:/books/" + bookId + "/detail/" + isbn;
+    }
+
+    public synchronized long minusBookCount(long bookId, long bookCount) {
+
+        bookCount = bookCount - countId++;
+
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+
+        while (stringStringValueOperations.get(bookId + String.valueOf(bookCount)) != null) {
+            bookCount--;
+            if(bookCount < 1)
+                break;
+        }
+
+        // 1초
+        long LIMIT_TIME = 3000;
+        stringStringValueOperations.set(bookId + String.valueOf(bookCount), String.valueOf(bookCount), LIMIT_TIME, TimeUnit.MILLISECONDS);
+
+        return bookCount;
+    }
+
+    public boolean isValidationRentalTest(Long memberId) {
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+
+        if(stringStringValueOperations.get(String.valueOf(memberId)) != null) {
+            return false;
+        }
+
+        // 1초
+        long LIMIT_TIME = 1000;
+        stringStringValueOperations.set(String.valueOf(memberId), String.valueOf(memberId), LIMIT_TIME, TimeUnit.MILLISECONDS);
+
+        return true;
+    }
+
+    @PostMapping("/books/{id}/rental/JMeterTest/{member_id}")
+    public String rentalBooksJMeterTest(@PathVariable(name="id")Long bookId,
+                                        @PathVariable(name="member_id")Long memberId,
+                                        HttpServletResponse response) {
+
+        long bookCount = bookService.countRentalBookTest(bookId);
+
+        long quantityOfBook = minusBookCount(bookId, bookCount);
+
+        if(isValidationRentalTest(memberId)) {
+            if (quantityOfBook > 0) {
+                String successMessage = bookService.rentalBookTest(bookId, memberId);
+
+                // username 쿠키 1시간
+                Cookie cookie = new Cookie("event", successMessage);
+                cookie.setMaxAge(3600);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+
+                if (cookie.getName().equals("event")) {
+                    log.info(cookie.getValue());
+                }
+            } else {
+                Cookie cookie = new Cookie("event", "수량부족");
+                cookie.setMaxAge(3600);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+
+                if (cookie.getName().equals("event")) {
+                    log.info(cookie.getValue());
+                }
+            }
+        }
+
+        return "redirect:/search";
+
     }
 
     // 무한 스크롤 서치 페이지
@@ -303,6 +427,10 @@ public class BooksController extends HttpServlet {
                 model.addAttribute("username", cookie.getValue());
             }
         }
+
+        List<LibraryResDtoV2> findLibrary = librarysRepository.findByLibrary();
+        model.addAttribute("library",findLibrary);
+        model.addAttribute("msg", notificationService.getMessage());
 
         return "search";
     }
@@ -360,4 +488,39 @@ public class BooksController extends HttpServlet {
         List<ElasticBooksResDto> elasticBooksResDtoList = bookService.searchElasticForExcel(word, mode, field);;
         bookService.outputExcelForElastic(elasticBooksResDtoList, res);
     }
+
+    @GetMapping("/library")
+    public String getLibrary() {
+        return "libraryPage";
+    }
+
+    @LogExecutionTime
+    @GetMapping("/library/info")
+    public String searchLibraryV2(
+            Model model,
+            @RequestParam(name ="libcode") Long  libcode,
+            @RequestParam(defaultValue = "1", name = "page") int page,
+            @RequestParam(defaultValue = "10", name = "size") int size) {
+
+        List<LibraryResDtoV2> findLibrary = librarysRepository.findByLibrary();
+        model.addAttribute("library",findLibrary);
+
+        ListBookResTestDtoAndPagination listBookResTestDtoAndPagination = bookService.searchLibraryV2(libcode, size, page);
+        // 검색 리스트 가져오는 용도
+        model.addAttribute("data10", listBookResTestDtoAndPagination.getBookResTestDtoList());
+        // page 버튼 뿌려주는 용도
+        model.addAttribute("pagination", listBookResTestDtoAndPagination.getPagination());
+        log.info("listBookResTestDtoAndPagination.getPagination(): " + listBookResTestDtoAndPagination.getPagination().getStartIndex());
+        model.addAttribute("libcode", libcode);
+
+        // 메소드 검색 시간 체크 프론트에 뿌려주는 용도
+        StopWatchTable stopWatchTable = stopWatchRepository.findTopByOrderByIdDesc();
+        listBookResTestDtoAndPagination.updateStopWatch(stopWatchTable);
+        model.addAttribute("method", listBookResTestDtoAndPagination.getMethod());
+        model.addAttribute("mills", listBookResTestDtoAndPagination.getMills());
+        model.addAttribute("nanos", listBookResTestDtoAndPagination.getNanos());
+
+        return "libraryPage";
+    }
+
 }

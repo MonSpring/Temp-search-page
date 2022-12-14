@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -42,6 +43,14 @@ public class BookService {
     private final MemberRepository memberRepository;
 
     private final SseController sseController;
+
+    private final MemberTestRepository memberTestRepository;
+
+    private final StringRedisTemplate stringRedisTemplate;
+
+    private final BookRentalTestRepository bookRentalTestRepository;
+
+    private final NotificationRepository notificationRepository;
 
     // 1630만개 끌고오기
     public List<BookResTestDto> getAll() {
@@ -266,28 +275,13 @@ public class BookService {
     }
 
     @Transactional
-    public int rentalBook(Long bookId, String username) {
+    public String rentalBook(Long bookId, String username) {
 
         Books book = bookRepository.findById(bookId).orElseThrow();
 
         Member member = memberRepository.findByUsername(username).orElseThrow();
 
-        Long rentalBook = bookRentalRepository.countByBook(book);
-
-        Long bookCount = Long.parseLong(book.getBookCount()) - rentalBook;
-
-        if (bookRentalRepository.existsByBookAndMember(book, member)) {
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("반납 안내 : ").append(book.getTitle()).append("도서를 ").append(member.getUsername()).append("님이 반납하셨습니다.");
-
-            sseController.publish(String.valueOf(sb));
-
-            bookRentalRepository.deleteByBookAndMember(book, member);
-            return 1;
-        }
-
-        if(bookCount > 0) {
+        if(Long.parseLong(book.getBookCount()) - bookRentalRepository.countByBook(book) > 0) {
 
             BookRentals bookRental = BookRentals.builder()
                     .book(book)
@@ -301,10 +295,62 @@ public class BookService {
 
             bookRentalRepository.save(bookRental);
 
-            return 1;
+            Message message = Message.builder()
+                    .message(String.valueOf(sb))
+                    .build();
+
+            notificationRepository.save(message);
+
+            return String.valueOf(sb);
         } else {
-            return 0;
+            return "";
         }
+    }
+
+    @Transactional
+    public String returnBook(Long bookId, String username){
+
+        StringBuilder sb = new StringBuilder();
+
+        Books book = bookRepository.findById(bookId).orElseThrow();
+
+        Member member = memberRepository.findByUsername(username).orElseThrow();
+
+        bookRentalRepository.deleteByBookAndMember(book, member);
+
+        sb.append("반납완료");
+
+        return String.valueOf(sb);
+    }
+
+    @Transactional
+    public String rentalBookTest(Long bookId, Long memberId) {
+
+        StringBuilder sb = new StringBuilder();
+
+            if(bookRentalTestRepository.existsByBookIdAndMemberId(bookId, memberId) > 0){
+                sb.append("중복대여");
+            } else {
+
+                bookRentalTestRepository.saveBookRentalTest(bookId, memberId);
+
+                sb.append("대여완료");
+
+                sseController.publish(String.valueOf(sb));
+            }
+
+        return String.valueOf(sb);
+    }
+
+    public Long countRentalBookTest(Long bookId) {
+
+        Books book = bookRepository.findById(bookId).orElseThrow();
+
+        Long rentalBook = bookRentalTestRepository.countByBook(book);
+
+        Long bookCount = Long.parseLong(book.getBookCount()) - rentalBook;
+
+        return bookCount;
     }
 
     public Long findIsbn(Long bookId) {
@@ -499,4 +545,27 @@ public class BookService {
 
         wb.write(res.getOutputStream());
     }
+
+    public ListBookResTestDtoAndPagination searchLibraryV2(Long libcode,int size,int page) {
+        int count = bookRepository.getBooksByLibrarysV3Count(libcode);
+
+        Pagination pagination = new Pagination(count, page);
+        int pageOffset = pagination.getStartIndex();
+
+        List<LibRepoResDto> findLibrary = bookRepository.getBooksByLibrarysV3(libcode, size, pageOffset);
+
+        return ListBookResTestDtoAndPagination.builder()
+                .bookResTestDtoList(findLibrary)
+                .pagination(pagination)
+                .build();
+    }
+
+    public List<LibRepoResDto> libraryExcel(Long libcode) {
+
+        List<LibRepoResDto> BookResTestDto = bookRepository.forLibraryExcel(libcode);
+
+        return BookResTestDto;
+    }
+
+
 }
