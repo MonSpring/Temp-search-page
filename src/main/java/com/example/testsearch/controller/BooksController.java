@@ -371,7 +371,6 @@ public class BooksController extends HttpServlet {
                 break;
         }
 
-        // 1초
         long LIMIT_TIME = 3000;
         stringStringValueOperations.set(bookId + String.valueOf(bookCount), String.valueOf(bookCount), LIMIT_TIME, TimeUnit.MILLISECONDS);
 
@@ -437,35 +436,7 @@ public class BooksController extends HttpServlet {
 
         countId = 0;
 
-/*
-        if(bookCount > memberIdList.size() - 1){
-            String successMessage = bookService.rentalBookTest(bookId, memberId);
-
-            // username 쿠키 1시간
-            Cookie cookie = new Cookie("event", successMessage);
-            cookie.setMaxAge(3600);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            if (cookie.getName().equals("event")) {
-                log.info(cookie.getValue());
-            }
-        } else {
-            Cookie cookie = new Cookie("event", "수량부족");
-            cookie.setMaxAge(3600);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            if (cookie.getName().equals("event")) {
-                log.info(cookie.getValue());
-            }
-        }
-
-        memberIdList.clear();*/
-
         return "login";
-
-
     }
 
     // 무한 스크롤 서치 페이지
