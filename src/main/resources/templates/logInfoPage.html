@@ -21,24 +21,28 @@
             justify-content: center;
         }
 
-        .stop-watch {
-            display: inline-flex;
-            margin-left: 5px;
-            border: 2px rgb(180, 180, 180) solid;
-            border-radius: 2px;
-            box-shadow: 1px 1px 1px 0;
-            padding: 5px;
-        }
-
-        .btn-dark {
-            display: block;
-            margin-top: 10px;
-            margin-left: 35%;
-        }
-
-        .date-lab {
+        .date-lab, .log-confirm {
             margin-top: 15px;
         }
+
+        h6 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        body{
+            background-color: #101010;
+            color: #c9c4c4;
+        }
+        .table-striped{
+            color: #c9c4c4;
+        }
+
+        .table-striped>tbody>tr:nth-of-type(odd)>* {
+            color: #95a0ab;
+            margin-top: 40px;
+        }
+
     </style>
 
     <script>
@@ -54,28 +58,27 @@
 </head>
 <body>
 <div class="wrap">
-    <button type="button" class="btn btn-dark" onclick="logout();">로그아웃</button>
+    <a class="btn btn-dark" onclick="logout();">로그아웃</a>
+    <a class="btn btn-dark" th:href="@{/search}">Home</a>
     <a th:if="${startDatetime}" class="btn btn-success pd-l" th:href="@{/log/excel?startDatetime={startDatetime}&endDatetime={endDatetime} (startDatetime = ${startDatetime}, endDatetime = ${endDatetime})}">
         <span>로그인 정보 Excel 다운로드</span>
     </a>
     <div class="input-group">
         <div class="input-group-append">
 
-            <h1>회원 접속 이력 로그 조회</h1>
-            <form class="connectMember" method="post" action="/log/info">
+            <h1>회원 접속 이력 로그 조회<br/>(ElasticSearch)<br/><h6>(해당 데이터는 30일 후 자동 폐기됩니다)</h6></h1>
+            <form class="connectMember" method="get" action="/log/info">
                 <div class="date-lab">
                     <label for="start">Start date:</label>
                     <input type="date" id="start" name="startDatetime"
-                           th:value="${localdate}"
+                           th:value="${startDatetime}"
                            th:min="${beforemonth}" th:max="${localdate}">
                     <label for="start">End date:</label>
                     <input type="date" id="end" name="endDatetime"
-                           th:value="${localdate}"
+                           th:value="${endDatetime}"
                            th:min="${beforemonth}" th:max="${localdate}">
                 </div>
-    <!--            <div class="stop-watch" th:if="${nanos}>0" th:text=" '걸린 시간 (ms) : ' + ${mills} + ' 밀리초'"></div>-->
-    <!--            <div class="stop-watch" th:if="${nanos}>0" th:text=" '걸린 시간 (ns) : ' + ${nanos} + ' 나노초'"></div>-->
-                <button type="submit" class="btn btn-dark" >접속 로그 확인</button>
+                <button type="submit" class="btn btn-dark log-confirm" >접속 로그 확인</button>
             </form>
         </div>
     </div>
@@ -96,6 +99,38 @@
         </tr>
         </tbody>
     </table>
+    <nav th:if="${pagination.totalListCnt}>0" aria-label="Page navigation example">
+        <ul class="pagination d-flex justify-content-center">
+            <li class="page-item">
+                <a class="page-link" th:href="@{/log/info?startDatetime={startDatetime}&endDatetime={endDatetime}&page={page}&size={size} (page = 1, startDatetime = ${startDatetime}, endDatetime = ${endDatetime}, size=${pagination.pageSize})}" aria-label="Previous">
+                    <span aria-hidden="true">처음</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" th:href="@{/log/info?startDatetime={startDatetime}&endDatetime={endDatetime}&page={page}&size={size} (page = ${pagination.prevBlock}, startDatetime = ${startDatetime}, endDatetime = ${endDatetime}, size=${pagination.pageSize})}" aria-label="Previous">
+                    <span aria-hidden="true">이전</span>
+                </a>
+            </li>
+            <th:block  th:with="start = ${pagination.startPage}, end = ${pagination.endPage}">
+                <li class="page-item"
+                    th:with="start = ${pagination.startPage}, end = ${pagination.endPage}, word = ${word}"
+                    th:each="pageButton : ${#numbers.sequence(start, end)}">
+                    <a class="page-link" th:href="@{/log/info?startDatetime={startDatetime}&endDatetime={endDatetime}&page={page}&size={size} (page = ${pageButton}, startDatetime = ${startDatetime}, endDatetime = ${endDatetime}, size=${pagination.pageSize})}" th:text=${pageButton}></a>
+                </li>
+            </th:block>
+            <li class="page-item">
+                <a class="page-link" th:href="@{/log/info?startDatetime={startDatetime}&endDatetime={endDatetime}&page={page}&size={size} (page = ${pagination.nextBlock}, startDatetime = ${startDatetime}, endDatetime = ${endDatetime}, size=${pagination.pageSize})}" aria-label="Next">
+                    <span aria-hidden="true">다음</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" th:href="@{/log/info?startDatetime={startDatetime}&endDatetime={endDatetime}&page={page}&size={size} (page = ${pagination.totalPageCnt}, startDatetime = ${startDatetime}, endDatetime = ${endDatetime}, size=${pagination.pageSize})}" aria-label="Previous">
+                    <span aria-hidden="true">끝</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div th:if="${pagination.totalListCnt}==0" class="no-search">검색된 결과가 없습니다</div>
 </div>
 </body>
 </html>

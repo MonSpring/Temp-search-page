@@ -130,4 +130,6 @@ public interface BookRepository extends JpaRepository<Books, Long>, BookReposito
     @Query(value ="select count(1) from books b left join librarys l on l.libcode=b.libcode where b.libcode=:libcode", nativeQuery = true)
     int getBooksByLibrarysV3Count(@Param("libcode") Long libcode);
 
+    @Query(value ="select distinct b.*, l.lib_name from books b left join librarys l on l.libcode=b.libcode where b.libcode=:libcode",nativeQuery = true)
+    List<LibRepoResDto> forLibraryExcel(Long libcode);
 }

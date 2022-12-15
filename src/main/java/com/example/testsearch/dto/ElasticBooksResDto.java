@@ -1,4 +1,4 @@
-package com.example.testsearch.service;
+package com.example.testsearch.dto;
 
 import com.example.testsearch.entity.ElasticBooks;
 import lombok.Getter;

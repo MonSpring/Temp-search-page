@@ -9,11 +9,54 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+ <style>
+  body{
+  background-color: #101010;
+  color: #c9c4c4;
+  }
+  .table-striped{
+  color: #c9c4c4;
+  }
+
+  .table-striped>tbody>tr:nth-of-type(odd)>* {
+  color: #95a0ab;
+  margin-top: 40px;
+  }
+  .btn-css{
+  position: absolute;
+  left: 16%;
+  top: 0;
+  }
+
+  .home-css{
+  position: absolute;
+  left: 21.8%;
+  top: 0;
+  }
+
+  </style>
+
+  <script>
+    function logout(){
+      /*모든 쿠키 삭제*/
+      document.cookie = 'username=; expires=Thu, 01 Jan 1999 00:00:10 GMT;domain=localhost;path=/;'
+      document.cookie = 'countPost=; expires=Thu, 01 Jan 1999 00:00:10 GMT;domain=localhost;path=/;'
+      document.cookie = 'username=; expires=Thu, 01 Jan 1999 00:00:10 GMT;domain=localhost;path=user/;'
+      location.href = "/user/login"
+    }
+  </script>
 
 </head>
 <body>
 
-<div class="input-group-append">
+<div class="wrap">
+
+  <form action="/log" method="get"><button input="submit" class="btn btn-dark">회원 로그 조회 페이지</button></form>
+  <a class="btn btn-dark btn-css" onclick="logout();">로그아웃</a>
+  <a class="btn btn-primary home-css" th:href="@{/search}" role="button">Home</a>
+
+
+  <div class="input-group-append">
   <h3>도서관별 조회 페이지</h3>
   <form class="pager" method="get" action="/library/info">
     <select name="libcode" class="form-select" aria-label="Default select example">
@@ -29,6 +72,9 @@
     </div>
   </form>
 </div>
+<a class="btn btn-success pd-l" th:href="@{/library/excel/download?libcode={libcode} (libcode = ${libcode})}">
+  <span>도서관별 Excel 다운로드(검색결과에 따라 시간 오래걸림)</span>
+</a>
 
 <div class="stop-watch mt2" th:if="${nanos}>0" th:text=" '걸린 시간 (ms) : ' + ${mills} + ' 밀리초'"></div>
 <div class="stop-watch mt2" th:if="${nanos}>0" th:text=" '걸린 시간 (ns) : ' + ${nanos} + ' 나노초'"></div>

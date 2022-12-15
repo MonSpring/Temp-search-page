@@ -64,19 +64,59 @@
             padding: 5px;
         }
 
+        .search-detail {
+            padding : 10px 0 0 0;
+        }
+
+        body{
+            background-color: #101010;
+            color: #c9c4c4;
+        }
+        .table-striped{
+            color: #c9c4c4;
+        }
+
+        .table-striped>tbody>tr:nth-of-type(odd)>* {
+            color: #95a0ab;
+            margin-top: 40px;
+        }
+        .btn-css{
+            position: absolute;
+            left: 16%;
+            top: 0;
+        }
+
+        .home-css{
+            position: absolute;
+            left: 21.8%;
+            top: 0;
+        }
+
     </style>
+
+    <script>
+        function logout(){
+            /*모든 쿠키 삭제*/
+            document.cookie = 'username=; expires=Thu, 01 Jan 1999 00:00:10 GMT;domain=localhost;path=/;'
+            document.cookie = 'countPost=; expires=Thu, 01 Jan 1999 00:00:10 GMT;domain=localhost;path=/;'
+            document.cookie = 'username=; expires=Thu, 01 Jan 1999 00:00:10 GMT;domain=localhost;path=user/;'
+            location.href = "/user/login"
+        }
+    </script>
 
 </head>
 <body>
 
 <div class="wrap">
 
-    <form action="/log" method="get"><button input="submit">회원 로그 조회 페이지</button></form>
+    <form action="/log" method="get"><button input="submit" class="btn btn-dark">회원 로그 조회 페이지</button></form>
+    <a class="btn btn-dark btn-css" onclick="logout();">로그아웃</a>
+    <a class="btn btn-primary home-css" th:href="@{/search}" role="button">Home</a>
 
     <div class="left-flex">
         <div class="input-group">
             <div class="input-group-append">
-                <h1>Native Query 방식</h1>
+                <h1>Native Query 방식<br/>(MySQL 인덱싱)</h1>
                 <form class="pager" method="get" action="/searchJpql">
                     <select name="field" class="form-select" aria-label="Default select example">
                         <option value="title" selected>제목</option>
@@ -113,7 +153,7 @@
                 </a>
 
                 <h1>ElasticSearch 검색</h1>
-                <form class="pager" method="get" action="/elasticsearch">
+                <form class="pager" method="get" action="/elasticsearch" accept-charset="UTF-8">
                     <select name="field" class="form-select" aria-label="Default select example">
                         <option value="title" selected>제목</option>
                         <option value="author">작가</option>
@@ -122,11 +162,11 @@
                     </select>
                     <div class="search-detail">
                         <tr>
-                            <th>검색 상세설정 : </th>
-                            <td class="text-align-left text-indent text-strong text-orange" colspan="3">
-                                <input type="radio" name="mode" value="text" id="rd_1" checked><label for="rd_1">&nbsp전문검색</label>
-                                <input type="radio" name="mode" value="keyword" id="rd_2"><label for="rd_2">&nbsp키워드검색 (공사중)</label>
-                            </td>
+<!--                            <th>검색 상세설정 : </th>-->
+<!--                            <td class="text-align-left text-indent text-strong text-orange" colspan="3">-->
+<!--                                <input type="radio" name="mode" value="text" id="rd_1" checked><label for="rd_1">&nbsp전문검색</label>-->
+<!--                                <input type="radio" name="mode" value="keyword" id="rd_2"><label for="rd_2">&nbsp키워드검색 (공사중)</label>-->
+<!--                            </td>-->
                         </tr>
                     </div>
                     <div class="search-box">
@@ -147,7 +187,7 @@
 
         <div class="input-group">
             <div class="input-group-append">
-                <h1>Querydsl 방식</h1>
+                <h1>Querydsl 방식<br/>(MySQL 인덱싱)</h1>
                 <form class="pager" method="get" action="/querydsl">
                     <select name="field" class="form-select" aria-label="Default select example">
                         <option value="title" selected>제목</option>

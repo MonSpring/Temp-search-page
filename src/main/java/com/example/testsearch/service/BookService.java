@@ -1,5 +1,6 @@
 package com.example.testsearch.service;
 
+import com.example.testsearch.dto.ListElasticBookResTestDtoAndPagination;
 import com.example.testsearch.controller.SseController;
 import com.example.testsearch.customAnnotation.LogExecutionTime;
 import com.example.testsearch.dto.*;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
@@ -47,6 +49,8 @@ public class BookService {
     private final StringRedisTemplate stringRedisTemplate;
 
     private final BookRentalTestRepository bookRentalTestRepository;
+
+    private final NotificationRepository notificationRepository;
 
     // 1630만개 끌고오기
     public List<BookResTestDto> getAll() {
@@ -285,12 +289,17 @@ public class BookService {
                     .build();
 
             StringBuilder sb = new StringBuilder();
-            /*sb.append("대여 안내 : ").append(book.getTitle()).append("도서를 ").append(member.getUsername()).append("님이 대여하셨습니다.");*/
-            sb.append("대여");
+            sb.append("대여 안내 : ").append(book.getTitle()).append("도서를 ").append(member.getUsername()).append("님이 대여하셨습니다.");
 
             sseController.publish(String.valueOf(sb));
 
             bookRentalRepository.save(bookRental);
+
+            Message message = Message.builder()
+                    .message(String.valueOf(sb))
+                    .build();
+
+            notificationRepository.save(message);
 
             return String.valueOf(sb);
         } else {
@@ -319,21 +328,21 @@ public class BookService {
 
         StringBuilder sb = new StringBuilder();
 
-        if(bookRentalTestRepository.existsByBookIdAndMemberId(bookId, memberId) > 0){
-            sb.append("중복대여");
-        } else {
+            if(bookRentalTestRepository.existsByBookIdAndMemberId(bookId, memberId) > 0){
+                sb.append("중복대여");
+            } else {
 
-            bookRentalTestRepository.saveBookRentalTest(bookId, memberId);
+                bookRentalTestRepository.saveBookRentalTest(bookId, memberId);
 
-            sb.append("대여완료");
+                sb.append("대여완료");
 
-            sseController.publish(String.valueOf(sb));
+                sseController.publish(String.valueOf(sb));
+            }
 
-        }
         return String.valueOf(sb);
     }
 
-    public synchronized Long countRentalBookTest(Long bookId) {
+    public Long countRentalBookTest(Long bookId) {
 
         Books book = bookRepository.findById(bookId).orElseThrow();
 
@@ -539,11 +548,9 @@ public class BookService {
 
     public ListBookResTestDtoAndPagination searchLibraryV2(Long libcode,int size,int page) {
         int count = bookRepository.getBooksByLibrarysV3Count(libcode);
-        log.info("count: "+String.valueOf(count));
 
         Pagination pagination = new Pagination(count, page);
         int pageOffset = pagination.getStartIndex();
-        log.info("pageOffset: "+String.valueOf(pageOffset));
 
         List<LibRepoResDto> findLibrary = bookRepository.getBooksByLibrarysV3(libcode, size, pageOffset);
 
@@ -552,4 +559,13 @@ public class BookService {
                 .pagination(pagination)
                 .build();
     }
+
+    public List<LibRepoResDto> libraryExcel(Long libcode) {
+
+        List<LibRepoResDto> BookResTestDto = bookRepository.forLibraryExcel(libcode);
+
+        return BookResTestDto;
+    }
+
+
 }
