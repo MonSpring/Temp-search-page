@@ -353,7 +353,6 @@ public class BooksController extends HttpServlet {
                 break;
         }
 
-        // 1초
         long LIMIT_TIME = 3000;
         stringStringValueOperations.set(bookId + String.valueOf(bookCount), String.valueOf(bookCount), LIMIT_TIME, TimeUnit.MILLISECONDS);
 

@@ -7,12 +7,8 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +29,7 @@ public class SseController {
 
     @ResponseBody
     @GetMapping("/api/subscribe")
-    public SseEmitter subscribe(String id, HttpServletRequest req) {
+    public SseEmitter subscribe(String id) {
 
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         CLIENTS.put(id, emitter);
@@ -48,8 +44,6 @@ public class SseController {
     @GetMapping("/api/publish")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public void publish(String message) {
-
-        HttpServletResponse response = getResponse();
 
         Set<String> deadIds = new HashSet<>();
 
@@ -67,12 +61,6 @@ public class SseController {
         });
 
         deadIds.forEach(CLIENTS::remove);
-    }
-
-    public static HttpServletResponse getResponse() {
-        ServletRequestAttributes attr =
-                (ServletRequestAttributes)RequestContextHolder.currentRequestAttributes();
-        return attr.getResponse();
     }
 
 }
