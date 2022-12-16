@@ -31,8 +31,8 @@
 |이창욱|Redis Setting<br/>QueryDSL Based Search<br/>AOP Developer Slack Messaging Service<br/>QueryDSL Based Search Service<br/>Library Search Service<br/>Insert Optimazation<br/>Book Rental SSE Messaging Service<br/>Excel Output Service<br/>CSS Basic Setting<br/>Refresh Token LifeCycle Manage|
 |안연일|JMitter Server Stress Test (Concurrency Controll test)<br/>Concurrency Improve Procsess<br/>OpenAPI Data Input RDB Service<br/>BookDetail Scheduling Service<br/>BookDetail Search & Batch Service<br/>Book Rental Service<br/>Redis conjugation for BookDetail & Rental Service improved<br/>Front Basic Setting<br/>Login Keep Procsess (Using cookie)|
 # Total Data Handling Count
-|:--|:--|
 |DB|ROWS|
+|:--|:--|
 |MySQL|16,618,783|
 |ElasticSearch|16,368,130|
 |Redis|ExpireTime 1 day : Not Remain|
