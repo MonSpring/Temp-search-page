@@ -27,6 +27,6 @@
 # 서비스 및 기능 구현 담당자
 |담당자|기능 및 서비스|
 |:--|:--|
-|김연태|ElasticSearch Setting (LifeCycle Policy Set)<br/>Kibana Visualization<br/>Logstash Data Migration<br/>MySQL Indexing & Setting<br/>AOP Developer Mailing Service<br/>Method StopWatch Log Remain & View Service<br/>Member Login Log Search Service<br/>Cursor Based Infinity Scroll<br/>Native Query Search Service<br/>Pagination & Select Optimization<br/>Excel Input API
+|김연태|ElasticSearch Setting (LifeCycle Policy Set)<br/>Kibana Visualization<br/>Logstash Data Migration<br/>MySQL Indexing & Setting<br/>AOP Developer Mailing Service<br/>Method StopWatch Log Remain & View Service<br/>Member Login Log Search Service<br/>Cursor Based Infinity Scroll<br/>Native Query Based Search Service<br/>Pagination & Select Optimization<br/>Excel Input API
 |이창욱|Redis Setting (LifeCycle Policy Set)<br/>Refresh Token LifeCycle Manage<br/>QueryDSL Based Search<br/>AOP Developer Slack Messaging Service<br/>Library Search Page<br/>QueryDSL Based Search Service<br/>Library Search Service<br/>Insert Optimazation<br/>Excel Output API<br/>Book Rental SSE Messaging Service|
 |안연일|JMitter Server Stress Test (Concurrency test)<br/>OpenAPI Data Input RDB Service<br/>BookDetail Scheduling Service<br/>BookDetail Search & Batch Service<br/>Book Rental Service|
