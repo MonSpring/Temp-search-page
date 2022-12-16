@@ -31,7 +31,6 @@ public class EmailService {
         toUserList.add("kimyuntae19@gmail.com");
         toUserList.add("lcy122225@gmail.com");
         toUserList.add("ahnyi527@gmail.com");
-        toUserList.add("ilkasd616@gmail.com");
 
         // 수신 대상 개수
         int toUserSize = toUserList.size();

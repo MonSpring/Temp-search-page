@@ -9,6 +9,7 @@ import com.example.testsearch.repository.LibrarysRepository;
 import com.example.testsearch.service.BookService;
 import com.example.testsearch.service.NotificationService;
 import com.example.testsearch.dto.ElasticBooksResDto;
+import com.example.testsearch.util.WhiteSpaceRemover;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -455,7 +456,8 @@ public class BooksController extends HttpServlet {
                                                   @RequestParam String field,
                                                   @RequestParam(defaultValue = "text", name = "mode") String mode) {
 
-        ListElasticBookResTestDtoAndPagination listElasticBookResTestDtoAndPagination = bookService.getElasticBooksSearch(word, size, page, field, mode);
+        String modifiedWord = WhiteSpaceRemover.allWhiteSpaceRemove(word);
+        ListElasticBookResTestDtoAndPagination listElasticBookResTestDtoAndPagination = bookService.getElasticBooksSearch(modifiedWord, size, page, field, mode);
 
         // 검색 리스트 가져오는 용도
         model.addAttribute("data7", listElasticBookResTestDtoAndPagination.getElasticBooksResDtoList());
