@@ -19,9 +19,17 @@ public class QMessage extends EntityPathBase<Message> {
 
     public static final QMessage message1 = new QMessage("message1");
 
+    public final QTimestamped _super = new QTimestamped(this);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath message = createString("message");
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
 
     public QMessage(String variable) {
         super(Message.class, forVariable(variable));
