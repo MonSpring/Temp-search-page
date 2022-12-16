@@ -76,7 +76,7 @@
       overflow: scroll;
       margin-top: 32px;
       margin-bottom: 33px;
-      border: 7px solid black;
+      border: 7px solid white;
       border-radius: 13px;
     }
     .myBox h3 {
@@ -89,7 +89,7 @@
 
 
     ::-webkit-scrollbar-track {
-      border: 2px solid black;
+      border: 2px solid white;
       border-radius: 10px;
     }
 
@@ -116,9 +116,33 @@
       padding : 10px 0 0 0;
     }
 
+    body{
+      background-color: #101010;
+      color: #c9c4c4;
+    }
+    .table-striped{
+      color: #c9c4c4;
+    }
+
+    .table-striped>tbody>tr:nth-of-type(odd)>* {
+      color: #95a0ab;
+      margin-top: 40px;
+    }
+    .btn-css{
+      position: absolute;
+      left: 16%;
+      top: 0;
+    }
+
   </style>
   <script>
-
+    function logout(){
+      /*모든 쿠키 삭제*/
+      document.cookie = 'username=; expires=Thu, 01 Jan 1999 00:00:10 GMT;domain=localhost;path=/;'
+      document.cookie = 'countPost=; expires=Thu, 01 Jan 1999 00:00:10 GMT;domain=localhost;path=/;'
+      document.cookie = 'username=; expires=Thu, 01 Jan 1999 00:00:10 GMT;domain=localhost;path=user/;'
+      location.href = "/user/login"
+    }
   </script>
 </head>
 
@@ -126,6 +150,7 @@
 <div class="wrap">
 
   <form action="/log" method="get"><button input="submit" class="btn btn-dark">회원 로그 조회 페이지</button></form>
+  <a class="btn btn-dark btn-css" onclick="logout();">로그아웃</a>
 
   <div class="myBox">
     <h3>알림 메세지</h3>
@@ -254,8 +279,6 @@
       </form>
     </div>
   </div>
-
-  <div id="messages" style="height:100px;width:140px;overflow:auto;background-color:white;color:black;scrollbar-base-color:gold;font-family:sans-serif;padding:10px;"></div>
 
   <table class="table table-striped">
     <thead>
