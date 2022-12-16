@@ -24,3 +24,9 @@
 |POI|대용량 데이터 수집 및 엑셀 출력을 위해 사용|
 |Spring Scheduler	|정보나루의 Book Detail 데이터 Open API 활용하여 데이터 수집을 위해 사용|
 |ELK <br/>(ElasticSearch + Kibana + Logstash)|RDB(MySQL) 인덱싱, 튜닝과 비정형 데이터 조회 속도의 차이를 직접 테스트 해보고 마이그레이션 자동화가 가능한지 검증, Data LifeCycle Policy(Hot,Warm,Cold 아키텍쳐 적용) 설정으로 쉽게 데이터 생명주기를 관리하기 위해 사용|
+# 서비스 및 기능 구현 담당자
+|담당자|기능 및 서비스|
+|:--|:--|
+|김연태|ElasticSearch Setting (LifeCycle Policy Set)<br/>Kibana Visualization<br/>Logstash Data Migration<br/>MySQL Indexing & Setting<br/>AOP Developer Mailing Service<br/>Method StopWatch Log Remain & View Service<br/>Member Login Log Search Service<br/>Cursor Based Infinity Scroll<br/>Native Query Search Service<br/>Pagination & Select Optimization<br/>Excel Input API
+|이창욱|Redis Setting (LifeCycle Policy Set)<br/>Refresh Token LifeCycle Manage<br/>QueryDSL Based Search<br/>AOP Developer Slack Messaging Service<br/>Library Search Page<br/>QueryDSL Based Search Service<br/>Library Search Service<br/>Insert Optimazation<br/>Excel Output API<br/>Book Rental SSE Messaging Service|
+|안연일|JMitter Server Stress Test (Concurrency test)<br/>OpenAPI Data Input RDB Service<br/>BookDetail Scheduling Service<br/>View (ThymeLeaf Based)<br/>Book Rental Service|
